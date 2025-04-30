@@ -1,11 +1,33 @@
+<!DOCTYPE html>
 <html>
-   <body>
-      <form action = "http://localhost:5000/login" method = "post">
-         <p>Enter Name:</p>
-         <p><input type = "text" name = "username" /></p>
-         <p>Enter Password:</p>
-         <p><input type = "text" name = "pw" /></p>
-         <p><input type = "submit" value = "Click to Enter" /></p>
-      </form>
-   </body>
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <h2>Login</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            {% if category == 'danger' %}
+              <li style="color: red;">{{ message }}</li>
+            {% elif category == 'success' %}
+              <li style="color: green;">{{ message }}</li>
+            {% else %}
+              <li>{{ message }}</li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('login') }}" method="post">
+        <p>Enter Name:</p>
+        <input type="text" name="username" required><br><br>
+        <p>Enter Password:</p>
+        <input type="password" name="pw" required><br><br>
+        <input type="submit" value="Login">
+    </form>
+</body>
 </html>

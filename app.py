@@ -1,66 +1,45 @@
-from flask import Flask, request, redirect, url_for, session, flash, render_template_string
+from flask import Flask, request, redirect, url_for, session, flash, render_template
+import sqlite3
 
 app = Flask(__name__)
-app.secret_key = 'supersecretkey'
+app.secret_key = 'supersecretkey'  # needed for session (session = store information about the user across multiple pages)
 
-# Hardcoded user login info
-USER = {
-    'username': 'admin',
-    'password': '1234'
-}
+DATABASE = 'tasks.db'
 
-login_html = """
-<!DOCTYPE html>
-<html>
-<head><title>Login</title></head>
-<body>
-    <h2>Login</h2>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul>
-          {% for category, message in messages %}
-            <li style="color: {{ 'red' if category == 'danger' else 'green' }}">{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-    <form method="POST" action="/login">
-        <label>Username:</label><br>
-        <input type="text" name="username"><br><br>
-        <label>Password:</label><br>
-        <input type="password" name="password"><br><br>
-        <input type="submit" value="Login">
-    </form>
-</body>
-</html>
-"""
+# function to connect to database
+def get_db():
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 @app.route('/')
 def home():
     if 'user' in session:
-        return f"Hello, {session['user']}! <br><a href='/logout'>Logout</a>"
+        return f"Hello, {session['user']}! <a href='/logout'>Logout</a><br><a href='/add'>Go to Add Task</a>"
     return redirect(url_for('login'))
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST']) # get=view, post=submit
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
-        password = request.form.get('password')
+        password = request.form.get('pw')
 
-        if username == USER['username'] and password == USER['password']:
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        # check if username exists
+        cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
+        user = cursor.fetchone()
+
+        if not user:
+            flash('User not found.', 'danger')
+        elif user['password'] != password:
+            flash('Wrong password.', 'danger')
+        else:
             session['user'] = username
             flash('Login successful!', 'success')
             return redirect(url_for('home'))
-        else:
-            flash('Invalid username or password.', 'danger')
 
-    return render_template_string(login_html)
+        conn.close()
 
-@app.route('/logout')
-def logout():
-    session.pop('user', None)
-    flash('Logged out.', 'info')
-    return redirect(url_for('login'))
-
-if __name__ == '__main__':
-    app.run(debug=True)
+    return render_template('login.html')
