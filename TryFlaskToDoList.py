@@ -57,10 +57,10 @@ html_page = """
   </style>
 </head>
 <body>
-  <h2>Add New Task</h2>
+  <h2>To-Do List</h2>
   <form onsubmit="addTask(); return false;">
-    <input id="name" placeholder="Who is adding the task?" required />
-    <input id="task" placeholder="What is the task?" required />
+    <input id="name" placeholder="Who's adding the task?" required />
+    <input id="task" placeholder="Write your task here" required />
     <input id="date" type="date" required />
     <button type="submit">Add Task</button>
   </form>
