@@ -48,7 +48,7 @@ def get_user(username, password):
 def add_task(username, task, date):
     conn = sqlite3.connect("tasks.db")
     c = conn.cursor()
-    c.execute("INSERT INTO task (username, task, date) VALUES (?, ?, ?)", (username, task, date))
+    c.execute("INSERT INTO tasks (username, task, date) VALUES (?, ?, ?)", (username, task, date))
     conn.commit()
     conn.close()
 
