@@ -1,9 +1,9 @@
-from flask import Flask, request, jsonify, render_template_string
+from flask import Flask, request, jsonify, render_template_string, redirect, url_for
+import database 
 
 app = Flask(__name__)
 
-tasks = []
-
+# HTML page for task UI
 html_page = """
 <!DOCTYPE html>
 <html>
@@ -102,24 +102,22 @@ html_page = """
 </html>
 """
 
+# show task form and list (when opening the page)
 @app.route("/")
 def ui():
     return render_template_string(html_page)
 
 @app.route("/tasks", methods=["GET"])
 def get_tasks():
+    tasks = database.get_tasks() # fetch tasks from database
     return jsonify(tasks)
 
 @app.route("/tasks", methods=["POST"])
 def post_task():
-    data = request.json
-    new_task = {
-        "name": data["name"],
-        "task": data["task"],
-        "date": data["date"]
-    }
-    tasks.append(new_task)
-    return jsonify(new_task), 201
+    data = request.json # read new task from request
+    database.add_task(data["name"], data["task"], data["date"]) # save to database
+    return jsonify("message": "Task added succesfully!"), 201
 
 if __name__ == "__main__":
+    database.init_db()
     app.run(debug=True)
