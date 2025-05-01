@@ -1,45 +1,36 @@
-from flask import Flask, request, redirect, url_for, session, flash, render_template
-import sqlite3
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session
+import database
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'  # needed for session (session = store information about the user across multiple pages)
 
-DATABASE = 'tasks.db'
-
-# function to connect to database
-def get_db():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-@app.route('/')
-def home():
-    if 'user' in session:
-        return f"Hello, {session['user']}! <a href='/logout'>Logout</a><br><a href='/add'>Go to Add Task</a>"
-    return redirect(url_for('login'))
-
-@app.route('/login', methods=['GET', 'POST']) # get=view, post=submit
+# route for login page
+@app.route("/", methods=['GET', 'POST']) # get = view, post = submit
 def login():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('pw')
+        # extract form data
+        username = request.form('username')
+        password = request.form('password')
+        # check if user exists
+        user = database.get_user(username, password)
 
-        conn = get_db()
-        cursor = conn.cursor()
-        
-        # check if username exists
-        cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
-        user = cursor.fetchone()
-
-        if not user:
-            flash('User not found.', 'danger')
-        elif user['password'] != password:
-            flash('Wrong password.', 'danger')
+        if user:
+            # store username in session (successful login)
+            session["username"] = username 
+            return redirect(url_for('ui')) # redirect to task page
         else:
-            session['user'] = username
-            flash('Login successful!', 'success')
-            return redirect(url_for('home'))
+            return "Invalid username or password, please try again."
 
-        conn.close()
-
+    # show login form on GET request    
     return render_template('login.html')
+    
+# route for task (Teha's UI page)
+@app.route('/tasks')
+def ui():
+    # ensure user login session is active
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    return render_template(html_page)
+
+if __name__ == "__main__":
+    app.run(debug=True)
