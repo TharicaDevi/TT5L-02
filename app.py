@@ -33,4 +33,6 @@ def ui():
     return render_template("task.html")
 
 if __name__ == "__main__":
+    database.init_db()
+    database.add_hardcoded_data()
     app.run(debug=True)

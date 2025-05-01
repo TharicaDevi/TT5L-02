@@ -11,8 +11,6 @@ def init_db():
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
         )""")
-    conn.commit()
-    conn.close()
 
     # create tasks table (if not exist) storing tasks associated with users
     c.execute("""
@@ -85,6 +83,3 @@ def add_hardcoded_data():
         c.execute("INSERT INTO tasks (username, task, date) VALUES (?, ?, ?)", ("admin", "Clean the cage", "2025-05-01"))
         conn.commit()
     conn.close()
-
-    init_db()
-    add_hardcoded_data()
