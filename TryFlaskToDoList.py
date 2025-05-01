@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for
+from flask import Flask, request, jsonify, render_template
 import database 
 
 app = Flask(__name__)
@@ -6,7 +6,7 @@ app = Flask(__name__)
 # route to show task UI page
 @app.route("/tasks_page")
 def tasks_page():
-    return render_template("tasks.html")
+    return render_template("task.html")
 
 # route to fetch tasks from database as JSON
 @app.route("/tasks", methods=["GET"])
