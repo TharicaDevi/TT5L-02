@@ -9,8 +9,8 @@ app.secret_key = 'supersecretkey'  # needed for session (session = store informa
 def login():
     if request.method == 'POST':
         # extract form data
-        username = request.form('username')
-        password = request.form('password')
+        username = request.form['username']
+        password = request.form['password']
         # check if user exists
         user = database.get_user(username, password)
 
