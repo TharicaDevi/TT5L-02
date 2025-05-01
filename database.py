@@ -16,6 +16,32 @@ def init_db():
 
 init_db()
 
+def add_user_table():
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+
+    # Create the users table if it doesn't already exist
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+    """)
+
+    conn.commit()
+    conn.close()
+    print("✅ 'users' table created successfully.")
+
+add_user_table()
+
+def add_task(username, password, task):
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    c.execute("INSERT INTO users (username, password, task) VALUES (?, ?, ?)", (username, password, task))
+    conn.commit()
+    conn.close()
+
 def add_task(username, password, task):
     conn = sqlite3.connect("tasks.db")
     c = conn.cursor()
@@ -39,5 +65,3 @@ if __name__ == "__main__":
     print("Tasks for admin:")
     for task in get_tasks("admin"):
         print("-", task[0])
-
- 
