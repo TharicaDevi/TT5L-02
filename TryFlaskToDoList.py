@@ -116,7 +116,7 @@ def get_tasks():
 def post_task():
     data = request.json # read new task from request
     database.add_task(data["name"], data["task"], data["date"]) # save to database
-    return jsonify("message": "Task added succesfully!"), 201
+    return jsonify({"message": "Task added succesfully!"}), 201
 
 if __name__ == "__main__":
     database.init_db()
