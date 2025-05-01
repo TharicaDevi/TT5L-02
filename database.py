@@ -3,65 +3,88 @@ import sqlite3
 def init_db():
     conn = sqlite3.connect("tasks.db")
     c = conn.cursor()
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT,
-            password TEXT,
-            task TEXT
-        )
-    """)
-    conn.commit()
-    conn.close()
 
-init_db()
-
-def add_user_table():
-    conn = sqlite3.connect("tasks.db")
-    c = conn.cursor()
-
-    # Create the users table if it doesn't already exist
+    # create user table (if not exist) storing usernames and passwords
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
+            password TEXT NOT NULL,
+        )""")
+    conn.commit()
+    conn.close()
+
+    # create tasks table (if not exist) storing tasks associated with users
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS tasks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            task TEXT NOT NULL,
+            date TEXT NOT NULL,
+            FOREIGN KEY (username) REFERENCES users (username)
         )
     """)
-
-    conn.commit()
-    conn.close()
-    print("✅ 'users' table created successfully.")
-
-add_user_table()
-
-def add_task(username, password, task):
-    conn = sqlite3.connect("tasks.db")
-    c = conn.cursor()
-    c.execute("INSERT INTO users (username, password, task) VALUES (?, ?, ?)", (username, password, task))
     conn.commit()
     conn.close()
 
-def add_task(username, password, task):
+# add new user to database
+def add_user(username, password):
     conn = sqlite3.connect("tasks.db")
     c = conn.cursor()
-    c.execute("INSERT INTO users (username, password, task) VALUES (?, ?, ?)", (username, password, task))
+    c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
     conn.commit()
     conn.close()
 
-def get_tasks(username):
+# get user from database (for login purposes)
+def get_user(username, password):
     conn = sqlite3.connect("tasks.db")
     c = conn.cursor()
-    c.execute("SELECT task FROM users WHERE username = ?", (username,))
+    c.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
+    user = c.fetchone()
+    conn.close()
+    return user
+
+# add task to database, associated with user
+def add_task(username, task, date):
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    c.execute("INSERT INTO task (username, task, date) VALUES (?, ?, ?)", (username, task, date))
+    conn.commit()
+    conn.close()
+
+# get all tasks from database
+def get_tasks():
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    c.execute("SELECT username, task, date FROM tasks")
     tasks = c.fetchall()
     conn.close()
     return tasks
 
-if __name__ == "__main__":
-    init_db()
-    add_task("admin", "1234", "Feed the dog") #hardcoded
-    add_task("admin", "1234", "Clean the cage")
+# add hardcoded user and task if database is empty
+def add_hardcoded_data():
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    
+    # check if 'users' table is empty
+    c.execute("SELECT COUNT(*) FROM users")
+    user_count = c.fetchone()[0]
 
-    print("Tasks for admin:")
-    for task in get_tasks("admin"):
-        print("-", task[0])
+    if user_count == 0:
+        # add hardcoded user
+        c.execute("INSERT INTO users (username, password) VALUES (?, ?)", ("admin", "1234"))
+        conn.commit()
+
+    # check if there are any tasks
+    c.execute("SELECT COUNT(*) FROM tasks")
+    task_count = c.fetchone()[0]
+
+    if task_count == 0:
+        # add hardcoded tasks for admin user
+        c.execute("INSERT INTO tasks (username, task, date) VALUES (?, ?, ?)", ("admin", "Feed the dog", "2025-05-01"))
+        c.execute("INSERT INTO tasks (username, task, date) VALUES (?, ?, ?)", ("admin", "Clean the cage", "2025-05-01"))
+        conn.commit()
+    conn.close()
+
+    init_db()
+    add_hardcoded_data()
