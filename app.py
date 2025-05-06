@@ -4,8 +4,25 @@ import database
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'  # needed for session (session = store information about the user across multiple pages)
 
-# route for login page
-@app.route("/", methods=['GET', 'POST']) # get = view, post = submit
+# signup route
+@app.route("/signup", methods=['GET', 'POST']) # get = view, post = submit
+def signup():
+    if request.method == 'POST':
+        # extract form data
+        username = request.form['username']
+        password = request.form['password']
+        try:
+            # add new user to database
+            database.add_user(username, password)
+            # successful, redirect to login page
+            return redirect(url_for('login'))
+        except:
+            # unsuccessful, retry signup
+            return "Username already exists. Please choose a different one."
+    return render_template('signup.html')
+
+# login route
+@app.route("/", methods=['GET', 'POST']) 
 def login():
     if request.method == 'POST':
         # extract form data
@@ -17,12 +34,20 @@ def login():
         if user:
             # store username in session (successful login)
             session["username"] = username 
-            return redirect(url_for('ui')) # redirect to task page
+            return redirect(url_for('welcome', username=username, success=1))
         else:
-            return "Invalid username or password, please try again."
-
+            return redirect(url_for('welcome', username=username, success=0))
+        
     # show login form on GET request    
     return render_template('login.html')
+
+# welcome route after login
+@app.route("/welcome")
+def welcome():
+    username = request.args.get("username")
+    success = request.args.get("success") == "1" # check if login successful
+    # welcome page with success/failure message
+    return render_template('welcome.html', username=username, success=success)
     
 # route for task (Teha's UI page)
 @app.route('/tasks')
