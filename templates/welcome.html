@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+    <head><title>Welcome</title></head>
+    <body>
+        {% if success %}
+            <h2>Welcome, {{ username }}!</h2>
+            <p>You have successfully logged in.</p>
+        {% else %}
+            <h2>Login failed for {{ username }}. Wrong username or password.</h2>
+            <a href="{{ url_for('login') }}">Try again</a>
+        {% endif %}
+    </body>
+</html>
