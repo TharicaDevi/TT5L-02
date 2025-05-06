@@ -117,13 +117,13 @@ body {
     font-weight: 600;
 }
 
-.wrapper.register-link {
+.wrapper.signup-link {
     font-size: 14.5px;
     text-align: center;
     margin-top: 20px 0 15px;
 }
 
-.wrapper.register-link a {
+.wrapper.signup-link a {
     color: #fff;
     text-decoration: none;
     font-weight: 600;
@@ -153,4 +153,10 @@ body {
     font-size: 14px;
     color: #fff;
     text-decoration: none;
+}
+
+.signup-link a:hover {
+    color:blue;
+    text-decoration: underline;
+    transition: 0.3s;
 }
