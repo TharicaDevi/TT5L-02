@@ -27,7 +27,7 @@ def signup():
     return render_template('signup.html')
 
 # login route
-@app.route("/", methods=['GET', 'POST']) 
+@app.route("/login", methods=['GET', 'POST']) 
 def login():
     if request.method == 'POST':
         # extract form data
