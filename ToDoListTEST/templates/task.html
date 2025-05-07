@@ -1,0 +1,52 @@
+<!-- templates/task.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>To-Do App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='task.css') }}">
+</head>
+<body>
+  <h2>To-Do List</h2>
+  <form onsubmit="addTask(); return false;">
+    <input id="name" placeholder="Who's adding the task?" required />
+    <input id="task" placeholder="Write your task here" required />
+    <input id="date" type="date" required />
+    <button type="submit">Add Task</button>
+  </form>
+
+  <h3>Task List</h3>
+  <ul id="taskList"></ul>
+
+  <script>
+    async function loadTasks() {
+      const res = await fetch("/tasks");
+      const tasks = await res.json();
+      const list = document.getElementById("taskList");
+      list.innerHTML = "";
+      tasks.forEach(t => {
+        const li = document.createElement("li");
+        li.textContent = `${t.name} has added "${t.task}" on ${t.date}`;
+        list.appendChild(li);
+      });
+    }
+
+    async function addTask() {
+      const name = document.getElementById("name").value;
+      const task = document.getElementById("task").value;
+      const date = document.getElementById("date").value;
+      await fetch("/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, task, date })
+      });
+      document.getElementById("name").value = "";
+      document.getElementById("task").value = "";
+      document.getElementById("date").value = "";
+      loadTasks();
+    }
+
+    loadTasks();
+  </script>
+</body>
+</html>
