@@ -7,12 +7,15 @@
 </head>
 <body>
   <h2>To-Do List</h2>
+  <h3>Hi {{ username }}!</h3>
+
   <form onsubmit="addTask(); return false;">
-    <input id="name" placeholder="Who's adding the task?" required />
     <input id="task" placeholder="Write your task here" required />
     <input id="date" type="date" required />
     <button type="submit">Add Task</button>
   </form>
+
+  <a href="{{ url_for('logout') }}">Logout</a>
 
   <h3>Task List</h3>
   <ul id="taskList"></ul>
@@ -31,15 +34,13 @@
     }
 
     async function addTask() {
-      const name = document.getElementById("name").value;
       const task = document.getElementById("task").value;
       const date = document.getElementById("date").value;
       await fetch("/tasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, task, date })
+        body: JSON.stringify({ task, date })
       });
-      document.getElementById("name").value = "";
       document.getElementById("task").value = "";
       document.getElementById("date").value = "";
       loadTasks();
