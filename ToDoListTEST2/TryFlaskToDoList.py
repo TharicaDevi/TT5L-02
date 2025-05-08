@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template_string, session, redirect
-from db_helper import get_tasks as db_get_tasks, add_task as db_add_task, get_user
+from db_helper import get_tasks as db_get_tasks, add_task as db_add_task, get_user, add_user
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key'  # Needed to use sessions
@@ -71,11 +71,23 @@ html_page = """
 
 # --- ROUTES ---
 
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.json
+    username = data.get("username")
+    password = data.get("password")
+
+    user = get_user(username, password)
+    if user:
+        return redirect(f"/tasks_app?username={username}")
+    else:
+        return jsonify({"error": "Invalid credentials"}), 401
+
 @app.route("/tasks_app")
 def tasks_app():
-    username = request.args.get("username")
+    username = request.args.get("username")  # Get username from the URL
     if not username:
-        return redirect("/login")  # If no username, redirect to login page
+        return redirect("/login")  # Redirect to login if no username in URL
     return render_template_string(html_page, username=username)
 
 @app.route("/tasks", methods=["GET"])
@@ -93,17 +105,6 @@ def post_task():
         return "Unauthorized", 401
     db_add_task(username, data["task"], data["date"])
     return jsonify({"username": username, "task": data["task"], "date": data["date"]}), 201
-
-@app.route("/login", methods=["POST"])
-def login():
-    data = request.json
-    username = data.get("username")
-    password = data.get("password")
-
-    if get_user(username, password):
-        return jsonify({"message": "Login successful"}), 200
-    else:
-        return jsonify({"error": "Invalid credentials"}), 401
 
 if __name__ == "__main__":
     app.run(debug=True)
