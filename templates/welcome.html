@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html>
-    <head><title>Welcome</title></head>
+    <head>
+        <title>Welcome</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='welcome.css') }}">
+    </head>
+
     <body>
-        {% if success %}
-            <h2>Welcome, {{ username }}!</h2>
-            <p>You have successfully logged in.</p>
+        <body class="{% if success %}success-bg{% else %}failed-bg{% endif %}">        {% if success %}
+        <div class="container success">
+            <h2>HI, {{ username }}!</h2>
+            <p>Nice to have you back!</p>
+        </div>
+
         {% else %}
-            <h2>Login failed for {{ username }}. Wrong username or password.</h2>
-            <a href="{{ url_for('login') }}">Try again</a>
+        <div class="container failed">
+            <h2>Oops, {{ username }}! </h2>
+            <P>Wrong username or password ≽^•˕• ྀི≼ </P>
+            <a href="{{ url_for('login') }}">TRY AGAIN?</a>
+        </div>
+
         {% endif %}
     </body>
 </html>
