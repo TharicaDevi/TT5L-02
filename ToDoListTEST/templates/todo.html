@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>To-Do App</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5efff;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px #e5ccff;
+        }
+        h2, h3 {
+            color: #6a1b9a;
+            text-align: center;
+        }
+        input, button {
+            padding: 10px;
+            margin: 6px 0;
+            width: 100%;
+            border: 1px solid #dabefc;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #bb86fc;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: white;
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 6px solid #bb86fc;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Hello, {{ username }}!</h2>
+    <form method="POST">
+        <input name="task" placeholder="Enter your task" required>
+        <input name="date" type="date" required>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <h3>Your Tasks</h3>
+    <ul>
+        {% for task in tasks %}
+        <li>{{ task.task }} — {{ task.date }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('logout') }}">Logout</a>
+</body>
+</html>
