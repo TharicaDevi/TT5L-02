@@ -2,9 +2,8 @@ from flask import Flask, request, jsonify, render_template_string, session, redi
 from db_helper import get_tasks as db_get_tasks, add_task as db_add_task
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key'  # Needed to use sessions
+app.secret_key = 'your-secret-key' 
 
-# --- HTML page template ---
 html_page = """
 <!DOCTYPE html>
 <html>
@@ -64,23 +63,29 @@ html_page = """
 </html>
 """
 
-# --- Routes ---
-
-@app.route("/")
+@app.route("/tasks_app")
 def ui():
-    username = session.get("username")
-    if not username:
-        return redirect("/login")  # redirect if not logged in
+    # Get username from session or query params
+    if "username" not in session:
+        username = request.args.get("username")  # Get username from the query parameter
+        if not username:
+            return redirect("/login")  # If there's no username, redirect to login
+        session["username"] = username  # Save username to session
+    else:
+        username = session["username"]  # Use username from session if available
+
+    # After that, proceed to render the task page
     return render_template_string(html_page, username=username)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username")
-        # In real app: validate password too
+        # In a real app, validate the password too
         if username:
             session["username"] = username
-            return redirect("/")
+            # Redirect to the tasks app with the username as a query parameter
+            return redirect(f"/tasks_app?username={username}")
         return "Invalid login", 401
     return """
     <form method="POST">
