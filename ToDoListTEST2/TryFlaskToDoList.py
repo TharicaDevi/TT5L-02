@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template_string, session, redirect
-from db_helper import get_tasks as db_get_tasks, add_task as db_add_task
+from db_helper import get_tasks as db_get_tasks, add_task as db_add_task, get_user
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key'  # Needed to use sessions
@@ -48,11 +48,16 @@ html_page = """
     async function addTask() {
       const task = document.getElementById("task").value;
       const date = document.getElementById("date").value;
-      await fetch("/tasks", {
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const username = urlParams.get("username");
+
+      await fetch(`/tasks?username=${encodeURIComponent(username)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ task, date })
       });
+
       document.getElementById("task").value = "";
       document.getElementById("date").value = "";
       loadTasks();
@@ -64,22 +69,17 @@ html_page = """
 </html>
 """
 
-# --- Routes ---
+# --- ROUTES ---
 
 @app.route("/tasks_app")
 def tasks_app():
-    # Get the username from the query parameter
     username = request.args.get("username")
-    
     if not username:
         return redirect("/login")  # If no username, redirect to login page
-
-    # Render the task page for the logged-in user
     return render_template_string(html_page, username=username)
 
 @app.route("/tasks", methods=["GET"])
 def get_tasks():
-    # Retrieve tasks for the logged-in user from the DB
     tasks = db_get_tasks()
     return jsonify([
         {"username": t[0], "task": t[1], "date": t[2]} for t in tasks
@@ -87,16 +87,23 @@ def get_tasks():
 
 @app.route("/tasks", methods=["POST"])
 def post_task():
-    # Add a new task for the logged-in user
     data = request.json
-    username = request.args.get("username")  # Getting username from query string
-
+    username = request.args.get("username")
     if not username:
         return "Unauthorized", 401
-    
     db_add_task(username, data["task"], data["date"])
     return jsonify({"username": username, "task": data["task"], "date": data["date"]}), 201
 
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.json
+    username = data.get("username")
+    password = data.get("password")
+
+    if get_user(username, password):
+        return jsonify({"message": "Login successful"}), 200
+    else:
+        return jsonify({"error": "Invalid credentials"}), 401
 
 if __name__ == "__main__":
     app.run(debug=True)
