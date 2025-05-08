@@ -4,11 +4,6 @@ import database
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'  # needed for session (session = store information about the user across multiple pages)
 
-# home route
-@app.route("/", methods=['GET']) # get = view
-def home():
-    return render_template('home.html')
-
 # signup route
 @app.route("/signup", methods=['GET', 'POST']) # post = submit
 def signup():
@@ -27,7 +22,7 @@ def signup():
     return render_template('signup.html')
 
 # login route
-@app.route("/login", methods=['GET', 'POST']) 
+@app.route("/", methods=['GET', 'POST']) 
 def login():
     if request.method == 'POST':
         # extract form data
