@@ -34,10 +34,12 @@ def login():
         user = database.get_user(username, password)
 
         if user:
-            # store username in session (successful login)
+            # Successful login, store username in session
             session["username"] = username 
-            return redirect(url_for('welcome', username=username, success=1))
+            # Redirect to your task interface with the username in the URL
+            return redirect(f"http://127.0.0.1:5000/tasks_app?username={username}")  # <-- This line redirects to your app
         else:
+            # Failed login, show failure message
             return redirect(url_for('welcome', username=username, success=0))
         
     # show login form on GET request    
