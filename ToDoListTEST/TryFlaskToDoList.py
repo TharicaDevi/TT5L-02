@@ -1,52 +1,51 @@
-from flask import Flask, request, jsonify, render_template, session, redirect, url_for
-from database import init_db, get_tasks, add_task, add_hardcoded_data, get_user
-import os
+from flask import Flask, render_template, request, redirect, session, url_for, jsonify
+from database import init_db, get_user, add_user, add_task, get_tasks_by_user
+import sqlite3
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)  # Required to use sessions
+app.secret_key = "your-secret-key"  # Required for session to work
 
 init_db()
-add_hardcoded_data()
 
 @app.route("/")
-def home():
+def index():
     if "username" in session:
-        return redirect(url_for("task_ui"))
-    return render_template("login.html")  # new login page
+        return redirect("/tasks")
+    return redirect("/login")
 
-@app.route("/login", methods=["POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    username = request.form["username"]
-    password = request.form["password"]
-    user = get_user(username, password)
-    if user:
-        session["username"] = username
-        return redirect(url_for("task_ui"))
-    else:
-        return "Invalid credentials. Please try again."
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        user = get_user(username, password)
+        if user:
+            session["username"] = username
+            return redirect("/tasks")
+        return "Invalid credentials"
+    return render_template("login.html")
 
 @app.route("/logout")
 def logout():
-    session.pop("username", None)
-    return redirect(url_for("home"))
+    session.clear()
+    return redirect("/login")
 
-@app.route("/tasks_ui")
+@app.route("/tasks")
 def task_ui():
     if "username" not in session:
-        return redirect(url_for("home"))
+        return redirect("/login")
     return render_template("task.html", username=session["username"])
 
-@app.route("/tasks", methods=["GET"])
-def get_tasks_route():
-    return jsonify([
-        {"name": row[0], "task": row[1], "date": row[2]}
-        for row in get_tasks()
-    ])
+@app.route("/api/tasks", methods=["GET"])
+def get_user_tasks():
+    if "username" not in session:
+        return jsonify([])
+    return jsonify(get_tasks_by_user(session["username"]))
 
-@app.route("/tasks", methods=["POST"])
+@app.route("/api/tasks", methods=["POST"])
 def post_task():
     if "username" not in session:
-        return jsonify({"error": "Not logged in"}), 403
+        return "Not logged in", 403
     data = request.json
     add_task(session["username"], data["task"], data["date"])
     return jsonify(data), 201
