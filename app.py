@@ -14,11 +14,13 @@ def signup():
         try:
             # add new user to database
             database.add_user(username, password)
-            # successful, redirect to login page
-            return redirect(url_for('login'))
+            # successful, redirect to welcome page
+            session["username"] = username 
+            return redirect(url_for('welcome', username=username, success=1))
         except:
-            # unsuccessful, retry signup
-            return "Username already exists. Please choose a different one."
+            # pass error, retry signup
+            error = "Username already exists!"
+            return render_template('signup.html', error=error)
     return render_template('signup.html')
 
 # login route

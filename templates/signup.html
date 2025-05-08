@@ -14,7 +14,10 @@
         <div class="wrapper">
             <form method="POST" autocomplete="off">
                 <h1>SIGNUP</h1>
-
+                {% if error %}
+                    <p class="error-message">{{ error }}</p>
+                {% endif %}
+  
                 <div class="input-box">
                    <input type="text" placeholder="username" name="username" required autocomplete="off">
                    <i class='bx bxs-user'></i>
