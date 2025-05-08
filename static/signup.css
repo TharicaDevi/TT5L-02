@@ -12,7 +12,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: url(https://unsplash.com/photos/brown-tabby-cat-with-orange-eyes-MVWeV_iJrSI) no-repeat;
+    background: url(https://images.unsplash.com/photo-1660707069618-cbd0a205e4d4?q=80&w=1925&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) no-repeat;
     background-size: cover;
     background-position: center;
 }
