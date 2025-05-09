@@ -21,7 +21,7 @@ body {
     width: 420px;
     background: transparent;
     border: 2px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(50px);
     color: #fff;
     border-radius: 10px;
     padding: 30px 40px;
@@ -43,7 +43,7 @@ body {
     width: 100%;
     border: none;
     outline: none;
-    background: transparent;
+    background: #fff;
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 40px;
     font-size: 16px;
@@ -63,35 +63,6 @@ body {
     font-size: 20px;
 }
 
-.wrapper .remember-forget {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14.5px;
-    margin: -15 0 15px;
-}
-
-.wrapper .remember-forget label input {
-    accent-color: #fff;
-    margin-left: 3px;
-}
-
-.wrapper .remember-forget a {
-    color: #fff;
-    text-decoration: none;
-}
-
-.remember-forget a:hover {
-    text-decoration: underline;
-}
-
-.remember-label input[type="checkbox"] {
-    margin-right: 5px;
-}
-
-.forget-link:hover {
-    text-decoration: underline;
-}
-
 .wrapper input {
     width: 100%;
     height: 50px;
@@ -104,59 +75,47 @@ body {
 }
 
 .wrapper .btn {
+    --bg: #fff;
+    --hover-bg: #000000;
+    --hover-text: #fff;
     width: 100%;
     height: 45px;
-    background: #fff;
-    border: none;
-    outline: none;
+    background: var(--bg);
+    border: 1px soid var(--bg);
     border-radius: 48px;
-    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     font-size: 15px;
     color: #333;
     font-weight: 600;
+    transition: 0.2s;
+}
+
+.wrapper .btn:hover {
+  color: var(--hover-text);
+  transform: translate(-0.25rem, -0.25rem);
+  background: var(--hover-bg);
+  box-shadow: 0.25rem 0.25rem 5px var(--bg);
+}
+
+.wrapper .btn:active {
+  transform: translate(0);
+  box-shadow: none;
 }
 
 .signup-link {
     font-size: 14.5px;
-    text-align: right;
+    text-align: left;
     margin-top: 20px;
 }
 
 .wrapper .signup-link a {
     color: #7700ff;
     text-decoration: none;
-    font-weight: 600;
-}
-
-.wrapper .remember-forget {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 14.5px;
-    margin-top: 10px;
-}
-
-.remember-label {
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    color: #fff;
-}
-
-.remember-label input[type="checkbox"] {
-    margin-right: 5px;
-    transform: scale(0.8);
-}
-
-.forget-link {
-    font-size: 14px;
-    color: #fff;
-    text-decoration: none;
+    font-weight: 800;
 }
 
 .signup-link a:hover {
-    color:rgb(206, 255, 27);
+    color:rgb(0, 0, 0);
     text-decoration: underline;
     transition: 0.3s;
 }
