@@ -16,7 +16,7 @@ def signup():
             database.add_user(username, password)
             # successful, redirect to welcome page
             session["username"] = username 
-            return redirect(url_for('welcome', username=username, success=1))
+            return redirect(url_for('login', username=username, success=1))
         except:
             # pass error, retry signup
             error = "Username already exists!"
