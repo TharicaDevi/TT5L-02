@@ -45,6 +45,15 @@ def get_user(username, password):
     conn.close()
     return user
 
+# Check if a username already exists
+def user_exists(username):
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    c.execute("SELECT 1 FROM users WHERE username = ?", (username,))
+    result = c.fetchone()
+    conn.close()
+    return result is not None
+
 # Add a new task to the tasks table
 def add_task(username, task, date):
     conn = sqlite3.connect("tasks.db")

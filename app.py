@@ -7,21 +7,22 @@ app.secret_key = 'supersecretkey'  # needed for session (session = store informa
 # signup route
 @app.route("/signup", methods=['GET', 'POST']) # post = submit
 def signup():
+    error = None
     if request.method == 'POST':
         # extract form data
         username = request.form['username']
         password = request.form['password']
-        try:
-            # add new user to database
-            database.add_user(username, password)
-            # successful, redirect to welcome page
-            session["username"] = username 
-            return redirect(url_for('login', username=username, success=1))
-        except:
-            # pass error, retry signup
+
+        if not (8 <= len(username) <= 20):
+            error = "Username must be 8-20 long!"
+        elif not (8 <= len(password) <= 20):
+            error = "Password must be 8-20 long!"
+        elif database.user_exists(username):
             error = "Username already exists!"
-            return render_template('signup.html', error=error)
-    return render_template('signup.html')
+        else: 
+            database.add_user(username, password)
+            return redirect(url_for('login'))
+    return render_template('signup.html', error=error)
 
 # login route
 @app.route("/", methods=['GET', 'POST']) 
