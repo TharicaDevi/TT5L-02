@@ -103,18 +103,24 @@ body {
 }
 
 .signup-link {
+  display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: 14.5px;
-    text-align: left;
     margin-top: 20px;
 }
 
-.wrapper .signup-link a {
+.left-text {
+    color:#fff
+}
+
+.right-link {
     color: #7700ff;
     text-decoration: none;
     font-weight: 800;
 }
 
-.signup-link a:hover {
+.right-link:hover {
     color:rgb(0, 0, 0);
     text-decoration: underline;
     transition: 0.3s;
