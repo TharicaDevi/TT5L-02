@@ -44,6 +44,26 @@ def login():
     # show login form on GET request    
     return render_template('login.html')
 
+# forgot password route
+@app.route("/forgot", methods=['GET', 'POST'])
+def forgot_password():
+    error = None
+    message = None
+
+    if request.method == 'POST':
+        username = request.form['username']
+        new_password = request.form['new_password']
+
+        if not (8 <= len(new_password) <= 20):
+            error = "Password must be 8-20 characters!"
+        elif not database.user_exists(username):
+            error = "Username does not exist!"
+        else:
+            database.update_password(username, new_password)
+            message = "Password successfully updated!"
+
+    return render_template('forgot.html', error=error, message=message)
+
 # welcome route after login
 @app.route("/welcome")
 def welcome():

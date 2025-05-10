@@ -54,6 +54,13 @@ def user_exists(username):
     conn.close()
     return result is not None
 
+def update_password(username, new_password):
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    c.execute("UPDATE users SET password = ? WHERE username = ?", (new_password, username))
+    conn.commit()
+    conn.close()
+
 # Add a new task to the tasks table
 def add_task(username, task, date):
     conn = sqlite3.connect("tasks.db")
