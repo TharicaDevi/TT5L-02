@@ -102,7 +102,7 @@ body {
   box-shadow: none;
 }
 
-.signup-link {
+.login-link {
   display: flex;
     justify-content: space-between;
     align-items: center;
@@ -115,13 +115,13 @@ body {
 }
 
 .right-link {
-    color: #7700ff;
+    color: #000000f1;
     text-decoration: none;
     font-weight: 800;
 }
 
 .right-link:hover {
-    color:rgb(0, 0, 0);
+    color:rgba(0, 225, 255, 0.886);
     text-decoration: underline;
     transition: 0.3s;
 }
