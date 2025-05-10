@@ -57,10 +57,10 @@ def forgot_password():
         if not (8 <= len(new_password) <= 20):
             error = "Password must be 8-20 characters!"
         elif not database.user_exists(username):
-            error = "Username does not exist!"
+            error = "Username doesn't exist!"
         else:
             database.update_password(username, new_password)
-            message = "Password successfully updated!"
+            message = "Password successfully updated! Redirecting to login page..."
 
     return render_template('forgot.html', error=error, message=message)
 
