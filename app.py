@@ -44,9 +44,9 @@ def login():
     # show login form on GET request    
     return render_template('login.html')
 
-# forgot password route
-@app.route("/forgot", methods=['GET', 'POST'])
-def forgot_password():
+# reset password route
+@app.route("/reset", methods=['GET', 'POST'])
+def reset():
     error = None
     message = None
 
@@ -62,7 +62,7 @@ def forgot_password():
             database.update_password(username, new_password)
             message = "Password successfully updated! Redirecting to login page..."
 
-    return render_template('forgot.html', error=error, message=message)
+    return render_template('reset.html', error=error, message=message)
 
 # welcome route after login
 @app.route("/welcome")
