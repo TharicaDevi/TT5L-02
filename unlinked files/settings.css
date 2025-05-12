@@ -77,3 +77,31 @@ textarea {
   border-radius: 8px;
   border: 1px solid #ccc;
 }
+
+.top-nav {
+  background-color: #007bff;
+  padding: 10px 0;
+}
+
+.top-nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: center;
+}
+
+.top-nav ul li {
+  display: inline;
+  margin: 0 15px;
+}
+
+.top-nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.top-nav ul li a:hover {
+  text-decoration: underline;
+}
