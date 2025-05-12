@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>security settings</title>
+  <link rel="stylesheet" href="settings.css"/>
+</head>
+
+<body>
+  <div class="container">
+    <h2>SECURITY SETTINGS</h2>
+
+    <div class="form-group">
+      <label>Two-Factor Authentication</label>
+      <div class="form-actions">
+        <button type="button">Enable</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="security-question">Security Questions</label>
+      <select id="security-question" name="security-question">
+        <option value="">Select a question</option>
+        <option value="pet">What is your first pet's name?</option>
+        <option value="school">What is the name of your first school?</option>
+        <option value="city">In what city were you born?</option>
+      </select>
+      <input type="text" placeholder="Your Answer" style="margin-top: 10px;"/>
+    </div>
+
+    <div class="form-group">
+      <label>Login Activity</label>
+      <div class="form-actions">
+        <button type="button">View</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Trusted Devices</label>
+      <div class="form-actions">
+        <button type="button">Manage Devices</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Logout of All Sessions</label>
+      <div class="form-actions">
+        <button type="button">Logout Everywhere</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -49,3 +49,14 @@ select {
 button {
   background-color: #007bff;
 }
+
+.section-heading {
+  margin-top: 30px;
+  font-size: 18px;
+  color: #444;
+  font-weight: bold;
+}
+
+.form-actions button {
+  margin-top: 10px;
+}
