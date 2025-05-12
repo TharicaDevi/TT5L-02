@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>account information</title>
-  <link rel="stylesheet" href="settings.css" />
+  <link rel="stylesheet" href="settings.css"/>
 </head>
 
 <body>
@@ -14,30 +14,37 @@
     <form>
       <div class="form-group">
         <label for="username">Username</label>
-        <input type="text" id="username" name="username" placeholder="Enter your username" />
+        <input type="text" id="username" name="username" placeholder="Enter your username"/>
       </div>
 
       <div class="form-group">
         <label for="email">Email Address</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email" />
+        <input type="email" id="email" name="email" placeholder="Enter your email"/>
       </div>
 
       <div class="form-group">
         <label for="phone">Phone Number</label>
-        <input type="text" id="phone" name="phone" placeholder="Enter your phone number" />
+        <input type="text" id="phone" name="phone" placeholder="Enter your phone number"/>
       </div>
 
       <div class="form-group">
-        <label for="address">Address</label>
-        <input type="text" id="address" name="address" placeholder="Enter your address" />
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="********" />
+        <div class="form-actions" style="margin-top: 10px;">
+          <button type="button">Change/Reset Password</button>
+        </div>
       </div>
 
       <div class="form-group">
-        <label for="language">Language</label>
-        <select id="language" name="language">
-          <option value="en">English</option>
-          <option value="ms">Malay</option>
-        </select>
+        <label>My Social Media</label>
+        <div class="form-actions">
+          <button type="button">Instagram</button>
+          <button type="button">Whatsapp</button>
+          <button type="button">Facebook</button>
+        </div>
       </div>
+      
+    </form>
+  </div>
 </body>
 </html>
