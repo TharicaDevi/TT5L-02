@@ -60,3 +60,20 @@ button {
 .form-actions button {
   margin-top: 10px;
 }
+
+.form-group img {
+  display: block;
+  margin-top: 10px;
+  max-width: 150px;
+  height: auto;
+  border-radius: 8px;
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
