@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Track Application Status</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        <a href="/">Check Status</a>
+    </nav>
+
+    <div class="container">
+        <h1>Pet Adoption Application Tracker</h1>
+        <form method="POST">
+            <input type="text" name="application_id" placeholder="Enter Application ID" required>
+            <button type="submit">Check Status</button>
+        </form>
+
+        {% if status %}
+            <p class="status">Status: {{ status }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>
