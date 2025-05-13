@@ -72,14 +72,6 @@ def welcome():
     # welcome page with success/failure message
     return render_template('welcome.html', username=username, success=success)
     
-# route for task (Teha's UI page)
-@app.route('/tasks')
-def ui():
-    # ensure user login session is active
-    if 'username' not in session:
-        return redirect(url_for('login'))
-    return render_template("task.html")
-
 if __name__ == "__main__":
     database.init_db()
     app.run(debug=True)

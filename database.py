@@ -60,20 +60,3 @@ def update_password(username, new_password):
     c.execute("UPDATE users SET password = ? WHERE username = ?", (new_password, username))
     conn.commit()
     conn.close()
-
-# Add a new task to the tasks table
-def add_task(username, task, date):
-    conn = sqlite3.connect("tasks.db")
-    c = conn.cursor()
-    c.execute("INSERT INTO tasks (username, task, date) VALUES (?, ?, ?)", (username, task, date))
-    conn.commit()
-    conn.close()
-
-# Get all tasks from the tasks table 
-def get_tasks():
-    conn = sqlite3.connect("tasks.db")
-    c = conn.cursor()
-    c.execute("SELECT username, task, date FROM tasks")
-    tasks = c.fetchall()
-    conn.close()
-    return tasks
