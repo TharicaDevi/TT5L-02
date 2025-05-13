@@ -1,47 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>contact information</title>
-  <link rel="stylesheet" href="settings.css" />
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>contact information</title>
+    <link rel="stylesheet" href="settings.css" />
+  </head>
 
-<body>
-  <nav class="top-nav">
-  <ul>
-    <li><a href="AccInfo.html">ACCOUNT</a></li>
-    <li><a href="personal.html">PERSONAL</a></li>
-    <li><a href="contact.html">CONTACT </a></li>
-    <li><a href="privacy.html">PRIVACY</a></li>
-    <li><a href="security.html">SECURITY</a></li>
-  </ul>
-  </nav>
-
-  <div class="container">
-    <h2>CONTACT INFORMATION</h2>
-
-    <div class="form-group">
-      <label for="primary-address">Primary Address</label>
-      <textarea id="primary-address" name="primary-address" placeholder="Enter your primary address"></textarea>
-    </div>
-
-    <div class="form-group">
-      <label for="billing-address">Shipping Address (if relevant)</label>
-      <textarea id="shipping-address" name="shipping-address" placeholder="Enter billing or shipping address if different"></textarea>
-    </div>
-      
-    <div class="form-group">
-        <label>My Social Media</label>
-        <div class="form-actions">
-          <button type="button">Instagram</button>
-          <button type="button">Whatsapp</button>
-          <button type="button">Facebook</button>
-        </div>
-    </div>
-
-
+  <body>
+    <div class="top-nav">
+    <ul>
+      <li><a href="account.html">ACCOUNT</a></li>
+      <li><a href="personal.html">PERSONAL</a></li>
+      <li><a href="contact.html">CONTACT </a></li>
+      <li><a href="privacy.html">PRIVACY</a></li>
+      <li><a href="security.html">SECURITY</a></li>
+    </ul>
   </div>
-</body>
+
+    <main class="main-wrapper">    
+      <div class="wrapper">
+        <h2>CONTACT INFORMATION</h2>
+        <form class="form-scroll">
+
+          <div class="input-box">
+            <label for="primary-address">Primary Address</label>
+            <textarea id="primary-address" name="primary-address" placeholder="Enter your primary address"></textarea>
+          </div>
+
+          <div class="input-box">
+            <label for="billing-address">Shipping Address (if relevant)</label>
+            <textarea id="shipping-address" name="shipping-address" placeholder="Enter billing or shipping address if different"></textarea>
+          </div>
+      
+          <div class="input-box">
+            <label>My Social Media</label>
+            <div class="form-actions">
+              <button type="button">Instagram</button>
+              <button type="button">Whatsapp</button>
+              <button type="button">Facebook</button>
+            </div>
+          </div>
+
+          <div class ="main-button">
+            <button type="submit" class="btn">SAVE CHANGES</button>
+          </div>
+      
+        </form>
+      </div>
+    </main>
+  </body>
 </html>

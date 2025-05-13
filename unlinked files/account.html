@@ -1,52 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>account information</title>
-  <link rel="stylesheet" href="settings.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>account information</title>
+    <link rel="stylesheet" href="settings.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  </head>
 
-<body>
-  <nav class="top-nav">
-  <ul>
-    <li><a href="AccInfo.html">ACCOUNT</a></li>
-    <li><a href="personal.html">PERSONAL</a></li>
-    <li><a href="contact.html">CONTACT </a></li>
-    <li><a href="privacy.html">PRIVACY</a></li>
-    <li><a href="security.html">SECURITY</a></li>
-  </ul>
-  </nav>
+  <body>
+    <div class="top-nav">
+      <ul>
+        <li><a href="account.html">ACCOUNT</a></li>
+        <li><a href="personal.html">PERSONAL</a></li>
+        <li><a href="contact.html">CONTACT </a></li>
+        <li><a href="privacy.html">PRIVACY</a></li>
+        <li><a href="security.html">SECURITY</a></li>
+      </ul>
+    </div>
 
-  <div class="container">
-    <h2>ACCOUNT INFORMATION</h2>
-    <form>
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" placeholder="Enter your username"/>
+    <main class="main-wrapper">    
+      <div class="wrapper">
+        <h2>ACCOUNT INFORMATION</h2>
+        <form class="form-scroll">
+
+          <div class="input-box">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username"/>
+          </div>
+
+          <div class="input-box">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email"/>
+          </div>
+
+          <div class="input-box">
+            <label for="phone">Phone Number</label>
+            <input type="text" id="phone" name="phone" placeholder="Enter your phone number"/>
+          </div>
+
+          <div class="input-box">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Change password" />
+          </div>
+
+          <div class ="main-button">
+            <button type="submit" class="btn">SAVE CHANGES</button>
+          </div>
+    
+        </form>
       </div>
-
-      <div class="form-group">
-        <label for="email">Email Address</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email"/>
-      </div>
-
-      <div class="form-group">
-        <label for="phone">Phone Number</label>
-        <input type="text" id="phone" name="phone" placeholder="Enter your phone number"/>
-      </div>
-
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="********" />
-        <div class="form-actions" style="margin-top: 10px;">
-          <button type="button">Change/Reset Password</button>
-        </div>
-      </div>
-      
-    </form>
-  </div>
-</body>
+    </main>
+  </body>
 </html>

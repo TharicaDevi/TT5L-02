@@ -1,47 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>privacy settings</title>
-  <link rel="stylesheet" href="settings.css" />
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>privacy settings</title>
+    <link rel="stylesheet" href="settings.css" />
+  </head>
 
-<body>
-  <nav class="top-nav">
-  <ul>
-    <li><a href="AccInfo.html">ACCOUNT</a></li>
-    <li><a href="personal.html">PERSONAL</a></li>
-    <li><a href="contact.html">CONTACT </a></li>
-    <li><a href="privacy.html">PRIVACY</a></li>
-    <li><a href="security.html">SECURITY</a></li>
-  </ul>
-  </nav>
+  <body>
+    <div class="top-nav">
+      <ul>
+        <li><a href="account.html">ACCOUNT</a></li>
+        <li><a href="personal.html">PERSONAL</a></li>
+        <li><a href="contact.html">CONTACT </a></li>
+        <li><a href="privacy.html">PRIVACY</a></li>
+        <li><a href="security.html">SECURITY</a></li>
+      </ul>
+    </div>
 
-  <div class="container">
-  <h2>PRIVACY SETTINGS</h2>
+    <main class="main-wrapper">    
+      <div class="wrapper">
+        <h2>PRIVACY SETTINGS</h2>
+        <form class="form-scroll">
 
-  <div class="form-group">
-    <label for="visibility">Profile Visibility</label>
-    <select id="visibility" name="visibility">
-      <option value="public">Public</option>
-      <option value="private">Private</option>
-    </select>
-  </div>
+          <div class="input-box">
+            <label for="visibility">Profile Visibility</label>
+            <select id="visibility" name="visibility">
+              <option value="public">Public</option>
+              <option value="private">Private</option>
+            </select>
+          </div>
 
-  <div class="form-group">
-    <label for="activity-status">Show Activity Status</label>
-    <select id="activity-status" name="activity-status">
-      <option value="show">Show</option>
-      <option value="hide">Hide</option>
-    </select>
-  </div>
+          <div class="input-box">
+            <label for="activity-status">Show Activity Status</label>
+            <select id="activity-status" name="activity-status">
+              <option value="show">Show</option>
+              <option value="hide">Hide</option>
+            </select>
+          </div>
 
-  <div class="form-group">
-    <label for="delete">Account Deletion</label>
-    <button type="button" style="background-color: #d9534f;">Delete Account</button>
-  </div>
+          <div class="input-box">
+            <label for="delete">Account Deletion</label>
+            <button type="button" class="delete-btn">Delete Account</button>
+          </div>
 
-</body>
+          <div class ="main-button">
+            <button type="submit" class="btn">SAVE CHANGES</button>
+          </div>
+
+        </form>
+      </div>
+    </main>
+  </body>
 </html>
