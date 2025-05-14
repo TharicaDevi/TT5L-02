@@ -77,6 +77,19 @@ def welcome():
     # welcome page with success/failure message
     return render_template('welcome.html', username=username, success=success)
     
+# account info route
+@app.route("/account", methods=['GET', 'POST'])
+def account():
+    if request.method == 'POST':
+        # extract submitted form data
+        username = request.form['username']
+        email = request.form['email']
+        phone = request.form['phone']
+        password = request.form['password']
+
+        return render_template('account.html', message="Changes saved!")
+    return render_template('account.html')
+
 # personal info route
 @app.route("/personal", methods=["GET", "POST"])
 def personal():
@@ -102,8 +115,8 @@ def personal():
         database.update_personal_info(username, fullname, dob, gender, nationality, language, bio, profile_pic_path)
 
         return redirect(url_for("welcome", username=username, success=1))
-
     return render_template("personal.html")
+
 
 if __name__ == "__main__":
     database.init_db()
