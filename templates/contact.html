@@ -11,18 +11,18 @@
   <body>
     <div class="top-nav">
     <ul>
-      <li><a href="{{ url_for('account') }}"></a></li>
-      <li><a href="{{ url_for('personal') }}"></a></li>
-      <li><a href="{{ url_for('contact') }}"></a></li>
-      <li><a href="{{ url_for('privacy') }}"></a></li>
-      <li><a href="{{ url_for('security') }}"></a></li>
+      <li><a href="{{ url_for('account') }}">ACCOUNT</a></li>
+      <li><a href="{{ url_for('personal') }}">PERSONAL</a></li>
+      <li><a href="{{ url_for('contact') }}">CONTACT</a></li>
+      <li><a href="{{ url_for('privacy') }}">PRIVACY</a></li>
+      <li><a href="{{ url_for('security') }}">SECURITY</a></li>
     </ul>
   </div>
 
     <main class="main-wrapper">    
       <div class="wrapper">
         <h2>CONTACT INFORMATION</h2>
-        <form class="form-scroll">
+        <form class="form-scroll" method="POST" action="{{ url_for('contact') }}">
 
           <div class="input-box">
             <label for="primary-address">Primary Address</label>
