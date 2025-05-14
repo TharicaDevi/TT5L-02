@@ -80,15 +80,26 @@ def welcome():
 # account info route
 @app.route("/account", methods=['GET', 'POST'])
 def account():
+
+    if "username" not in session:
+        return redirect(url_for("login"))
+
+    username = session.get("username")
     if request.method == 'POST':
         # extract submitted form data
-        dusername = request.form['username']
         email = request.form['email']
         phone = request.form['phone']
         password = request.form['password']
 
-        return render_template('account.html', message="Changes saved!")
-    return render_template('account.html')
+        database.update_account_info(username, email, phone, password)
+        message = "Changes saved!"
+
+         # retrieve updated user info
+        user = database.get_user_by_username(username)
+        return render_template('account.html', user=user, message=message)
+
+    user = database.get_user_by_username(username)
+    return render_template('account.html', user=user)
 
 # personal info route
 @app.route("/personal", methods=["GET", "POST"])

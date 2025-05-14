@@ -75,6 +75,28 @@ def update_password(username, new_password):
     conn.commit()
     conn.close()
 
+def get_user_by_username(username):
+    conn = sqlite3.connect("task.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+    user = cursor.fetchone()
+    conn.close()
+    return user
+
+# save account information
+def update_account_info(username, email, phone, password):
+    conn = sqlite3.connect("task")
+    cursor = conn.cursor()
+
+    if email:
+        cursor.execute("UPDATE users SET email = ? WHERE username = ?", (email, username))
+    if phone:
+        cursor.execute("UPDATE users SET phone = ? WHERE username = ?", (phone, username))
+    if password:
+        cursor.execute("UPDATE users SET password = ? WHERE username = ?", (password, username))
+    conn.commit()
+    conn.close()
+
 # save personal information    
 def update_personal_info(username, fullname, dob, gender, nationality, language, bio, profile_pic):
     conn = sqlite3.connect("tasks.db")
