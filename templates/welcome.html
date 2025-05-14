@@ -4,8 +4,11 @@
     <head>
         <title>Welcome</title>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='welcome.css') }}">
+        {% if success %}
+            <meta http-equiv="refresh" content="3;url={{ url_for('personal') }}">
+        {% endif %}    
     </head>
-
+    
     <body>
         <!-- apply different bg for successful & failed login -->
         <body class="{% if success %}success-bg{% else %}failed-bg{% endif %}">        

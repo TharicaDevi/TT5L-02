@@ -1,8 +1,13 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
-import database
+import database, os
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'  # needed for session (session = store information about the user across multiple pages)
+
+# folder for uploaded profile pictures
+UPLOAD_FOLDER = 'static/profile_pics'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # signup route
 @app.route("/signup", methods=['GET', 'POST']) # post = submit
@@ -72,6 +77,34 @@ def welcome():
     # welcome page with success/failure message
     return render_template('welcome.html', username=username, success=success)
     
+# personal info route
+@app.route("/personal", methods=["GET", "POST"])
+def personal():
+    if "username" not in session:
+        return redirect(url_for('login'))
+
+    if request.method == "POST":
+        username = session["username"]
+        fullname = request.form.get("fullname")
+        dob = request.form.get("dob")
+        gender = request.form.get("gender")
+        nationality = request.form.get("nationality")
+        language = request.form.get("language")
+        bio = request.form.get("bio")
+
+        profile_pic_file = request.files.get("profile-pic")
+        profile_pic_path = None
+
+        if profile_pic_file and profile_pic_file.filename != "":
+            profile_pic_path = os.path.join(app.config['UPLOAD_FOLDER'], profile_pic_file.filename)
+            profile_pic_file.save(profile_pic_path)
+
+        database.update_personal_info(username, fullname, dob, gender, nationality, language, bio, profile_pic_path)
+
+        return redirect(url_for("welcome", username=username, success=1))
+
+    return render_template("personal.html")
+
 if __name__ == "__main__":
     database.init_db()
     app.run(debug=True)

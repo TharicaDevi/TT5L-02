@@ -14,14 +14,19 @@ def init_db():
         )
     """)
 
-    # Create tasks table
+    # Create personal info table
     c.execute("""
-        CREATE TABLE IF NOT EXISTS tasks (
+        CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL,
-            task TEXT NOT NULL,
-            date TEXT NOT NULL,
-            FOREIGN KEY (username) REFERENCES users (username)
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            fullname TEXT,
+            dob TEXT,
+            gender TEXT,
+            nationality TEXT,
+            language TEXT,
+            bio TEXT,
+            profile_pic TEXT
         )
     """)
 
@@ -58,5 +63,18 @@ def update_password(username, new_password):
     conn = sqlite3.connect("tasks.db")
     c = conn.cursor()
     c.execute("UPDATE users SET password = ? WHERE username = ?", (new_password, username))
+    conn.commit()
+    conn.close()
+
+# save personal information    
+def update_personal_info(username, fullname, dob, gender, nationality, language, bio, profile_pic):
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    c.execute("""
+        UPDATE users SET 
+            fullname = ?, dob = ?, gender = ?, nationality = ?, 
+            language = ?, bio = ?, profile_pic = ?
+        WHERE username = ?
+    """, (fullname, dob, gender, nationality, language, bio, profile_pic, username))
     conn.commit()
     conn.close()
