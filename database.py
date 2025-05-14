@@ -29,9 +29,11 @@ def init_db():
             nationality TEXT,
             language TEXT,
             bio TEXT,
-            profile_pic TEXT
+            profile_pic TEXT,
             primary_address TEXT,
-            shipping_address TEXT
+            shipping_address TEXT,
+            visibility TEXT DEFAULT 'public',
+            activity_status TEXT DEFAULT 'show'
         )
     """)
 
@@ -93,5 +95,17 @@ def update_contact_info(username, primary_address, shipping_address):
             primary_address = ?, shipping_address = ?
         WHERE username = ?
     """, (primary_address, shipping_address, username))
+    conn.commit()
+    conn.close()
+
+# save privacy settings
+def update_privacy_settings(username, visibility, activity_status):
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    c.execute("""
+        UPDATE users SET
+            visibility = ?, activity_status = ?
+        WHERE username = ?
+    """, (visibility, activity_status, username))
     conn.commit()
     conn.close()
