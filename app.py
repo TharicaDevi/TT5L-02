@@ -125,12 +125,21 @@ def contact():
         primary = request.form['primary-address']
         shipping = request.form['shipping-address']
         database.update_contact_info(username, primary, shipping)
-        return redirect(url_for('contact'))  # reload after save
+        return redirect(url_for('contact'))
     return render_template("contact.html")
 
 # privacy settings route
 @app.route("/privacy")
 def privacy():
+    if request.method == 'POST':
+        username = session.get('username')
+        if not username:
+            return redirect(url_for('login'))
+
+        visibility = request.form.get('visibility')
+        activity_status = request.form.get('activity-status')
+        database.update_privacy_settings(username, visibility, activity_status)
+        return redirect(url_for('privacy')) 
     return render_template("privacy.html")
 
 # security settings route
