@@ -96,6 +96,8 @@ def personal():
     if "username" not in session:
         return redirect(url_for('login'))
 
+    username = session["username"]
+
     if request.method == "POST":
         username = session["username"]
         fullname = request.form.get("fullname")

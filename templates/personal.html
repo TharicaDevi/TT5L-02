@@ -5,17 +5,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>personal information</title>
-    <link rel="stylesheet" href="settings.css" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='settings.css') }}">
   </head>
 
   <body>
     <div class="top-nav">
       <ul>
-        <li><a href="account.html">ACCOUNT</a></li>
-        <li><a href="personal.html">PERSONAL</a></li>
-        <li><a href="contact.html">CONTACT </a></li>
-        <li><a href="privacy.html">PRIVACY</a></li>
-        <li><a href="security.html">SECURITY</a></li>
+        <li><a href="{{ url_for('account') }}">ACCOUNT</a></li>
+        <li><a href="{{ url_for('personal') }}">PERSONAL</a></li>
+        <li><a href="{{ url_for('contact') }}">CONTACT</a></li>
+        <li><a href="{{ url_for('privacy') }}">PRIVACY</a></li>
+        <li><a href="{{ url_for('security') }}">SECURITY</a></li>
       </ul>
     </div>
 
@@ -26,7 +26,7 @@
 
           <div class="input-box">
             <label for="fullname">Full Name</label>
-            <input type="text" id="fullname" name="fullname" placeholder="Enter your full name"/>
+            <input type="text" id="fullname" name="fullname" value="{{ user[3] if user else '' }}">
           </div>
 
           <div class="input-box">
@@ -36,34 +36,33 @@
 
           <div class="input-box">
             <label for="dob">Date of Birth</label>
-           <input type="date" id="dob" name="dob"/>
+            <input type="date" id="dob" name="dob" value="{{ user[4] if user else '' }}">
           </div>
 
           <div class="input-box">
             <label for="gender">Gender</label>
             <select id="gender" name="gender">
-              <option value="">Select</option>
-              <option value="female">Female</option>
-              <option value="male">Male</option>
+              <option value="female" {% if user[5] == 'female' %}selected{% endif %}>Female</option>
+              <option value="male" {% if user[5] == 'male' %}selected{% endif %}>Male</option>
             </select>
           </div>
 
           <div class="input-box">
             <label for="nationality">Nationality</label>
-            <input type="text" id="nationality" name="nationality" placeholder="Enter your nationality" />
+            <input type="text" id="nationality" name="nationality" value="{{ user[6] if user else '' }}"/>
           </div>
 
           <div class="input-box">
             <label for="language">Preferred Language</label>
             <select id="language" name="language">
-              <option value="en">English</option>
-              <option value="ms">Malay</option>
+              <option value="en" {% if user[7] == 'en' %}selected{% endif %}>English</option>
+              <option value="ms" {% if user[7] == 'ms' %}selected{% endif %}>Malay</option>
             </select>
           </div>
         
           <div class="input-box">
             <label for="bio">About Me</label>
-            <textarea id="bio" name="bio" placeholder="Tell us something about yourself..."></textarea>
+            <textarea id="bio" name="bio" placeholder="Tell us something about yourself...">{{ user[8] if user else '' }}</textarea>
           </div>
 
           <div class ="main-button">
