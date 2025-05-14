@@ -3,20 +3,20 @@
 
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>account information</title>
-    <link rel="stylesheet" href="settings.css" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='settings.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   </head>
 
   <body>
     <div class="top-nav">
       <ul>
-        <li><a href="account.html">ACCOUNT</a></li>
-        <li><a href="personal.html">PERSONAL</a></li>
-        <li><a href="contact.html">CONTACT </a></li>
-        <li><a href="privacy.html">PRIVACY</a></li>
-        <li><a href="security.html">SECURITY</a></li>
+        <li><a href="{{ url_for('account') }}">ACCOUNT</a></li>
+        <li><a href="{{ url_for('personal') }}">PERSONAL</a></li>
+        <li><a href="{{ url_for('contact') }}">CONTACT</a></li>
+        <li><a href="{{ url_for('privacy') }}">PRIVACY</a></li>
+        <li><a href="{{ url_for('security') }}">SECURITY</a></li>
       </ul>
     </div>
 
@@ -27,22 +27,22 @@
 
           <div class="input-box">
             <label for="username">Username</label>
-            <input type="text" id="username" name="username" placeholder="Enter your username"/>
+            <input type="text" id="username" name="username" value="{{ user[1] if user else '' }}" placeholder="Enter your username" readonly/>
           </div>
 
           <div class="input-box">
             <label for="email">Email Address</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email"/>
+            <input type="email" id="email" name="email" placeholder="Enter your email" value="{{ user[4] if user else '' }}"/>
           </div>
 
           <div class="input-box">
             <label for="phone">Phone Number</label>
-            <input type="text" id="phone" name="phone" placeholder="Enter your phone number"/>
+            <input type="text" id="phone" name="phone" placeholder="Enter your phone number" value="{{ user[5] if user else '' }}"/>
           </div>
 
           <div class="input-box">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Change password" />
+            <input type="password" id="password" name="password" placeholder="Change password"/>
           </div>
 
           <div class ="main-button">
