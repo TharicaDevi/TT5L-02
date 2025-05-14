@@ -81,34 +81,27 @@ def welcome():
 @app.route("/account", methods=['GET', 'POST'])
 def account():
 
-    if "username" not in session:
-        return redirect(url_for("login"))
+    username = session.get('username')
+    user = database.get_user_by_username(username)  # always define user early
+    message = ""
 
-    username = session.get("username")
     if request.method == 'POST':
         # extract submitted form data
         email = request.form['email']
         phone = request.form['phone']
         password = request.form['password']
 
-        database.update_account_info(username, email, phone, password)
-        message = "Changes saved!"
-
-         # retrieve updated user info
-        user = database.get_user_by_username(username)
-        return render_template('account.html', user=user, message=message)
-
-    user = database.get_user_by_username(username)
-    return render_template('account.html', user=user)
+        if user:
+            database.update_account_info(username, email, phone, password)
+            message = "Changes saved!"
+            user = database.get_user_by_username(username)
+        else:
+            message = "User not found. Changes not saved."
+    return render_template('account.html', user=user, message=message)
 
 # personal info route
 @app.route("/personal", methods=["GET", "POST"])
 def personal():
-    if "username" not in session:
-        return redirect(url_for('login'))
-
-    username = session["username"]
-
     if request.method == "POST":
         username = session["username"]
         fullname = request.form.get("fullname")
@@ -126,8 +119,6 @@ def personal():
             profile_pic_file.save(profile_pic_path)
 
         database.update_personal_info(username, fullname, dob, gender, nationality, language, bio, profile_pic_path)
-
-        return redirect(url_for("welcome", username=username, success=1))
     return render_template("personal.html")
 
 # contact info route

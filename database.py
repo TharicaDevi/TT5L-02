@@ -25,6 +25,8 @@ def init_db():
             password TEXT NOT NULL,
             fullname TEXT,
             dob TEXT,
+            email TEXT,
+            phone TEXT,
             gender TEXT,
             nationality TEXT,
             language TEXT,
