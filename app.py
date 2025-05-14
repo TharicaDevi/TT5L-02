@@ -70,7 +70,7 @@ def reset():
     return render_template('reset.html', error=error, message=message)
 
 # welcome route after login
-@app.route("/welcome")
+@app.route("/welcome", methods=["GET", "POST"])
 def welcome():
     username = request.args.get("username")
     success = request.args.get("success") == "1" # check if login successful
@@ -82,7 +82,7 @@ def welcome():
 def account():
     if request.method == 'POST':
         # extract submitted form data
-        username = request.form['username']
+        dusername = request.form['username']
         email = request.form['email']
         phone = request.form['phone']
         password = request.form['password']
@@ -118,7 +118,7 @@ def personal():
     return render_template("personal.html")
 
 # contact info route
-@app.route("/contact")
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
     if request.method == 'POST':
         username = session.get('username')
@@ -129,13 +129,10 @@ def contact():
     return render_template("contact.html")
 
 # privacy settings route
-@app.route("/privacy")
+@app.route("/privacy", methods=["GET", "POST"])
 def privacy():
     if request.method == 'POST':
         username = session.get('username')
-        if not username:
-            return redirect(url_for('login'))
-
         visibility = request.form.get('visibility')
         activity_status = request.form.get('activity-status')
         database.update_privacy_settings(username, visibility, activity_status)
@@ -143,8 +140,16 @@ def privacy():
     return render_template("privacy.html")
 
 # security settings route
-@app.route("/security")
-def privacy():
+@app.route("/security", methods=["GET", "POST"])
+def security():
+    if request.method == "POST":
+        username = session.get("username")
+        question = request.form.get("security-question")
+        answer = request.form.get("security-answer")
+
+        if username and question and answer:
+            database.update_security_settings(username, question, answer)
+            return render_template("security.html", message="Security settings updated!")
     return render_template("security.html")
 
 if __name__ == "__main__":

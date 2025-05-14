@@ -33,7 +33,9 @@ def init_db():
             primary_address TEXT,
             shipping_address TEXT,
             visibility TEXT DEFAULT 'public',
-            activity_status TEXT DEFAULT 'show'
+            activity_status TEXT DEFAULT 'show',
+            security_question TEXT,
+            security_answer TEXT
         )
     """)
 
@@ -107,6 +109,18 @@ def update_privacy_settings(username, visibility, activity_status):
             visibility = ?, activity_status = ?
         WHERE username = ?
     """, (visibility, activity_status, username))
+    conn.commit()
+    conn.close()
+
+# save security question & answer
+def update_security_settings(username, question, answer):
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    c.execute("""
+        UPDATE users SET
+            security_question = ?, security_answer = ?
+        WHERE username = ?
+    """, (question, answer, username))
     conn.commit()
     conn.close()
 
