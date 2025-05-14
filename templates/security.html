@@ -13,7 +13,7 @@
       <ul>
         <li><a href="{{ url_for('account') }}">ACCOUNT</a></li>
         <li><a href="{{ url_for('personal') }}">PERSONAL</a></li>
-        <li><a href="{{ url_for('contact') }}">CONTACT </a></li>
+        <li><a href="{{ url_for('contact') }}">CONTACT</a></li>
         <li><a href="{{ url_for('privacy') }}">PRIVACY</a></li>
         <li><a href="{{ url_for('security') }}">SECURITY</a></li>
       </ul>
@@ -22,7 +22,7 @@
     <main class="main-wrapper">    
       <div class="wrapper">
         <h2>SECURITY SETTINGS</h2>
-        <form class="form-scroll">
+        <form class="form-scroll" method="POST" action="{{ url_for('security') }}">
 
           <div class="input-box">
             <label>Two-Factor Authentication</label>
@@ -39,7 +39,7 @@
               <option value="school">What is the name of your first school?</option>
               <option value="city">In what city were you born?</option>
             </select>
-            <input type="text" placeholder="Your Answer" style="margin-top: 10px;"/>
+            <input type="text" name="security-answer" placeholder="Your Answer" style="margin-top: 10px;"/>
           </div>
 
           <div class="input-box">
