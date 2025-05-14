@@ -127,6 +127,10 @@ def contact():
 def privacy():
     return render_template("privacy.html")
 
+# security settings route
+@app.route("/security")
+def privacy():
+    return render_template("security.html")
 
 if __name__ == "__main__":
     database.init_db()
