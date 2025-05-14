@@ -14,7 +14,10 @@ def init_db():
         )
     """)
 
-    # Create personal info table
+    # Drop and recreate for resetting data during development
+    c.execute("DROP TABLE IF EXISTS users")
+
+    # Create updated info table
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,6 +30,8 @@ def init_db():
             language TEXT,
             bio TEXT,
             profile_pic TEXT
+            primary_address TEXT,
+            shipping_address TEXT
         )
     """)
 
@@ -76,5 +81,17 @@ def update_personal_info(username, fullname, dob, gender, nationality, language,
             language = ?, bio = ?, profile_pic = ?
         WHERE username = ?
     """, (fullname, dob, gender, nationality, language, bio, profile_pic, username))
+    conn.commit()
+    conn.close()
+
+# save contact information
+def update_contact_info(username, primary_address, shipping_address):
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    c.execute("""
+        UPDATE users SET
+            primary_address = ?, shipping_address = ?
+        WHERE username = ?
+    """, (primary_address, shipping_address, username))
     conn.commit()
     conn.close()
