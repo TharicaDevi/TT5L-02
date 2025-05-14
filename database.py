@@ -109,3 +109,11 @@ def update_privacy_settings(username, visibility, activity_status):
     """, (visibility, activity_status, username))
     conn.commit()
     conn.close()
+
+# delete account
+def delete_account(username):
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    c.execute("DELETE FROM users WHERE username = ?", (username,))
+    conn.commit()
+    conn.close()
