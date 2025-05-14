@@ -120,6 +120,12 @@ def personal():
 # contact info route
 @app.route("/contact")
 def contact():
+    if request.method == 'POST':
+        username = session.get('username')
+        primary = request.form['primary-address']
+        shipping = request.form['shipping-address']
+        database.update_contact_info(username, primary, shipping)
+        return redirect(url_for('contact'))  # reload after save
     return render_template("contact.html")
 
 # privacy settings route
