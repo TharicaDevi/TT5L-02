@@ -117,6 +117,10 @@ def personal():
         return redirect(url_for("welcome", username=username, success=1))
     return render_template("personal.html")
 
+# contact info route
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
 
 if __name__ == "__main__":
     database.init_db()
