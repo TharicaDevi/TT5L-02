@@ -5,7 +5,7 @@ app = Flask(__name__)
 app.secret_key = 'secret'
 
 applications = {
-    'APP123': {'status': 'Approved', 'pet': 'Buddy', 'finalized': True, 'review': None},
+    'APP123': {'status': 'Approved', 'pet': 'Buddy', 'finalized': False, 'review': None},
     'APP124': {'status': 'Pending', 'pet': 'Milo', 'finalized': False, 'review': None},
     'APP125': {'status': 'Rejected', 'pet': 'Luna', 'finalized': False, 'review': None}
 }
