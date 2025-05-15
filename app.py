@@ -136,13 +136,20 @@ def personal():
 # contact info route
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
+    username = session.get('username')
+    message = None
+
     if request.method == 'POST':
-        username = session.get('username')
         primary = request.form['primary-address']
         shipping = request.form['shipping-address']
         database.update_contact_info(username, primary, shipping)
-        return redirect(url_for('contact'))
-    return render_template("contact.html")
+        message = "Changes saved!"
+        # Don't redirect — just reload with the message
+        user = database.get_user_by_username(username)
+        return render_template("contact.html", user=user, message=message)
+
+    user = database.get_user_by_username(username)
+    return render_template("contact.html", user=user)
 
 # privacy settings route
 @app.route("/privacy", methods=["GET", "POST"])

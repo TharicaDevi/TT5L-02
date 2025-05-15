@@ -63,6 +63,9 @@ body {
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 14px;
+  background-color: #fff;
+  color: #000;
+  resize: vertical;
 }
 
 .wrapper .input-box {
@@ -271,6 +274,47 @@ select {
   color: rgba(40, 0, 90, 0.799);
 }
 
+.readonly textarea {
+  border: none;
+  background-color: transparent;
+  pointer-events: none;
+  color: #fff;
+  resize: none;
+}
+
 .readonly .btn {
   display: none;
+}
+
+.social-btn {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.social-btn button {
+  padding: 8px 16px;
+  border: 1px solid #ffffff99;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #180030;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.social-btn button:hover {
+  background-color: #8000ff;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.form-message {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #f2dede;
+  background-color: rgba(255, 0, 0, 0.1);
+  padding: 8px 12px;
+  border-radius: 5px;
 }

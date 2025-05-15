@@ -22,24 +22,26 @@
     <main class="main-wrapper">    
       <div class="wrapper">
         <h2>CONTACT INFORMATION</h2>
-        <form class="form-scroll" method="POST" action="{{ url_for('contact') }}">
+        <button class="edit-btn" onclick="toggleContactEdit()">✏️</button>
+
+        <form id="contact-form" class="form-scroll readonly" method="POST" action="{{ url_for('contact') }}">
 
           <div class="input-box">
             <label for="primary-address">Primary Address</label>
-            <textarea id="primary-address" name="primary-address" placeholder="Enter your primary address"></textarea>
+            <textarea id="primary-address" name="primary-address" placeholder="Enter your primary address" readonly>{{ user[12] if user else '' }}</textarea>
           </div>
 
           <div class="input-box">
             <label for="billing-address">Shipping Address (if relevant)</label>
-            <textarea id="shipping-address" name="shipping-address" placeholder="Enter billing or shipping address if different"></textarea>
+            <textarea id="shipping-address" name="shipping-address" placeholder="Enter billing or shipping address if different" readonly>{{ user[13] if user else '' }}</textarea>
           </div>
       
           <div class="input-box">
             <label>My Social Media</label>
-            <div class="form-actions">
-              <button type="button">Instagram</button>
-              <button type="button">Whatsapp</button>
-              <button type="button">Facebook</button>
+            <div class="social-btn">
+              <a href="https://www.instagram.com" target="_blank"><button type="button">Instagram</button></a>
+              <a href="https://x.com" target="_blank"><button type="button">X</button></a>
+              <a href="https://www.facebook.com" target="_blank"><button type="button">Facebook</button></a>
             </div>
           </div>
 
@@ -49,6 +51,14 @@
       
         </form>
       </div>
+
+        {% if message %}
+          <p>{{ message }}</p>
+        {% endif %}
+      
     </main>
+
+    <script src="{{ url_for('static', filename='settings.js') }}"></script>
+
   </body>
 </html>

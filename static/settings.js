@@ -42,6 +42,23 @@ function togglePersonalEdit() {
     form.classList.toggle('readonly');
 }
 
+// Toggle edit for contact form
+function toggleContactEdit() {
+    const form = document.getElementById('contact-form');
+    const isReadonly = form.classList.contains('readonly');
+    const inputs = form.querySelectorAll('textarea');
+    const saveBtn = form.querySelector('.btn');
+
+    inputs.forEach(textarea => {
+        textarea.readOnly = !isReadonly;
+        textarea.style.backgroundColor = isReadonly ? 'white' : 'transparent';
+        textarea.style.border = isReadonly ? '1px solid #ccc' : 'none';
+    });
+
+    saveBtn.style.display = isReadonly ? 'inline-block' : 'none';
+    form.classList.toggle('readonly');
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     // For account form
     const accountMessage = document.querySelector("#account-form + p"); // or a more specific selector
@@ -76,5 +93,20 @@ document.addEventListener("DOMContentLoaded", () => {
         const saveBtn = personalForm.querySelector('.btn');
         saveBtn.style.display = 'none';
         personalForm.classList.add("readonly");
+    }
+
+    // For contact form
+    const contactMessage = document.querySelector("#contact-form + p");
+    const contactForm = document.getElementById("contact-form");
+    if (contactMessage && contactForm && !contactForm.classList.contains("readonly")) {
+        const inputs = contactForm.querySelectorAll("textarea");
+        inputs.forEach(textarea => {
+            textarea.readOnly = true;
+            textarea.style.backgroundColor = 'transparent';
+            textarea.style.border = 'none';
+        });
+        const saveBtn = contactForm.querySelector('.btn');
+        saveBtn.style.display = 'none';
+        contactForm.classList.add("readonly");
     }
 });
