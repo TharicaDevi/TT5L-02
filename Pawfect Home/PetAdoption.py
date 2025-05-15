@@ -35,7 +35,6 @@ def index():
 
     return render_template('index.html', status=result, app_id=app_id, show_finalize=show_finalize, message=message)
 
-
 @app.route('/finalize', methods=['POST'])
 def finalize():
     app_id = request.form['application_id'].strip().upper()
@@ -92,7 +91,6 @@ def schedule(application_id):
         meeting_info=meeting_info,
         datetime=datetime
     )
-
 
 if __name__ == '__main__':
     app.run(debug=True)
