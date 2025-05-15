@@ -1,37 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Track Application Status</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Track Adoption</title>
 </head>
 <body>
-    <nav>
-        <a href="/">Check Status</a>
-    </nav>
+    <h2>Check Adoption Application</h2>
+    <form method="POST">
+        <input type="text" name="application_id" placeholder="Enter Application ID" required>
+        <button type="submit">Check Status</button>
+    </form>
 
-    <div class="container">
-        <h1>Pet Adoption Application Tracker</h1>
-
-        <form method="POST" action="/">
-            <input type="text" name="application_id" placeholder="Enter Application ID" required>
-            <button type="submit">Check Status</button>
-        </form>
-
-        {% if status %}
-            <p class="status">Status: {{ status }}</p>
-        {% endif %}
-
+    {% if status %}
+        <p>Status: {{ status }}</p>
         {% if show_finalize %}
-            <form method="POST" cation="/finalize">
-                <input type="hidden" name="application_id" value="{{ app_id }}">
-                <button type="submit">Finalize Adoption</button> 
-            </form>
+        <form method="POST" action="{{ url_for('finalize') }}">
+            <input type="hidden" name="application_id" value="{{ app_id }}">
+            <button type="submit">Finalize Adoption</button>
+        </form>
         {% endif %}
-
-        {% if message %}
-            <p class="status">{{ message }}</p>
-        {% endif %}
-    </div>
+    {% endif %}
 </body>
 </html>
