@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Browse Pets</title>
+</head>
+<body>
+    <h1>Available Pets</h1>
+
+    <form method="POST" action="/filter">
+        <label>Breed:</label>
+        <input type="text" name="breed">
+        <label>Age:</label>
+        <input type="number" name="age">
+        <button type="submit">Filter</button>
+    </form>
+
+    <ul>
+        {% for pet in pets %}
+        <li>
+            <img src="{{ pet[1] }}" width="100">
+            <p>Type: {{ pet[2] }}</p>
+            <p>Breed: {{ pet[4] }}</p>
+            <p>Age: {{ pet[5] }}</p>
+            <a href="/pet/{{ pet[0] }}">View Profile</a>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
