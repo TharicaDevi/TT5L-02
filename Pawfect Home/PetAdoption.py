@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 app.secret_key = 'secret'
@@ -51,23 +52,28 @@ def finalize():
 
 @app.route('/schedule/<application_id>', methods=['GET', 'POST'])
 def schedule(application_id):
-    if application_id not in applications or not applications[application_id]['finalized']:
-        return "Invalid application or not finalized yet"
+    if application_id not in session:
+        return redirect(url_for('login'))
 
+    error = None
     if request.method == 'POST':
-        date = request.form['date']
+        date_str = request.form['date']
         time = request.form['time']
         notes = request.form['notes']
 
-        meetings[application_id] = {
-            'date': date,
-            'time': time,
-            'notes': notes
-        }
+        try:
+            chosen_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            tomorrow = datetime.today().date() + timedelta(days=1)
 
-        return f"Meeting scheduled for {applications[application_id]['pet']} on {date} at {time}"
+            if chosen_date < tomorrow:
+                error = "You cannot schedule a meeting for today or a past date."
+            else:
+                schedule_meeting(session['user_id'], date_str, time, notes)
+                return redirect(url_for('track')) 
+        except ValueError:
+            error = "Invalid date format."
 
-    return render_template('schedule.html', application_id=application_id)
+    return render_template('schedule.html', application_id=application_id, error=error)
 
 
 if __name__ == '__main__':
