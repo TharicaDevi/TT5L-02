@@ -76,7 +76,7 @@ def schedule(application_id):
                     'date': date_str,
                     'time': time,
                     'notes': notes,
-                    'approved': True,  # Simulate auto-approval
+                    'approved': True,
                     'by': application_id
                 }
                 success = "Your meeting has been approved!"
@@ -84,7 +84,15 @@ def schedule(application_id):
         except ValueError:
             error = "Invalid date format."
 
-    return render_template('schedule.html', application_id=application_id, error=error, success=success, meeting_info=meeting_info)
+    return render_template(
+        'schedule.html',
+        application_id=application_id,
+        error=error,
+        success=success,
+        meeting_info=meeting_info,
+        datetime=datetime
+    )
+
 
 if __name__ == '__main__':
     app.run(debug=True)
