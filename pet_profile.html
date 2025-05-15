@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pet Profile</title>
+</head>
+<body>
+    <h1>Pet Profile</h1>
+
+    <img src="{{ url_for('static', filename=pet[1]) }}" alt="Pet Image" width="200">
+    <p><strong>Type:</strong> {{ pet[2] }}</p>
+    <p><strong>Color:</strong> {{ pet[3] }}</p>
+    <p><strong>Breed:</strong> {{ pet[4] }}</p>
+    <p><strong>Age:</strong> {{ pet[5] }}</p>
+    <p><strong>Status:</strong> {{ pet[6] }}</p>
+
+    <a href="/">Back to homepage</a>
+</body>
+</html>

@@ -1,29 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Browse Pets</title>
+    <meta charset="UTF-8">
+    <title>Pet Shop - Home</title>
 </head>
 <body>
-    <h1>Available Pets</h1>
+    <h1>Browse Pets</h1>
 
-    <form method="POST" action="/filter">
-        <label>Breed:</label>
-        <input type="text" name="breed">
-        <label>Age:</label>
-        <input type="number" name="age">
+    <form method="get" action="/">
+        <label for="breed">Breed:</label>
+        <input type="text" name="breed" id="breed">
+        
+        <label for="age">Age:</label>
+        <input type="number" name="age" id="age">
+
         <button type="submit">Filter</button>
     </form>
 
-    <ul>
+    <hr>
+
+    {% if pets %}
         {% for pet in pets %}
-        <li>
-            <img src="{{ pet[1] }}" width="100">
-            <p>Type: {{ pet[2] }}</p>
-            <p>Breed: {{ pet[4] }}</p>
-            <p>Age: {{ pet[5] }}</p>
-            <a href="/pet/{{ pet[0] }}">View Profile</a>
-        </li>
+            <div style="margin-bottom: 20px;">
+                <img src="{{ url_for('static', filename=pet[1]) }}" alt="Pet Image" width="150">
+                <p><strong>Type:</strong> {{ pet[2] }}</p>
+                <p><strong>Color:</strong> {{ pet[3] }}</p>
+                <p><strong>Breed:</strong> {{ pet[4] }}</p>
+                <p><strong>Age:</strong> {{ pet[5] }}</p>
+                <a href="{{ url_for('pet_profile', pet_id=pet[0]) }}">View Profile</a>
+            </div>
+            <hr>
         {% endfor %}
-    </ul>
+    {% else %}
+        <p>No pets found.</p>
+    {% endif %}
 </body>
 </html>
