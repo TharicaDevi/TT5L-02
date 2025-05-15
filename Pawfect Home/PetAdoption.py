@@ -10,6 +10,7 @@ applications = {
     'APP125': {'status': 'Rejected', 'pet': 'Luna', 'finalized': False, 'user_id': 'user003'}
 }
 
+
 meetings = {}
 reviews = {}
 
