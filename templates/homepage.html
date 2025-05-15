@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pawfect Home - Home</title>
+</head>
+<body>
+    <body style="font-family: Arial, sans-serif;">
+        <h1>Browse Pets</h1>
+    
+        <form method="get" action="/">
+            <label for="breed">Breed:</label>
+            <input type="text" name="breed" id="breed">
+            
+            <label for="age">Age:</label>
+            <input type="number" name="age" id="age">
+    
+            <button type="submit">Filter</button>
+        </form>
+    
+        <hr>
+    
+        {% if pets %}
+            {% for pet in pets %}
+                <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; width: 300px;">
+                    <img src="{{ url_for('static', filename='images/' + pet[1]) }}" alt="Pet Image" width="150">
+                    <p><strong>Type:</strong> {{ pet[2] }}</p>
+                    <p><strong>Color:</strong> {{ pet[3] }}</p>
+                    <p><strong>Breed:</strong> {{ pet[4] }}</p>
+                    <p><strong>Age:</strong> {{ pet[5] }}</p>
+                    <a href="{{ url_for('pet_profile', pet_id=pet[0]) }}">View Profile</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No pets found.</p>
+        {% endif %}
+    </body>
+    

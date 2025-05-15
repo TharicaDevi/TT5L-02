@@ -7,7 +7,7 @@ init_db()
 @app.route('/')
 def home():
     pets = get_all_pets()
-    return render_template("home.html", pets=pets)
+    return render_template("homepage.html", pets=pets)
 
 @app.route('/pet/<int:pet_id>')
 def pet_profile(pet_id):
@@ -19,7 +19,7 @@ def filter():
     breed = request.form.get("breed")
     age = request.form.get("age")
     pets = filter_pets(breed, age)
-    return render_template("home.html", pets=pets)
+    return render_template("homepage.html", pets=pets)
 
 if __name__ == '__main__':
     app.run(debug=True)
