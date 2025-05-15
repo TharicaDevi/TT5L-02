@@ -2,7 +2,7 @@ import sqlite3
 
 # Initialize the database and create tables if they don't exist
 def init_db():
-    conn = sqlite3.connect("tasks.db")
+    conn = sqlite3.connect("info.db")
     c = conn.cursor()
 
     # Create user table
@@ -46,7 +46,7 @@ def init_db():
 
 # Add a new user to the users table
 def add_user(username, password):
-    conn = sqlite3.connect("tasks.db")
+    conn = sqlite3.connect("info.db")
     c = conn.cursor()
     c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
     conn.commit()
@@ -54,7 +54,7 @@ def add_user(username, password):
 
 # Get a user from the database (for login validation)
 def get_user(username, password):
-    conn = sqlite3.connect("tasks.db")
+    conn = sqlite3.connect("info.db")
     c = conn.cursor()
     c.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
     user = c.fetchone()
@@ -63,7 +63,7 @@ def get_user(username, password):
 
 # Check if a username already exists
 def user_exists(username):
-    conn = sqlite3.connect("tasks.db")
+    conn = sqlite3.connect("info.db")
     c = conn.cursor()
     c.execute("SELECT 1 FROM users WHERE username = ?", (username,))
     result = c.fetchone()
@@ -71,14 +71,14 @@ def user_exists(username):
     return result is not None
 
 def update_password(username, new_password):
-    conn = sqlite3.connect("tasks.db")
+    conn = sqlite3.connect("info.db")
     c = conn.cursor()
     c.execute("UPDATE users SET password = ? WHERE username = ?", (new_password, username))
     conn.commit()
     conn.close()
 
 def get_user_by_username(username):
-    conn = sqlite3.connect("task.db")
+    conn = sqlite3.connect("info.db")
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
     user = cursor.fetchone()
@@ -87,7 +87,7 @@ def get_user_by_username(username):
 
 # save account information
 def update_account_info(username, email, phone, password):
-    conn = sqlite3.connect("task")
+    conn = sqlite3.connect("info.db")
     cursor = conn.cursor()
 
     if email:
@@ -101,7 +101,7 @@ def update_account_info(username, email, phone, password):
 
 # save personal information    
 def update_personal_info(username, fullname, dob, gender, nationality, language, bio, profile_pic):
-    conn = sqlite3.connect("tasks.db")
+    conn = sqlite3.connect("info.db")
     c = conn.cursor()
     c.execute("""
         UPDATE users SET 
@@ -114,7 +114,7 @@ def update_personal_info(username, fullname, dob, gender, nationality, language,
 
 # save contact information
 def update_contact_info(username, primary_address, shipping_address):
-    conn = sqlite3.connect("tasks.db")
+    conn = sqlite3.connect("info.db")
     c = conn.cursor()
     c.execute("""
         UPDATE users SET
@@ -126,7 +126,7 @@ def update_contact_info(username, primary_address, shipping_address):
 
 # save privacy settings
 def update_privacy_settings(username, visibility, activity_status):
-    conn = sqlite3.connect("tasks.db")
+    conn = sqlite3.connect("info.db")
     c = conn.cursor()
     c.execute("""
         UPDATE users SET
@@ -138,7 +138,7 @@ def update_privacy_settings(username, visibility, activity_status):
 
 # save security question & answer
 def update_security_settings(username, question, answer):
-    conn = sqlite3.connect("tasks.db")
+    conn = sqlite3.connect("info.db")
     c = conn.cursor()
     c.execute("""
         UPDATE users SET
@@ -150,7 +150,7 @@ def update_security_settings(username, question, answer):
 
 # delete account
 def delete_account(username):
-    conn = sqlite3.connect("tasks.db")
+    conn = sqlite3.connect("info.db")
     c = conn.cursor()
     c.execute("DELETE FROM users WHERE username = ?", (username,))
     conn.commit()
