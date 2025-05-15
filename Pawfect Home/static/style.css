@@ -44,6 +44,11 @@ button {
     color: white;
     border: none;
     cursor: pointer;
+    margin-top: 1rem;
+}
+
+button:hover {
+    background-color: #45a049;
 }
 
 .status {
