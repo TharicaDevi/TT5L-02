@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
-from database import init_db, get_all_pets, get_pet_by_id, filter_pets
+from petsdatabase import init_db, get_all_pets, get_pet_by_id, filter_pets
 
 app = Flask(__name__)
 init_db()
