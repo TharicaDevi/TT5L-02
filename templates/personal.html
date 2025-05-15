@@ -22,55 +22,109 @@
     <main class="main-wrapper">    
       <div class="wrapper">
         <h2>PERSONAL INFORMATION</h2>
-        <form class="form-scroll" method="POST" action="/personal" enctype="multipart/form-data">
+        <button class="edit-btn" onclick="toggleEdit()">✏️</button>
 
+        <form id="account-form" class="form-scroll readonly" method="POST" action="/personal" enctype="multipart/form-data">
+   
           <div class="input-box">
-            <label for="fullname">Full Name</label>
-            <input type="text" id="fullname" name="fullname" value="{{ user[3] if user else '' }}">
+            <label for="profile-pic">Profile Picture</label>
+            <input type="file" id="profile-pic" name="profile-pic" accept="image/*" disabled/>
           </div>
 
           <div class="input-box">
-            <label for="profile-pic">Profile Picture</label>
-            <input type="file" id="profile-pic" name="profile-pic" accept="image/*"/>
+            <label for="fullname">Full Name</label>
+            <input type="text" id="fullname" name="fullname" value="{{ user[5] if user else '' }}" readonly>
           </div>
 
           <div class="input-box">
             <label for="dob">Date of Birth</label>
-            <input type="date" id="dob" name="dob" value="{{ user[4] if user else '' }}">
+            <input type="date" id="dob" name="dob" value="{{ user[6] if user else '' }}" readonly>
           </div>
 
           <div class="input-box">
             <label for="gender">Gender</label>
-            <select id="gender" name="gender">
-              <option value="female" {% if user[5] == 'female' %}selected{% endif %}>Female</option>
-              <option value="male" {% if user[5] == 'male' %}selected{% endif %}>Male</option>
+            <select id="gender" name="gender" disabled>
+              <option value="female" {% if user[7] == 'female' %}selected{% endif %}>Female</option>
+              <option value="male" {% if user[7] == 'male' %}selected{% endif %}>Male</option>
             </select>
           </div>
 
           <div class="input-box">
             <label for="nationality">Nationality</label>
-            <input type="text" id="nationality" name="nationality" value="{{ user[6] if user else '' }}"/>
+            <input type="text" id="nationality" name="nationality" value="{{ user[8] if user else '' }}" readonly/>
           </div>
 
           <div class="input-box">
             <label for="language">Preferred Language</label>
-            <select id="language" name="language">
-              <option value="en" {% if user[7] == 'en' %}selected{% endif %}>English</option>
-              <option value="ms" {% if user[7] == 'ms' %}selected{% endif %}>Malay</option>
+            <select id="language" name="language" disabled>
+              <option value="en" {% if user[9] == 'en' %}selected{% endif %}>English</option>
+              <option value="my" {% if user[9] == 'my' %}selected{% endif %}>Malay</option>
+              <option value="mn" {% if user[9] == 'mn' %}selected{% endif %}>Mandarin</option>
+              <option value="tm" {% if user[9] == 'tm' %}selected{% endif %}>Tamil</option>            
             </select>
           </div>
         
           <div class="input-box">
             <label for="bio">About Me</label>
-            <textarea id="bio" name="bio" placeholder="Tell us something about yourself...">{{ user[8] if user else '' }}</textarea>
+            <textarea id="bio" name="bio" placeholder="Tell us something about yourself..." readonly>{{ user[10] if user else '' }}</textarea>
           </div>
 
           <div class ="main-button">
             <button type="submit" class="btn">SAVE CHANGES</button>
           </div>
           
-        </form>  
+        </form>
+
+        {% if message %}
+          <p>{{ message }}</p>
+        {% endif %}
+
       </div>
     </main>
+
+    <script>
+      function toggleEdit() {
+        const form = document.getElementById('account-form');
+        const isReadonly = form.classList.contains('readonly');
+        const inputs = form.querySelectorAll('input, textarea, select');
+        const saveBtn = form.querySelector('.btn');
+
+        inputs.forEach(el => {
+          if (el.id !== 'profile-pic') {
+            el.readOnly = isReadonly ? false : true;
+          }
+
+          if (el.tagName === 'SELECT' || el.id === 'profile-pic') {
+            el.disabled = !el.disabled;
+          }
+
+          el.style.backgroundColor = isReadonly ? 'white' : 'transparent';
+          el.style.border = isReadonly ? '1px solid #ccc' : 'none';    
+        });
+
+        saveBtn.style.display = isReadonly ? 'inline-block' : 'none';
+        form.classList.toggle('readonly');
+      }
+
+      {% if message %}
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("account-form");
+        const inputs = form.querySelectorAll("input, textarea, select");
+        const saveBtn = form.querySelector('.btn');
+
+        inputs.forEach(el => {
+          el.readOnly = true;
+          el.disabled = true;
+          el.style.backgroundColor = 'transparent';
+          el.style.border = 'none';
+        });
+
+        saveBtn.style.display = 'none';
+        form.classList.add("readonly");
+      });
+      
+      {% endif %}
+    </script>
+
   </body>
 </html>

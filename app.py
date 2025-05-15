@@ -102,8 +102,11 @@ def account():
 # personal info route
 @app.route("/personal", methods=["GET", "POST"])
 def personal():
+
+    username = session.get("username")
+    user = database.get_user_by_username(username)
+
     if request.method == "POST":
-        username = session["username"]
         fullname = request.form.get("fullname")
         dob = request.form.get("dob")
         gender = request.form.get("gender")
@@ -112,14 +115,14 @@ def personal():
         bio = request.form.get("bio")
 
         profile_pic_file = request.files.get("profile-pic")
-        profile_pic_path = None
+        profile_pic_path = user[9] if user else None
 
         if profile_pic_file and profile_pic_file.filename != "":
             profile_pic_path = os.path.join(app.config['UPLOAD_FOLDER'], profile_pic_file.filename)
             profile_pic_file.save(profile_pic_path)
 
         database.update_personal_info(username, fullname, dob, gender, nationality, language, bio, profile_pic_path)
-    return render_template("personal.html")
+    return render_template("personal.html", user=user)
 
 # contact info route
 @app.route("/contact", methods=["GET", "POST"])
