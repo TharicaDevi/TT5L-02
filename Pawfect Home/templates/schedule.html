@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Schedule a Meetup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Schedule a Meetup for Adoption #{{ adoption_id }}</h2>
+        <form method="POST">
+            <label>Date:</label><br>
+            <input type="date" name="date" required><br><br>
+
+            <label>Time:</label><br>
+            <input type="time" name="time" required><br><br>
+
+            <label>Notes:</label><br>
+            <textarea name="notes" rows="4" cols="40" placeholder="Optional message or address..."></textarea><br><br>
+
+            <button type="submit">Schedule</button>
+        </form>
+    </div>
+</body>
+</html>
