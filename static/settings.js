@@ -76,6 +76,41 @@ function togglePrivacyEdit() {
     form.classList.toggle('readonly');
 }
 
+// Toggle edit for security form
+function toggleSecurityEdit() {
+    const form = document.getElementById('security-form');
+    const isReadonly = form.classList.contains('readonly');
+    const select = form.querySelector('select');
+    const input = form.querySelector('input[name="security-answer"]');
+    const saveBtn = form.querySelector('.btn');
+
+    if (isReadonly) {
+        // Switch to edit mode
+        select.disabled = false;
+        input.readOnly = false;
+
+        select.style.backgroundColor = 'white';
+        select.style.border = '1px solid #ccc';
+        input.style.backgroundColor = 'white';
+        input.style.border = '1px solid #ccc';
+
+        saveBtn.style.display = 'inline-block';
+    } else {
+        // Switch to readonly mode
+        select.disabled = true;
+        input.readOnly = true;
+
+        select.style.backgroundColor = 'transparent';
+        select.style.border = 'none';
+        input.style.backgroundColor = 'transparent';
+        input.style.border = 'none';
+
+        saveBtn.style.display = 'none';
+    }
+
+    form.classList.toggle('readonly');
+}
+
 // Delete account confirmation
 function confirmDelete() {
   return confirm("Are you sure you want to permanently delete your account?");
@@ -145,4 +180,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     saveBtn.style.display = 'none';
     privacyForm.classList.add("readonly");
+
+    // For security form
+    const securityForm = document.getElementById('security-form');
+    if (securityForm) {
+        const select = securityForm.querySelector('select');
+        const input = securityForm.querySelector('input[name="security-answer"]');
+        const saveBtn = securityForm.querySelector('.btn');
+
+        select.disabled = true;
+        input.readOnly = true;
+
+        select.style.backgroundColor = 'transparent';
+        select.style.border = 'none';
+        input.style.backgroundColor = 'transparent';
+        input.style.border = 'none';
+
+        saveBtn.style.display = 'none';
+
+        securityForm.classList.add('readonly');
+    }
 });

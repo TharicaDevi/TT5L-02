@@ -22,7 +22,9 @@
     <main class="main-wrapper">    
       <div class="wrapper">
         <h2>SECURITY SETTINGS</h2>
-        <form class="form-scroll" method="POST" action="{{ url_for('security') }}">
+        <button class="edit-btn" onclick="toggleSecurityEdit()">✏️</button>
+
+        <form id="security-form" class="form-scroll readonly" method="POST" action="{{ url_for('security') }}">
 
           <div class="input-box">
             <label>Two-Factor Authentication</label>
@@ -33,13 +35,13 @@
 
           <div class="input-box">
             <label for="security-question">Security Questions</label>
-            <select id="security-question" name="security-question">
+            <select id="security-question" name="security-question" disabled>
               <option value="">Select a question</option>
               <option value="pet">What is your first pet's name?</option>
               <option value="school">What is the name of your first school?</option>
               <option value="city">In what city were you born?</option>
             </select>
-            <input type="text" name="security-answer" placeholder="Your Answer" style="margin-top: 10px;"/>
+            <input type="text" name="security-answer" value="{{ user[17] if user else '' }}" readonly style="margin-top: 10px;"/>
           </div>
 
           <div class="input-box">
@@ -66,9 +68,17 @@
           <div class ="main-button">
             <button type="submit" class="btn">SAVE CHANGES</button>
           </div>
-        
-        </form>  
+
+        </form>
+
+        {% if message %}
+          <p>{{ message }}</p>
+        {% endif %}
+
       </div>
     </main>
+    
+    <script src="{{ url_for('static', filename='settings.js') }}"></script>
+
   </body>
 </html>
