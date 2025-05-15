@@ -1,19 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Pet Profile</title>
+    <title>Pet Shop - Home</title>
 </head>
 <body>
-    <h1>Pet Profile</h1>
+    <h1>Welcome to the Pet Shop!</h1>
 
-    <img src="{{ url_for('static', filename=pet[1]) }}" alt="Pet Image" width="200">
-    <p><strong>Type:</strong> {{ pet[2] }}</p>
-    <p><strong>Color:</strong> {{ pet[3] }}</p>
-    <p><strong>Breed:</strong> {{ pet[4] }}</p>
-    <p><strong>Age:</strong> {{ pet[5] }}</p>
-    <p><strong>Status:</strong> {{ pet[6] }}</p>
+    <form method="POST" action="/filter">
+        <label>Breed: <input type="text" name="breed"></label>
+        <label>Age: <input type="number" name="age"></label>
+        <button type="submit">Filter</button>
+    </form>
 
-    <a href="/">Back to homepage</a>
+    <div>
+        {% for pet in pets %}
+            <div style="border:1px solid #aaa; margin:10px; padding:10px;">
+                <img src="{{ url_for('static', filename='images/' + pet[1]) }}" width="150">
+                <p><strong>Type:</strong> {{ pet[2] }}</p>
+                <p><strong>Breed:</strong> {{ pet[4] }}</p>
+                <p><strong>Age:</strong> {{ pet[5] }}</p>
+                <a href="{{ url_for('pet_profile', pet_id=pet[0]) }}">View Profile</a>
+            </div>
+        {% endfor %}
+    </div>
 </body>
 </html>
