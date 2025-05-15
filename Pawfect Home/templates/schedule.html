@@ -52,7 +52,12 @@
         h2 {
             margin-bottom: 20px;
         }
-        
+    </style>
+</head>
+<body>
+    <div class="center-box">
+        <h2>Schedule Meetup</h2>
+
         {% if error %}
             <p style="color: red;">{{ error }}</p>
         {% endif %}
@@ -67,11 +72,6 @@
         </div>
         {% endif %}
 
-    </style>
-</head>
-<body>
-    <div class="center-box">
-        <h2>Schedule Meetup</h2>
         <form method="POST">
             <label for="date">Date:</label><br>
             <input type="date" name="date" required><br>
