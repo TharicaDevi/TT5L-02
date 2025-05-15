@@ -10,6 +10,7 @@
             margin: 0;
             padding: 0;
         }
+
         .center-box {
             width: 400px;
             margin: 80px auto;
@@ -30,9 +31,11 @@
             border: 1px solid #ccc;
             border-radius: 6px;
         }
+
         textarea {
             resize: vertical;
         }
+
         button {
             padding: 10px 20px;
             background-color: #28a745;
@@ -41,11 +44,25 @@
             border-radius: 6px;
             cursor: pointer;
         }
+
         button:hover {
             background-color: #218838;
         }
+
         h2 {
             margin-bottom: 20px;
+        }
+
+        .message {
+            margin-top: 20px;
+        }
+
+        .message p {
+            margin: 5px 0;
+        }
+
+        .message h3 {
+            color: green;
         }
     </style>
 </head>
@@ -70,13 +87,13 @@
         {% endif %}
 
         {% if success %}
-            <div style="border: 1px solid #4CAF50; padding: 15px; margin-top: 20px; background-color: #e8f5e9;">
-                <h3 style="color: green;">{{ success }}</h3>
-                <p><strong>Approved By:</strong> {{ meeting_info.by }}</p>
-                <p><strong>Date:</strong> {{ meeting_info.date }}</p>
-                <p><strong>Time:</strong> {{ meeting_info.time }}</p>
-                <p><strong>Notes:</strong> {{ meeting_info.notes }}</p>
-            </div>
+        <div class="message" style="border: 1px solid #4CAF50; background-color: #e8f5e9; padding: 15px; margin-top: 20px;">
+            <h3>{{ success }}</h3>
+            <p><strong>Approved By:</strong> {{ meeting_info.by }}</p>
+            <p><strong>Date:</strong> {{ meeting_info.date }}</p>
+            <p><strong>Time:</strong> {{ meeting_info.time }}</p>
+            <p><strong>Notes:</strong> {{ meeting_info.notes }}</p>
+        </div>
         {% endif %}
     </div>
 </body>
