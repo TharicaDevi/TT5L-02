@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for, session
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session, flash
 from werkzeug.utils import secure_filename
 import database, os
 
@@ -154,13 +154,24 @@ def contact():
 # privacy settings route
 @app.route("/privacy", methods=["GET", "POST"])
 def privacy():
+    username = session.get('username')
+
     if request.method == 'POST':
-        username = session.get('username')
-        visibility = request.form.get('visibility')
-        activity_status = request.form.get('activity-status')
-        database.update_privacy_settings(username, visibility, activity_status)
-        return redirect(url_for('privacy')) 
-    return render_template("privacy.html")
+        if 'delete' in request.form:
+            # delete account logic
+            database.delete_account(username)
+            session.pop('username', None)
+            return redirect(url_for('login'))
+
+        elif 'save' in request.form:
+            # save privacy settings
+            visibility = request.form.get('visibility')
+            activity_status = request.form.get('activity-status')
+            database.update_privacy_settings(username, visibility, activity_status)
+            return redirect(url_for('privacy'))
+
+    user = database.get_user_by_username(username)
+    return render_template("privacy.html", user=user)
 
 # security settings route
 @app.route("/security", methods=["GET", "POST"])
@@ -174,6 +185,15 @@ def security():
             database.update_security_settings(username, question, answer)
             return render_template("security.html", message="Security settings updated!")
     return render_template("security.html")
+
+# delete account route
+@app.route("/delete_account", methods=["POST"])
+def delete_account():
+    username = session.get('username')
+    database.delete_account(username)
+    session.pop('username', None)
+    flash("Your account has been deleted.")
+    return redirect(url_for('login'))
 
 if __name__ == "__main__":
     database.init_db()

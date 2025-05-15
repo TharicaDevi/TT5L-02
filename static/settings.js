@@ -59,6 +59,28 @@ function toggleContactEdit() {
     form.classList.toggle('readonly');
 }
 
+// Toggle edit for privacy form
+function togglePrivacyEdit() {
+    const form = document.getElementById('privacy-form');
+    const isReadonly = form.classList.contains('readonly');
+    const selects = form.querySelectorAll('select');
+    const saveBtn = form.querySelector('.btn');
+
+    selects.forEach(select => {
+        select.disabled = isReadonly
+        select.style.backgroundColor = isReadonly ? 'white' : 'transparent';
+        select.style.border = isReadonly ? '1px solid #ccc' : 'none';
+    });
+
+    saveBtn.style.display = isReadonly ? 'inline-block' : 'none';
+    form.classList.toggle('readonly');
+}
+
+// Delete account confirmation
+function confirmDelete() {
+  return confirm("Are you sure you want to permanently delete your account?");
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     // For account form
     const accountMessage = document.querySelector("#account-form + p"); // or a more specific selector
@@ -109,4 +131,18 @@ document.addEventListener("DOMContentLoaded", () => {
         saveBtn.style.display = 'none';
         contactForm.classList.add("readonly");
     }
+
+    // For privacy form
+    const privacyForm = document.getElementById("privacy-form");
+    const selects = privacyForm.querySelectorAll("select");
+    const saveBtn = privacyForm.querySelector(".btn");
+
+    selects.forEach(select => {
+        select.disabled = true;
+        select.style.backgroundColor = 'transparent';
+        select.style.border = 'none';
+    });
+
+    saveBtn.style.display = 'none';
+    privacyForm.classList.add("readonly");
 });

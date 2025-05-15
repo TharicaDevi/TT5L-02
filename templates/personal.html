@@ -31,7 +31,7 @@
             {% if user and user[11] %}
               <img src="{{ url_for('static', filename=user[11]) }}" alt="Profile Picture" width="150" height="150">
               <img src="{{ url_for('static', filename=user[11] if user and user[11] else 'default.jpg') }}" alt="Profile Picture" width="150" height="150">
-              {% endif %}
+            {% endif %}
             <input type="file" id="profile-pic" name="profile-pic" accept="image/*" disabled/>
           </div>
 
