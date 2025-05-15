@@ -1,11 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Pawfect Home - Home</title>
-</head>
-<body>
-    <body style="font-family: Arial, sans-serif;">
+    <head>
+        <meta charset="UTF-8">
+        <title>Pawfect Home - Home</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background: linear-gradient(to right, #f8f9fa, #e0f7fa);
+                margin: 0;
+                padding: 20px;
+            }
+    
+            h1 {
+                text-align: center;
+                color: #2e3c40;
+            }
+    
+            form {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                margin-bottom: 30px;
+            }
+    
+            input, button {
+                padding: 8px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+            }
+    
+            button {
+                background-color: #007BFF;
+                color: white;
+                border: none;
+                cursor: pointer;
+            }
+    
+            button:hover {
+                background-color: #0056b3;
+            }
+    
+            .pet-card {
+                background-color: white;
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                padding: 15px;
+                margin: 0 auto 20px;
+                width: 300px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            }
+    
+            .pet-card img {
+                width: 100%;
+                border-radius: 8px;
+            }
+    
+            .pet-card p {
+                margin: 8px 0;
+            }
+    
+            .pet-card a {
+                color: #6f42c1;
+                text-decoration: none;
+            }
+    
+            .pet-card a:hover {
+                text-decoration: underline;
+            }
+    
+            .pets-container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+            }
+        </style>
+    </head>
+    <body>
         <h1>Browse Pets</h1>
     
         <form method="get" action="/">
@@ -18,21 +89,21 @@
             <button type="submit">Filter</button>
         </form>
     
-        <hr>
-    
-        {% if pets %}
-            {% for pet in pets %}
-                <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; width: 300px;">
-                    <img src="{{ url_for('static', filename='images/' + pet[1]) }}" alt="Pet Image" width="150">
-                    <p><strong>Type:</strong> {{ pet[2] }}</p>
-                    <p><strong>Color:</strong> {{ pet[3] }}</p>
-                    <p><strong>Breed:</strong> {{ pet[4] }}</p>
-                    <p><strong>Age:</strong> {{ pet[5] }}</p>
-                    <a href="{{ url_for('pet_profile', pet_id=pet[0]) }}">View Profile</a>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>No pets found.</p>
-        {% endif %}
+        <div class="pets-container">
+            {% if pets %}
+                {% for pet in pets %}
+                    <div class="pet-card">
+                        <img src="{{ url_for('static', filename='images/' + pet[1]) }}" alt="Pet Image">
+                        <p><strong>Type:</strong> {{ pet[2] }}</p>
+                        <p><strong>Color:</strong> {{ pet[3] }}</p>
+                        <p><strong>Breed:</strong> {{ pet[4] }}</p>
+                        <p><strong>Age:</strong> {{ pet[5] }}</p>
+                        <a href="{{ url_for('pet_profile', pet_id=pet[0]) }}">View Profile</a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No pets found.</p>
+            {% endif %}
+        </div>
     </body>
     
