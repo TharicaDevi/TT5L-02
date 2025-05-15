@@ -58,6 +58,7 @@ def schedule(application_id):
 
     error = None
     success = None
+    meeting_info = None
 
     if request.method == 'POST':
         date_str = request.form['date']
@@ -69,19 +70,21 @@ def schedule(application_id):
             tomorrow = datetime.today().date() + timedelta(days=1)
 
             if chosen_date < tomorrow:
-                error = "You cannot schedule a meeting for today or a past date."
+                error = "❌ You cannot schedule a meeting for today or a past date."
             else:
                 meetings[application_id] = {
                     'date': date_str,
                     'time': time,
-                    'notes': notes
+                    'notes': notes,
+                    'approved': True,  # Simulate auto-approval
+                    'by': application_id
                 }
-                success = "Meeting successfully scheduled!"
+                success = "✅ Your meeting has been approved!"
+                meeting_info = meetings[application_id]
         except ValueError:
-            error = "Invalid date format."
+            error = "❌ Invalid date format."
 
-    return render_template('schedule.html', application_id=application_id, error=error, success=success)
-
+    return render_template('schedule.html', application_id=application_id, error=error, success=success, meeting_info=meeting_info)
 
 if __name__ == '__main__':
     app.run(debug=True)
