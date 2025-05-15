@@ -7,6 +7,7 @@
     <title>account information</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='settings.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="{{ url_for('static', filename='settings.js') }}"></script>
   </head>
 
   <body>
@@ -23,7 +24,7 @@
     <main class="main-wrapper">    
       <div class="wrapper">
         <h2>ACCOUNT INFORMATION</h2>
-        <button class="edit-btn" onclick="toggleEdit()">✏️</button>
+        <button class="edit-btn" onclick="toggleAccountEdit()">✏️</button>
 
         <form id="account-form" class="form-scroll readonly" method="POST">
 
@@ -60,50 +61,7 @@
       </div>
     </main>
 
-    <script>
-      function toggleEdit() {
-        const form = document.getElementById('account-form');
-        const inputs = form.querySelectorAll('input');
-
-        // Toggle form class
-        form.classList.toggle('readonly');
-
-        // If form is in readonly mode, set inputs to readonly
-        const isReadonly = form.classList.contains('readonly');
-
-        inputs.forEach(input => {
-          // Username stays readonly
-          if (input.name !== 'username') {
-            input.readOnly = isReadonly;
-            input.style.backgroundColor = isReadonly ? 'transparent' : 'white';
-            input.style.border = isReadonly ? 'none' : '1px solid #ccc';
-          }
-        });
-
-        // Toggle the save button visibility
-        const saveBtn = form.querySelector('.btn');
-        saveBtn.style.display = isReadonly ? 'none' : 'inline-block';
-      }
-
-      // Ensure form is in readonly mode after save
-      {% if message %}
-      document.addEventListener("DOMContentLoaded", () => {
-        const form = document.getElementById("account-form");
-        const inputs = form.querySelectorAll("input");
-
-        inputs.forEach(input => {
-          input.readOnly = true;
-          input.style.backgroundColor = 'transparent';
-          input.style.border = 'none';
-        });
-
-        form.classList.add("readonly");
-        const saveBtn = form.querySelector('.btn');
-        saveBtn.style.display = 'none';
-      });
-
-      {% endif %}
-    </script>
+    <script src="{{ url_for('static', filename='settings.js') }}"></script>
 
   </body>
 </html>

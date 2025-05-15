@@ -1,4 +1,25 @@
-function toggleEdit() {
+// Toggle edit for account form
+function toggleAccountEdit() {
+    const form = document.getElementById('account-form');
+    const isReadonly = form.classList.contains('readonly');
+    const inputs = form.querySelectorAll('input');
+
+    inputs.forEach(input => {
+        if (input.name !== 'username') {
+            input.readOnly = isReadonly ? false : true;
+            input.style.backgroundColor = isReadonly ? 'white' : 'transparent';
+            input.style.border = isReadonly ? '1px solid #ccc' : 'none';
+        }
+    });
+
+    const saveBtn = form.querySelector('.btn');
+    saveBtn.style.display = isReadonly ? 'inline-block' : 'none';
+
+    form.classList.toggle('readonly');
+}
+
+// Toggle edit for personal form
+function togglePersonalEdit() {
     const form = document.getElementById('personal-form');
     const isReadonly = form.classList.contains('readonly');
     const inputs = form.querySelectorAll('input, textarea, select');
@@ -20,27 +41,40 @@ function toggleEdit() {
     saveBtn.style.display = isReadonly ? 'inline-block' : 'none';
     form.classList.toggle('readonly');
 }
-document.addEventListener("DOMContentLoaded", () => {
-    const message = document.querySelector("p");
-    const form = document.getElementById("personal-form");
-    const inputs = form.querySelectorAll("input, textarea, select");
-    const saveBtn = form.querySelector('.btn');
 
-    if (message && !form.classList.contains("readonly")) {
+document.addEventListener("DOMContentLoaded", () => {
+    // For account form
+    const accountMessage = document.querySelector("#account-form + p"); // or a more specific selector
+    if (accountMessage) {
+        const form = document.getElementById("account-form");
+        const inputs = form.querySelectorAll("input");
+        inputs.forEach(input => {
+            input.readOnly = true;
+            input.style.backgroundColor = 'transparent';
+            input.style.border = 'none';
+        });
+        form.classList.add("readonly");
+        const saveBtn = form.querySelector('.btn');
+        saveBtn.style.display = 'none';
+    }
+
+    // For personal form
+    const personalMessage = document.querySelector("#personal-form + p"); // adjust if needed
+    const personalForm = document.getElementById("personal-form");
+    if (personalMessage && personalForm && !personalForm.classList.contains("readonly")) {
+        const inputs = personalForm.querySelectorAll("input, textarea, select");
         inputs.forEach(el => {
             if (el.id !== 'profile-pic') {
                 el.readOnly = true;
             }
-
             if (el.tagName === 'SELECT' || el.id === 'profile-pic') {
                 el.disabled = true;
             }
-
             el.style.backgroundColor = 'transparent';
             el.style.border = 'none';
         });
-
+        const saveBtn = personalForm.querySelector('.btn');
         saveBtn.style.display = 'none';
-        form.classList.add("readonly");
+        personalForm.classList.add("readonly");
     }
 });
