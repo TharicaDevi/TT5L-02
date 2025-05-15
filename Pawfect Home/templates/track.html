@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Track My Adoptions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>My Adoption Applications</h2>
+
+        {% if adoptions %}
+            <table>
+                <tr>
+                    <th>Pet</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                {% for app in adoptions %}
+                <tr>
+                    <td>{{ app.pet_name }}</td>
+                    <td>{{ app.status }}</td>
+                    <td>
+                        {% if app.status == 'approved' %}
+                            <form action="{{ url_for('finalize', adoption_id=app.adoption_id) }}" method="post">
+                                <button type="submit">Finalize</button>
+                            </form>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>You don't have any adoption applications yet.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
