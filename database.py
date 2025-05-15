@@ -112,6 +112,14 @@ def update_personal_info(username, fullname, dob, gender, nationality, language,
     conn.commit()
     conn.close()
 
+def get_personal_info(username):
+    conn = sqlite3.connect("info.db")
+    c = conn.cursor()
+    c.execute("SELECT fullname, dob, gender, nationality, language, bio, profile_pic FROM users WHERE username = ?", (username,))
+    row = c.fetchone()
+    conn.close()
+    return row
+
 # save contact information
 def update_contact_info(username, primary_address, shipping_address):
     conn = sqlite3.connect("info.db")

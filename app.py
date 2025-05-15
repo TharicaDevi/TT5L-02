@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
+from werkzeug.utils import secure_filename
 import database, os
 
 app = Flask(__name__)
@@ -102,9 +103,9 @@ def account():
 # personal info route
 @app.route("/personal", methods=["GET", "POST"])
 def personal():
-
     username = session.get("username")
     user = database.get_user_by_username(username)
+    message = ""
 
     if request.method == "POST":
         fullname = request.form.get("fullname")
@@ -115,14 +116,21 @@ def personal():
         bio = request.form.get("bio")
 
         profile_pic_file = request.files.get("profile-pic")
-        profile_pic_path = user[9] if user else None
+        profile_pic_path = user[11] if user and len(user) > 11 else None
 
         if profile_pic_file and profile_pic_file.filename != "":
-            profile_pic_path = os.path.join(app.config['UPLOAD_FOLDER'], profile_pic_file.filename)
-            profile_pic_file.save(profile_pic_path)
+            filename = secure_filename(profile_pic_file.filename)
+            profile_pic_path = os.path.join('profile_pics', filename)
+            full_save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            profile_pic_file.save(full_save_path)
 
+        # Call update_personal_info always, with updated profile_pic_path (new or old)
         database.update_personal_info(username, fullname, dob, gender, nationality, language, bio, profile_pic_path)
-    return render_template("personal.html", user=user)
+        message = "Changes saved successfully!"
+
+    # Fetch latest personal info (for both GET and after POST)
+    personal_info = database.get_personal_info(username)
+    return render_template("personal.html", user=user, personal_info=personal_info, message=message)
 
 # contact info route
 @app.route("/contact", methods=["GET", "POST"])
