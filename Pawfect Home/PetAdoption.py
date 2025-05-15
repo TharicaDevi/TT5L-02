@@ -45,5 +45,20 @@ def finalize():
     else:
         message = "Cannot finalize adoption. Not found or not approved."
 
+
+@app.route('/schedule/<int:adoption_id>', methods=['GET', 'POST'])
+def schedule(adoption_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        date = request.form['date']
+        time = request.form['time']
+        notes = request.form['notes']
+        schedule_meeting(session['user_id'], date, time, notes)
+        return redirect(url_for('track'))
+
+    return render_template('schedule.html', adoption_id=adoption_id)
+
 if __name__ == '__main__':
     app.run(debug=True)
