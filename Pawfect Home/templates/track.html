@@ -1,44 +1,136 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Track My Adoptions</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Your Adoption Applications & Meetings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        table {
+            border-collapse: collapse;
+            width: 90%;
+            max-width: 900px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .approved {
+            color: green;
+            font-weight: bold;
+        }
+        .pending {
+            color: orange;
+            font-weight: bold;
+        }
+        .rejected {
+            color: red;
+            font-weight: bold;
+        }
+        .finalized {
+            background-color: #d4edda;
+            color: #155724;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .no-data {
+            color: #666;
+            font-style: italic;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h2>My Adoption Applications</h2>
+    <h2>Your Adoption Applications</h2>
+    {% if applications %}
+    <table>
+        <thead>
+            <tr>
+                <th>Application ID</th>
+                <th>Pet Name</th>
+                <th>Status</th>
+                <th>Finalized</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app_id, app in applications.items() %}
+            <tr>
+                <td>{{ app_id }}</td>
+                <td>{{ app.pet }}</td>
+                <td class="{% if app.status == 'Approved' %}approved{% elif app.status == 'Pending' %}pending{% else %}rejected{% endif %}">
+                    {{ app.status }}
+                </td>
+                <td>
+                    {% if app.finalized %}
+                        <span class="finalized">Yes</span>
+                    {% else %}
+                        No
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="no-data">You have no adoption applications.</p>
+    {% endif %}
 
-        {% if adoptions %}
-            <table>
-                <tr>
-                    <th>Pet</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-                {% for app in adoptions %}
-                <tr>
-                    <td>{{ app.pet_name }}</td>
-                    <td>{{ app.status }}</td>
-                    <td>
-                        {% if app.status == 'approved' %}
-                            <form action="{{ url_for('finalize', adoption_id=app.adoption_id) }}" method="post">
-                                <button type="submit">Finalize</button>
-                            </form>
-                        {% if app.status == 'finalized' %}
-                             <a href="{{ url_for('schedule', adoption_id=app.adoption_id) }}">
-                             <button type="button">Schedule Meetup</button>
-                             </a>
-                            {% endif %}
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </table>
-        {% else %}
-            <p>You don't have any adoption applications yet.</p>
-        {% endif %}
-    </div>
+    <h2>Your Scheduled Meetups</h2>
+    {% if meetings %}
+    <table>
+        <thead>
+            <tr>
+                <th>Application ID</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Notes</th>
+                <th>Approved By User ID</th>
+                <th>Approval Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app_id, meeting in meetings.items() %}
+            <tr>
+                <td>{{ app_id }}</td>
+                <td>{{ meeting.date }}</td>
+                <td>{{ meeting.time }}</td>
+                <td>{{ meeting.notes or '-' }}</td>
+                <td>{{ meeting.by_user }}</td>
+                <td>
+                    {% if meeting.approved %}
+                        <span class="approved">Approved</span>
+                    {% else %}
+                        <span class="pending">Pending</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="no-data">You have no scheduled meetups.</p>
+    {% endif %}
 </body>
 </html>
