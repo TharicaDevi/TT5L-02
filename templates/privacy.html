@@ -29,16 +29,16 @@
           <div class="input-box">
             <label for="visibility">Profile Visibility</label>
             <select id="visibility" name="visibility" disabled>
-              <option value="public" {% if user[14] == 'public' %}selected{% endif %}>Public</option>
-              <option value="private" {% if user[14] == 'private' %}selected{% endif %}>Private</option>
-            </select>
+              <option value="public" {% if privacy and privacy[0] == 'public' %}selected{% endif %}>Public</option>
+              <option value="private" {% if privacy and privacy[0] == 'private' %}selected{% endif %}>Private</option>
+            </select>          
           </div>
 
           <div class="input-box">
             <label for="activity-status">Show Activity Status</label>
-            <select id="activity-status" name="activity-status" disabled>
-              <option value="show" {% if user[15] == 'show' %}selected{% endif %}>Show</option>
-              <option value="hide" {% if user[15] == 'hide' %}selected{% endif %}>Hide</option>
+            <select id="activity-status" name="activity-status"  aria-label="Show or Hide Activity Status" disabled>
+              <option value="show" {% if privacy and privacy[1] == 'show' %}selected{% endif %}>Show</option>
+              <option value="hide" {% if privacy and privacy[1] == 'hide' %}selected{% endif %}>Hide</option>
             </select>
           </div>
 

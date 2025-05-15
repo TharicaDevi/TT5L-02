@@ -61,19 +61,16 @@ function toggleContactEdit() {
 
 // Toggle edit for privacy form
 function togglePrivacyEdit() {
-    const form = document.getElementById('privacy-form');
-    const isReadonly = form.classList.contains('readonly');
-    const selects = form.querySelectorAll('select');
-    const saveBtn = form.querySelector('.btn');
+  const form = document.getElementById('privacy-form');
+  const selects = form.querySelectorAll('select');
 
-    selects.forEach(select => {
-        select.disabled = isReadonly
-        select.style.backgroundColor = isReadonly ? 'white' : 'transparent';
-        select.style.border = isReadonly ? '1px solid #ccc' : 'none';
-    });
-
-    saveBtn.style.display = isReadonly ? 'inline-block' : 'none';
-    form.classList.toggle('readonly');
+  if (form.classList.contains('readonly')) {
+    form.classList.remove('readonly');
+    selects.forEach(select => select.disabled = false);
+  } else {
+    form.classList.add('readonly');
+    selects.forEach(select => select.disabled = true);
+  }
 }
 
 // Toggle edit for security form

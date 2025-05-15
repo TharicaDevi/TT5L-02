@@ -144,6 +144,14 @@ def update_privacy_settings(username, visibility, activity_status):
     conn.commit()
     conn.close()
 
+def get_privacy_settings(username):
+    conn = sqlite3.connect("info.db")
+    c = conn.cursor()
+    c.execute("SELECT visibility, activity_status FROM users WHERE username = ?", (username,))
+    result = c.fetchone()
+    conn.close()
+    return result
+
 # save security question & answer
 def update_security_settings(username, question, answer):
     conn = sqlite3.connect("info.db")

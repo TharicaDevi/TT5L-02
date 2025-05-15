@@ -154,24 +154,29 @@ def contact():
 # privacy settings route
 @app.route("/privacy", methods=["GET", "POST"])
 def privacy():
-    username = session.get('username')
+    username = session.get("username")
+    if not username:
+        return redirect(url_for("login"))  # Or your landing page
 
-    if request.method == 'POST':
-        if 'delete' in request.form:
-            # delete account logic
+    if request.method == "POST":
+        if "delete" in request.form:
+            # account deletion
             database.delete_account(username)
-            session.pop('username', None)
-            return redirect(url_for('login'))
+            session.pop("username", None)
+            return redirect(url_for("login"))
+        # update privacy settings
+        visibility = request.form.get("visibility")
+        activity_status = request.form.get("activity-status")
 
-        elif 'save' in request.form:
-            # save privacy settings
-            visibility = request.form.get('visibility')
-            activity_status = request.form.get('activity-status')
+        if visibility and activity_status:
             database.update_privacy_settings(username, visibility, activity_status)
-            return redirect(url_for('privacy'))
+            message = "Privacy settings updated!"
+            privacy_settings = database.get_privacy_settings(username)
+            return render_template("privacy.html", privacy=privacy_settings, message=message)
 
-    user = database.get_user_by_username(username)
-    return render_template("privacy.html", user=user)
+    # GET request
+    privacy_settings = database.get_privacy_settings(username)
+    return render_template("privacy.html", privacy=privacy_settings)
 
 # security settings route
 @app.route("/security", methods=["GET", "POST"])
