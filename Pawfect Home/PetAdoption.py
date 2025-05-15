@@ -70,7 +70,7 @@ def schedule(application_id):
             tomorrow = datetime.today().date() + timedelta(days=1)
 
             if chosen_date < tomorrow:
-                error = "❌ You cannot schedule a meeting for today or a past date."
+                error = "You cannot schedule a meeting for today or a past date."
             else:
                 meetings[application_id] = {
                     'date': date_str,
@@ -79,10 +79,10 @@ def schedule(application_id):
                     'approved': True,  # Simulate auto-approval
                     'by': application_id
                 }
-                success = "✅ Your meeting has been approved!"
+                success = "Your meeting has been approved!"
                 meeting_info = meetings[application_id]
         except ValueError:
-            error = "❌ Invalid date format."
+            error = "Invalid date format."
 
     return render_template('schedule.html', application_id=application_id, error=error, success=success, meeting_info=meeting_info)
 
