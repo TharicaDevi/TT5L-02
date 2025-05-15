@@ -57,6 +57,13 @@
             <p style="color: red;">{{ error }}</p>
         {% endif %}
 
+        {% if success %}
+            <p>📅 Date: {{ request.form['date'] }}</p>
+            <p>⏰ Time: {{ request.form['time'] }}</p>
+            <p>📝 Notes: {{ request.form['notes'] }}</p>
+        </div>
+        {% endif %}
+
     </style>
 </head>
 <body>
