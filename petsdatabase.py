@@ -102,14 +102,12 @@ def filter_pets(breed=None, age=None):
     c = conn.cursor()
     query = "SELECT * FROM pets WHERE status = 'available'"
     params = []
-
     if breed:
         query += " AND breed = ?"
         params.append(breed)
     if age:
         query += " AND age = ?"
         params.append(int(age))
-
     c.execute(query, params)
     pets = c.fetchall()
     conn.close()
