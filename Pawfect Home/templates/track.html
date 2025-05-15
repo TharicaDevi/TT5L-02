@@ -24,6 +24,11 @@
                             <form action="{{ url_for('finalize', adoption_id=app.adoption_id) }}" method="post">
                                 <button type="submit">Finalize</button>
                             </form>
+                        {% if app.status == 'finalized' %}
+                             <a href="{{ url_for('schedule', adoption_id=app.adoption_id) }}">
+                             <button type="button">Schedule Meetup</button>
+                             </a>
+                            {% endif %}
                         {% else %}
                             -
                         {% endif %}
