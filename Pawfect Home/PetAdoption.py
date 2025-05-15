@@ -67,10 +67,10 @@ def schedule(application_id):
 
         try:
             chosen_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-            tomorrow = datetime.today().date() + timedelta(days=1)
+            today = datetime.today().date()
 
-            if chosen_date < tomorrow:
-                error = "You cannot schedule a meeting for today or a past date."
+            if chosen_date < today:
+                error = "You cannot schedule a meeting for a past date."
             else:
                 meetings[application_id] = {
                     'date': date_str,
