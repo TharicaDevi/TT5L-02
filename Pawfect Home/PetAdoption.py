@@ -44,6 +44,7 @@ def finalize():
     if app_data and app_data["status"] == "Approved":
         if not app_data['finalized']:
             app_data['finalized'] = True
+            session['application_id'] = app_id 
             return redirect(url_for('schedule', application_id=app_id))
         else:
             return f"Adoption already finalized for {app_data['pet']}."
@@ -52,10 +53,12 @@ def finalize():
 
 @app.route('/schedule/<application_id>', methods=['GET', 'POST'])
 def schedule(application_id):
-    if application_id not in session:
-        return redirect(url_for('login'))
+    if 'application_id' not in session or session['application_id'] != application_id:
+        return redirect(url_for('index'))
 
     error = None
+    success = None
+
     if request.method == 'POST':
         date_str = request.form['date']
         time = request.form['time']
@@ -68,12 +71,16 @@ def schedule(application_id):
             if chosen_date < tomorrow:
                 error = "You cannot schedule a meeting for today or a past date."
             else:
-                schedule_meeting(session['user_id'], date_str, time, notes)
-                return redirect(url_for('track')) 
+                meetings[application_id] = {
+                    'date': date_str,
+                    'time': time,
+                    'notes': notes
+                }
+                success = "Meeting successfully scheduled!"
         except ValueError:
             error = "Invalid date format."
 
-    return render_template('schedule.html', application_id=application_id, error=error)
+    return render_template('schedule.html', application_id=application_id, error=error, success=success)
 
 
 if __name__ == '__main__':
