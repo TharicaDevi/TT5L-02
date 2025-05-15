@@ -137,7 +137,7 @@ def personal():
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
     username = session.get('username')
-    message = None
+    message = ""
 
     if request.method == 'POST':
         primary = request.form['primary-address']
