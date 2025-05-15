@@ -1,54 +1,54 @@
 import sqlite3
 
-# Initialize all tables
+# Initialize the database and all required tables
 def init_db():
     conn = sqlite3.connect("tasks.db")
     c = conn.cursor()
 
-    # USERS table
+    # Users table
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            phone TEXT,
+            email TEXT,
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
-            email TEXT NOT NULL,
-            phone TEXT NOT NULL,
-            status TEXT NOT NULL
+            status TEXT
         )
     """)
 
-    # PETS table
+    # Pets table
     c.execute("""
         CREATE TABLE IF NOT EXISTS pets (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             picture TEXT,
-            type TEXT NOT NULL,
-            color TEXT NOT NULL,
-            breed TEXT NOT NULL,
-            age INTEGER NOT NULL,
-            status TEXT NOT NULL
+            type TEXT,
+            color TEXT,
+            breed TEXT,
+            age INTEGER,
+            status TEXT
         )
     """)
 
-    # ADOPTIONS table
+    # Adoptions table
     c.execute("""
         CREATE TABLE IF NOT EXISTS adoptions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            pet_id INTEGER NOT NULL,
-            status TEXT NOT NULL,
+            user_id INTEGER,
+            pet_id INTEGER,
+            status TEXT,
             FOREIGN KEY (user_id) REFERENCES users(id),
             FOREIGN KEY (pet_id) REFERENCES pets(id)
         )
     """)
 
-    # MEETINGS table
+    # Meetings table
     c.execute("""
         CREATE TABLE IF NOT EXISTS meetings (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            date TEXT NOT NULL,
-            time TEXT NOT NULL,
+            user_id INTEGER,
+            date TEXT,
+            time TEXT,
             notes TEXT,
             FOREIGN KEY (user_id) REFERENCES users(id)
         )
@@ -57,69 +57,92 @@ def init_db():
     conn.commit()
     conn.close()
 
-# Add a new user
-def add_user(username, password, email, phone, status):
+def add_user(phone, email, username, password, status="active"):
     conn = sqlite3.connect("tasks.db")
     c = conn.cursor()
-    c.execute("""
-        INSERT INTO users (username, password, email, phone, status)
-        VALUES (?, ?, ?, ?, ?)
-    """, (username, password, email, phone, status))
+    c.execute("INSERT INTO users (phone, email, username, password, status) VALUES (?, ?, ?, ?, ?)",
+              (phone, email, username, password, status))
     conn.commit()
     conn.close()
 
-# Add a new pet
-def add_pet(picture, type_, color, breed, age, status):
+def get_user_by_credentials(username, password):
     conn = sqlite3.connect("tasks.db")
     c = conn.cursor()
-    c.execute("""
-        INSERT INTO pets (picture, type, color, breed, age, status)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (picture, type_, color, breed, age, status))
+    c.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
+    user = c.fetchone()
+    conn.close()
+    return user
+
+def add_pet(picture, type_, color, breed, age, status="available"):
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    c.execute("INSERT INTO pets (picture, type, color, breed, age, status) VALUES (?, ?, ?, ?, ?, ?)",
+              (picture, type_, color, breed, age, status))
     conn.commit()
     conn.close()
 
-# Add a new adoption request
-def add_adoption(user_id, pet_id, status):
-    conn = sqlite3.connect("tasks.db")
-    c = conn.cursor()
-    c.execute("""
-        INSERT INTO adoptions (user_id, pet_id, status)
-        VALUES (?, ?, ?)
-    """, (user_id, pet_id, status))
-    conn.commit()
-    conn.close()
-
-# Schedule a new meeting
-def schedule_meeting(user_id, date, time, notes):
-    conn = sqlite3.connect("tasks.db")
-    c = conn.cursor()
-    c.execute("""
-        INSERT INTO meetings (user_id, date, time, notes)
-        VALUES (?, ?, ?, ?)
-    """, (user_id, date, time, notes))
-    conn.commit()
-    conn.close()
-
-# Get all pets
 def get_all_pets():
     conn = sqlite3.connect("tasks.db")
     c = conn.cursor()
-    c.execute("SELECT * FROM pets")
+    c.execute("SELECT * FROM pets WHERE status = 'available'")
     pets = c.fetchall()
     conn.close()
     return pets
 
-# Get all adoptions with user and pet details
-def get_adoptions():
+def get_pet_by_id(pet_id):
     conn = sqlite3.connect("tasks.db")
     c = conn.cursor()
-    c.execute("""
-        SELECT adoptions.id, users.username, pets.type, adoptions.status
-        FROM adoptions
-        JOIN users ON adoptions.user_id = users.id
-        JOIN pets ON adoptions.pet_id = pets.id
-    """)
-    records = c.fetchall()
+    c.execute("SELECT * FROM pets WHERE id = ?", (pet_id,))
+    pet = c.fetchone()
     conn.close()
-    return records
+    return pet
+
+def filter_pets(breed=None, age=None):
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    query = "SELECT * FROM pets WHERE status = 'available'"
+    params = []
+
+    if breed:
+        query += " AND breed = ?"
+        params.append(breed)
+    if age:
+        query += " AND age = ?"
+        params.append(int(age))
+
+    c.execute(query, params)
+    pets = c.fetchall()
+    conn.close()
+    return pets
+
+def add_adoption(user_id, pet_id, status="pending"):
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    c.execute("INSERT INTO adoptions (user_id, pet_id, status) VALUES (?, ?, ?)",
+              (user_id, pet_id, status))
+    conn.commit()
+    conn.close()
+
+def get_adoption_status(user_id):
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    c.execute("SELECT * FROM adoptions WHERE user_id = ?", (user_id,))
+    adoptions = c.fetchall()
+    conn.close()
+    return adoptions
+
+def schedule_meeting(user_id, date, time, notes):
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    c.execute("INSERT INTO meetings (user_id, date, time, notes) VALUES (?, ?, ?, ?)",
+              (user_id, date, time, notes))
+    conn.commit()
+    conn.close()
+
+def get_meetings_by_user(user_id):
+    conn = sqlite3.connect("tasks.db")
+    c = conn.cursor()
+    c.execute("SELECT * FROM meetings WHERE user_id = ?", (user_id,))
+    meetings = c.fetchall()
+    conn.close()
+    return meetings
