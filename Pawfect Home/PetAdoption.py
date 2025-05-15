@@ -5,9 +5,9 @@ app = Flask(__name__)
 app.secret_key = 'secret'
 
 applications = {
-    'APP123': {'status': 'Approved', 'pet': 'Buddy', 'finalized': False},
-    'APP124': {'status': 'Pending', 'pet': 'Milo', 'finalized': False},
-    'APP125': {'status': 'Rejected', 'pet': 'Luna', 'finalized': False}
+    'APP123': {'status': 'Approved', 'pet': 'Buddy', 'finalized': True, 'review': None},
+    'APP124': {'status': 'Pending', 'pet': 'Milo', 'finalized': False, 'review': None},
+    'APP125': {'status': 'Rejected', 'pet': 'Luna', 'finalized': False, 'review': None}
 }
 
 meetings = {}
@@ -43,7 +43,7 @@ def finalize():
     if app_data and app_data["status"] == "Approved":
         if not app_data['finalized']:
             app_data['finalized'] = True
-            session['application_id'] = app_id 
+            session['application_id'] = app_id
             return redirect(url_for('schedule', application_id=app_id))
         else:
             return f"Adoption already finalized for {app_data['pet']}."
@@ -70,9 +70,8 @@ def schedule(application_id):
             if chosen_date < today:
                 error = "You cannot schedule a meeting for a past date."
             else:
-                formatted_date = chosen_date.strftime('%d-%m-%Y')
                 meetings[application_id] = {
-                    'date': formatted_date,
+                    'date': chosen_date.strftime('%d/%m/%Y'),
                     'time': time,
                     'notes': notes,
                     'approved': True,
@@ -84,6 +83,40 @@ def schedule(application_id):
             error = "Invalid date format."
 
     return render_template('schedule.html', application_id=application_id, error=error, success=success, meeting_info=meeting_info)
+
+@app.route('/track')
+def track():
+    all_data = []
+    for app_id, data in applications.items():
+        pet = data.get('pet')
+        status = data.get('status')
+        finalized = data.get('finalized')
+        review = data.get('review')
+        meetup = meetings.get(app_id)
+
+        all_data.append({
+            'app_id': app_id,
+            'pet': pet,
+            'status': status,
+            'finalized': finalized,
+            'review': review,
+            'meetup': meetup
+        })
+
+    return render_template('track.html', applications=all_data)
+
+@app.route('/submit_review', methods=['POST'])
+def submit_review():
+    app_id = request.form['application_id']
+    feedback = request.form['feedback']
+
+    if app_id in applications and applications[app_id]['finalized']:
+        applications[app_id]['review'] = {
+            'by': app_id,
+            'feedback': feedback
+        }
+
+    return redirect(url_for('track'))
 
 if __name__ == '__main__':
     app.run(debug=True)
