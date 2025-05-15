@@ -58,9 +58,12 @@
         {% endif %}
 
         {% if success %}
-            <p>📅 Date: {{ request.form['date'] }}</p>
-            <p>⏰ Time: {{ request.form['time'] }}</p>
-            <p>📝 Notes: {{ request.form['notes'] }}</p>
+        <div style="border: 1px solid #4CAF50; padding: 15px; margin-top: 20px; background-color: #e8f5e9;">
+            <h3 style="color: green;">{{ success }}</h3>
+            <p><strong>Approved By:</strong> {{ meeting_info.by }}</p>
+            <p><strong>Date:</strong> {{ meeting_info.date }}</p>
+            <p><strong>Time:</strong> {{ meeting_info.time }}</p>
+            <p><strong>Notes:</strong> {{ meeting_info.notes }}</p>
         </div>
         {% endif %}
 
