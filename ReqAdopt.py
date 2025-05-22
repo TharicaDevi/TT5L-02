@@ -1,6 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-import sqlite3
-from datetime import datetime
 from petsdatabase import init_db, add_adoption_request, get_all_pets
 
 app = Flask(__name__)
@@ -10,7 +8,7 @@ app.secret_key = 'your_secret_key'
 init_db()
 
 @app.route('/')
-def adoption_form():
+def req_form():
     return render_template('request.html')
 
 @app.route('/submit-request', methods=['POST'])
@@ -38,7 +36,8 @@ def submit_request():
 
     add_adoption_request(user_id=user_id, pet_id=pet_id, message=message)
     flash("Your adoption request has been submitted successfully!")
-    return redirect(url_for('request'))
+    return render_template('submitted.html', fullname=fullname, email=email, phone=phone, address=address,
+        pet_type=pet_type, reason=reason, living=living)
 
 if __name__ == '__main__':
     app.run(debug=True)

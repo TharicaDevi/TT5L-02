@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Request Submitted</title>
+</head>
+<body>
+  <h2>Adoption Request Submitted!</h2>
+  <p><strong>Full Name:</strong> {{ fullname }}</p>
+  <p><strong>Email:</strong> {{ email }}</p>
+  <p><strong>Phone:</strong> {{ phone }}</p>
+  <p><strong>Address:</strong> {{ address }}</p>
+  <p><strong>Pet Type:</strong> {{ pet_type }}</p>
+  <p><strong>Reason for Adoption:</strong> {{ reason }}</p>
+  <p><strong>Living Situation:</strong> {{ living }}</p>
+
+  <a href="{{ url_for('req_form') }}">Submit another request</a>
+</body>
+</html>
