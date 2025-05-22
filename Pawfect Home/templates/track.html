@@ -39,8 +39,9 @@
             border-radius: 6px;
             border: 1px solid #ccc;
         }
-        
-        .review-form button {
+
+        .review-form button,
+        .back-button button {
             margin-top: 10px;
             padding: 8px 16px;
             background: #007bff;
@@ -50,12 +51,17 @@
             cursor: pointer;
         }
 
-        .review-form button:hover {
+        .review-form button:hover,
+        .back-button button:hover {
             background: #0056b3;
         }
 
         .info {
             margin-top: 10px;
+        }
+
+        .back-button {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -70,9 +76,9 @@
             <p><strong>Status:</strong> {{ app.status }}</p>
 
             {% if app.finalized %}
-                <p><strong>Adoption:</strong>Finalized</p>
+                <p><strong>Adoption:</strong> Finalized</p>
             {% else %}
-                <p><strong>Adoption:</strong> ⏳ Not yet finalized</p>
+                <p><strong>Adoption:</strong>Not yet finalized</p>
             {% endif %}
 
             {% if app.meetup %}
@@ -103,6 +109,12 @@
             {% endif %}
         </div>
         {% endfor %}
+
+        <div class="back-button">
+            <form action="{{ url_for('index') }}">
+                <button type="submit">Go Back</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>
