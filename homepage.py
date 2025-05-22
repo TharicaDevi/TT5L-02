@@ -21,5 +21,9 @@ def filter():
     pets = filter_pets(breed, age)
     return render_template("homepage.html", pets=pets)
 
+@app.route('/home')
+def landing_page():
+    return render_template("landing_page.html")
+
 if __name__ == '__main__':
     app.run(debug=True)

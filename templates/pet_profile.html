@@ -1,27 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Pawfect Home - Home</title>
+    <meta charset="UTF-8">
+    <title>{{ pet.name }}'s Profile</title>
+    <style>
+        body {
+            background: #f9f9ff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        .profile-card {
+            display: inline-block;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 350px;
+        }
+        img {
+            width: 100%;
+            border-radius: 8px;
+        }
+        h2 {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Pawfact Home!</h1>
-
-    <form method="POST" action="/filter">
-        <label>Breed: <input type="text" name="breed"></label>
-        <label>Age: <input type="number" name="age"></label>
-        <button type="submit">Filter</button>
-    </form>
-
-    <div>
-        {% for pet in pets %}
-            <div style="border:1px solid #aaa; margin:10px; padding:10px;">
-                <img src="{{ url_for('static', filename='images/' + pet[1]) }}" width="150">
-                <p><strong>Type:</strong> {{ pet[2] }}</p>
-                <p><strong>Breed:</strong> {{ pet[4] }}</p>
-                <p><strong>Age:</strong> {{ pet[5] }}</p>
-                <a href="{{ url_for('pet_profile', pet_id=pet[0]) }}">View Profile</a>
-            </div>
-        {% endfor %}
+    <div class="profile-card">
+        <img src="{{ pet.image_url }}" alt="{{ pet.name }}">
+        <h2>{{ pet.name }}</h2>
+        <p><strong>Type:</strong> {{ pet.type }}</p>
+        <p><strong>Color:</strong> {{ pet.color }}</p>
+        <p><strong>Breed:</strong> {{ pet.breed }}</p>
+        <p><strong>Age:</strong> {{ pet.age }}</p>
+        <br>
+        <a href="{{ url_for('home') }}">← Back to Browse</a>
     </div>
 </body>
 </html>
