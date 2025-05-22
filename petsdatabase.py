@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime
 
 # Initialize the database and all required tables
 def init_db():
@@ -53,7 +54,7 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users(id)
         )
     """)
-    
+
      # Adoption requests table
     c.execute('''
         CREATE TABLE IF NOT EXISTS adoption_requests (
@@ -158,3 +159,32 @@ def get_meetings_by_user(user_id):
     meetings = c.fetchall()
     conn.close()
     return meetings
+
+def add_adoption_request(user_id, pet_id, message=""):
+    conn = sqlite3.connect('pets.db')
+    c = conn.cursor()
+    
+    request_date = datetime.now().strftime("%Y-%m-%d")
+    c.execute('''
+        INSERT INTO adoption_requests (user_id, pet_id, request_date, message)
+        VALUES (?, ?, ?, ?)
+    ''', (user_id, pet_id, request_date, message))
+    
+    conn.commit()
+    conn.close()
+
+def get_all_adoption_requests():
+    conn = sqlite3.connect('pets.db')
+    c = conn.cursor()
+
+    c.execute('''
+        SELECT ar.id, ar.user_id, ar.pet_id, ar.request_date, ar.status, ar.message,
+               u.username, p.name
+        FROM adoption_requests ar
+        JOIN users u ON ar.user_id = u.id
+        JOIN pets p ON ar.pet_id = p.id
+    ''')
+    
+    requests = c.fetchall()
+    conn.close()
+    return requests
