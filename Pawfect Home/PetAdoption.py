@@ -42,7 +42,6 @@ def finalize():
 
     if app_data and app_data["status"] == "Approved":
         if not app_data['finalized']:
-            app_data['finalized'] = True
             session['application_id'] = app_id
             return redirect(url_for('schedule', application_id=app_id))
         else:
@@ -67,7 +66,11 @@ def schedule(application_id):
             chosen_date = datetime.strptime(date_str, '%Y-%m-%d').date()
             today = datetime.today().date()
 
-            if chosen_date < today:
+            hour, minute = map(int, time.split(":"))
+
+            if hour < 8 or hour > 22 or (hour == 22 and minute > 0):
+                error = "Meeting time must be between 8am and 10pm."
+            elif chosen_date < today:
                 error = "You cannot schedule a meeting for a past date."
             else:
                 meetings[application_id] = {
@@ -79,6 +82,8 @@ def schedule(application_id):
                 }
                 success = "Your meeting has been approved!"
                 meeting_info = meetings[application_id]
+                applications[application_id]['finalized'] = True
+
         except ValueError:
             error = "Invalid date format."
 
