@@ -36,16 +36,20 @@
             resize: vertical;
         }
 
-        button {
+        button, .back-btn {
             padding: 10px 20px;
             background-color: #28a745;
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
         }
 
-        button:hover {
+        button:hover,
+        .back-btn:hover {
             background-color: #218838;
         }
 
@@ -95,6 +99,8 @@
             <p><strong>Notes:</strong> {{ meeting_info.notes }}</p>
         </div>
         {% endif %}
+
+        <a href="{{ url_for('index') }}" class="back-btn">Go Back to Status Page</a>
     </div>
 </body>
 </html>
