@@ -53,6 +53,20 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users(id)
         )
     """)
+    
+     # Adoption requests table
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS adoption_requests (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            pet_id INTEGER NOT NULL,
+            request_date TEXT NOT NULL,
+            status TEXT DEFAULT 'pending',
+            message TEXT,
+            FOREIGN KEY(user_id) REFERENCES users(id),
+            FOREIGN KEY(pet_id) REFERENCES pets(id)
+        )
+    ''')
 
     conn.commit()
     conn.close()

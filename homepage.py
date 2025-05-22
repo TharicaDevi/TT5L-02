@@ -7,7 +7,7 @@ init_db()
 @app.route('/')
 def home():
     pets = get_all_pets()
-    return render_template("homepage.html", pets=pets)
+    return render_template("browse.html", pets=pets)
 
 @app.route('/pet/<int:pet_id>')
 def pet_profile(pet_id):
