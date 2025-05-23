@@ -12,28 +12,32 @@ applications = {
 
 meetings = {}
 
+users = {
+    'admin': {'password': 'admin123', 'role': 'admin'},
+}
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    result = None
-    app_id = ''
-    show_finalize = False
-    message = None
+    return redirect(url_for('login'))
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
     if request.method == 'POST':
-        app_id = request.form['application_id'].strip().upper()
-        app_data = applications.get(app_id)
+        username = request.form['username']
+        password = request.form.get('password')
 
-        if app_data:
-            if app_data['finalized']:
-                result = f"Adoption already finalized for {app_data['pet']}"
-            else:
-                result = f"{app_data['status']} for pet {app_data['pet']}"
-                if app_data['status'] == 'Approved':
-                    show_finalize = True
+        if username == 'admin' and password == users['admin']['password']:
+            session['role'] = 'admin'
+            return redirect(url_for('track_admin'))
+        elif username in applications:
+            session['role'] = 'user'
+            session['application_id'] = username
+            return redirect(url_for('track_user'))
         else:
-            result = "Application ID not found"
+            error = "Invalid credentials"
 
-    return render_template('index.html', status=result, app_id=app_id, show_finalize=show_finalize, message=message)
+    return render_template('login.html', error=error)
 
 @app.route('/finalize', methods=['POST'])
 def finalize():
@@ -42,6 +46,7 @@ def finalize():
 
     if app_data and app_data["status"] == "Approved":
         if not app_data['finalized']:
+            app_data['finalized'] = True
             session['application_id'] = app_id
             return redirect(url_for('schedule', application_id=app_id))
         else:
@@ -51,7 +56,7 @@ def finalize():
 @app.route('/schedule/<application_id>', methods=['GET', 'POST'])
 def schedule(application_id):
     if 'application_id' not in session or session['application_id'] != application_id:
-        return redirect(url_for('index'))
+        return redirect(url_for('login'))
 
     error = None
     success = None
@@ -66,10 +71,9 @@ def schedule(application_id):
             chosen_date = datetime.strptime(date_str, '%Y-%m-%d').date()
             today = datetime.today().date()
 
-            hour, minute = map(int, time.split(":"))
-
-            if hour < 8 or hour > 22 or (hour == 22 and minute > 0):
-                error = "Meeting time must be between 8am and 10pm."
+            meeting_time = datetime.strptime(time, '%H:%M').time()
+            if not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
+                error = "Meetings must be scheduled between 08:00 and 22:00."
             elif chosen_date < today:
                 error = "You cannot schedule a meeting for a past date."
             else:
@@ -82,33 +86,46 @@ def schedule(application_id):
                 }
                 success = "Your meeting has been approved!"
                 meeting_info = meetings[application_id]
-                applications[application_id]['finalized'] = True
-
         except ValueError:
-            error = "Invalid date format."
+            error = "Invalid date or time format."
 
     return render_template('schedule.html', application_id=application_id, error=error, success=success, meeting_info=meeting_info)
 
-@app.route('/track')
-def track():
+@app.route('/track_user')
+def track_user():
+    if 'role' not in session or session['role'] != 'user':
+        return redirect(url_for('login'))
+
+    app_id = session['application_id']
+    app = applications.get(app_id)
+    meetup = meetings.get(app_id)
+
+    return render_template('track_user.html', app_id=app_id, app=app, meetup=meetup)
+
+@app.route('/track_admin')
+def track_admin():
+    if 'role' not in session or session['role'] != 'admin':
+        return redirect(url_for('login'))
+
     all_data = []
     for app_id, data in applications.items():
-        pet = data.get('pet')
-        status = data.get('status')
-        finalized = data.get('finalized')
-        review = data.get('review')
-        meetup = meetings.get(app_id)
-
         all_data.append({
             'app_id': app_id,
-            'pet': pet,
-            'status': status,
-            'finalized': finalized,
-            'review': review,
-            'meetup': meetup
+            'pet': data['pet'],
+            'status': data['status'],
+            'finalized': data['finalized'],
+            'review': data['review'],
+            'meetup': meetings.get(app_id)
         })
 
-    return render_template('track.html', applications=all_data)
+    return render_template('track_admin.html', applications=all_data)
+
+@app.route('/delete/<app_id>', methods=['POST'])
+def delete(app_id):
+    if 'role' in session and session['role'] == 'admin':
+        applications.pop(app_id, None)
+        meetings.pop(app_id, None)
+    return redirect(url_for('track_admin'))
 
 @app.route('/submit_review', methods=['POST'])
 def submit_review():
@@ -121,7 +138,9 @@ def submit_review():
             'feedback': feedback
         }
 
-    return redirect(url_for('track'))
+    if session.get('role') == 'admin':
+        return redirect(url_for('track_admin'))
+    return redirect(url_for('track_user'))
 
 if __name__ == '__main__':
     app.run(debug=True)
