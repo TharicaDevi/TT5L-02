@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = 'secret'
+app.secret_key = 'your_secret_key'
 
 applications = {
     'APP123': {'status': 'Approved', 'pet': 'Buddy', 'finalized': False, 'review': None},
@@ -35,24 +35,19 @@ def index():
 
     return render_template('index.html', status=status, app_id=app_id, show_finalize=show_finalize)
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    error = None
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form.get('password')
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        session["username"] = username
 
-        if username == 'admin' and password == users['admin']['password']:
-            session['role'] = 'admin'
-            return redirect(url_for('track_admin'))
-        elif username in applications:
-            session['role'] = 'user'
-            session['application_id'] = username
-            return redirect(url_for('track_user'))
+        if username == "admin":
+            return redirect(url_for("track_admin"))
         else:
-            error = "Invalid credentials"
+            return redirect(url_for("track_user"))
 
-    return render_template('login.html', error=error)
+    return render_template("login.html")
 
 @app.route('/finalize', methods=['POST'])
 def finalize():
@@ -106,41 +101,20 @@ def schedule(application_id):
 
     return render_template('schedule.html', application_id=application_id, error=error, success=success, meeting_info=meeting_info)
 
-@app.route('/track_user')
+@app.route("/track_user")
 def track_user():
-    if 'role' not in session or session['role'] != 'user':
-        return redirect(url_for('login'))
+    username = session.get("username")
+    if not username or username == "admin":
+        return redirect(url_for("login"))
+    user_apps = [app for app in applications if app.app_id == username]
+    return render_template("track_user.html", applications=user_apps)
 
-    app_id = session['application_id']
-    app = applications.get(app_id)
-    meetup = meetings.get(app_id)
-
-    return render_template('track_user.html', applications=[{
-        'app_id': app_id,
-        'pet': app['pet'],
-        'status': app['status'],
-        'finalized': app['finalized'],
-        'review': app['review'],
-        'meetup': meetup
-    }])
-
-@app.route('/track_admin')
+@app.route("/track_admin")
 def track_admin():
-    if 'role' not in session or session['role'] != 'admin':
-        return redirect(url_for('login'))
-
-    all_data = []
-    for app_id, data in applications.items():
-        all_data.append({
-            'app_id': app_id,
-            'pet': data['pet'],
-            'status': data['status'],
-            'finalized': data['finalized'],
-            'review': data['review'],
-            'meetup': meetings.get(app_id)
-        })
-
-    return render_template('track_admin.html', applications=all_data)
+    username = session.get("username")
+    if username != "admin":
+        return redirect(url_for("login"))
+    return render_template("track_admin.html", applications=applications)
 
 @app.route('/delete/<application_id>', methods=['POST'])
 def delete(application_id):
