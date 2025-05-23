@@ -1,39 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Adoption Tracker</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Admin Dashboard</title>
 </head>
 <body>
-    <div class="container">
-        <h2>Admin: All Applications</h2>
-        {% for app in applications %}
-        <div class="app-block">
+    <h1>All Applications</h1>
+    {% for app in applications %}
+        <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
             <p><strong>Application ID:</strong> {{ app.app_id }}</p>
             <p><strong>Pet:</strong> {{ app.pet }}</p>
             <p><strong>Status:</strong> {{ app.status }}</p>
-            <p><strong>Adoption:</strong> {{ "Finalized" if app.finalized else "Not finalized" }}</p>
+            <p><strong>Finalized:</strong> {{ app.finalized }}</p>
+            <p><strong>Review:</strong> {{ app.review.feedback if app.review else 'None' }}</p>
 
             {% if app.meetup %}
-            <div class="info">
-                <p><strong>Meeting:</strong></p>
+                <h3>Meeting</h3>
                 <p><strong>Date:</strong> {{ app.meetup.date }}</p>
                 <p><strong>Time:</strong> {{ app.meetup.time }}</p>
                 <p><strong>Notes:</strong> {{ app.meetup.notes }}</p>
-            </div>
             {% endif %}
 
-            {% if app.review %}
-            <div class="info">
-                <p><strong>Review:</strong> {{ app.review.feedback }}</p>
-            </div>
-            {% endif %}
-
-            <form method="POST" action="{{ url_for('delete_application', application_id=app.app_id) }}">
-                <button type="submit" onclick="return confirm('Are you sure?')">❌ Delete Application</button>
+            <form method="POST" action="{{ url_for('delete', application_id=app.app_id) }}">
+                <button type="submit">Delete Application</button>
             </form>
         </div>
-        {% endfor %}
-    </div>
+    {% endfor %}
+    <a href="{{ url_for('logout') }}">Logout</a>
 </body>
 </html>
