@@ -1,45 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Adoption Tracker</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>User Dashboard</title>
 </head>
 <body>
-    <div class="container">
-        <h2>My Adoption Tracker</h2>
-        {% for app in applications %}
-        <div class="app-block">
-            <p><strong>Application ID:</strong> {{ app.app_id }}</p>
-            <p><strong>Pet:</strong> {{ app.pet }}</p>
-            <p><strong>Status:</strong> {{ app.status }}</p>
-            <p><strong>Adoption:</strong> {{ "Finalized" if app.finalized else "Not yet finalized" }}</p>
+    <h1>Your Application</h1>
+    {% for app in applications %}
+        <p><strong>Application ID:</strong> {{ app.app_id }}</p>
+        <p><strong>Pet:</strong> {{ app.pet }}</p>
+        <p><strong>Status:</strong> {{ app.status }}</p>
+        <p><strong>Finalized:</strong> {{ app.finalized }}</p>
 
-            {% if app.meetup %}
-            <div class="info">
-                <p><strong>Meeting Scheduled:</strong></p>
-                <p><strong>Date:</strong> {{ app.meetup.date }}</p>
-                <p><strong>Time:</strong> {{ app.meetup.time }}</p>
-                <p><strong>Notes:</strong> {{ app.meetup.notes }}</p>
-            </div>
-            {% endif %}
+        {% if app.meetup %}
+            <h3>Meeting Details</h3>
+            <p><strong>Date:</strong> {{ app.meetup.date }}</p>
+            <p><strong>Time:</strong> {{ app.meetup.time }}</p>
+            <p><strong>Notes:</strong> {{ app.meetup.notes }}</p>
+        {% endif %}
 
-            {% if app.finalized %}
-                {% if app.review %}
-                <div class="info">
-                    <p><strong>Review:</strong> {{ app.review.feedback }}</p>
-                </div>
-                {% else %}
-                <div class="review-form">
-                    <form method="POST" action="{{ url_for('submit_review') }}">
-                        <input type="hidden" name="application_id" value="{{ app.app_id }}">
-                        <textarea name="feedback" rows="3" placeholder="Leave a review..."></textarea>
-                        <button type="submit">Submit Review</button>
-                    </form>
-                </div>
-                {% endif %}
-            {% endif %}
-        </div>
-        {% endfor %}
-    </div>
+        {% if app.finalized %}
+            <form method="POST" action="{{ url_for('submit_review') }}">
+                <input type="hidden" name="application_id" value="{{ app.app_id }}">
+                <textarea name="feedback" placeholder="Leave a review" required></textarea>
+                <button type="submit">Submit Review</button>
+            </form>
+        {% endif %}
+    {% endfor %}
+    <a href="{{ url_for('logout') }}">Logout</a>
 </body>
 </html>
