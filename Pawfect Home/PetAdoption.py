@@ -18,7 +18,22 @@ users = {
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return redirect(url_for('login'))
+    status = None
+    app_id = None
+    show_finalize = False
+
+    if request.method == 'POST':
+        app_id = request.form['application_id'].strip().upper()
+        app_data = applications.get(app_id)
+
+        if app_data:
+            status = app_data['status']
+            if app_data['status'] == 'Approved' and not app_data['finalized']:
+                show_finalize = True
+        else:
+            status = "Application ID not found."
+
+    return render_template('index.html', status=status, app_id=app_id, show_finalize=show_finalize)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -100,7 +115,14 @@ def track_user():
     app = applications.get(app_id)
     meetup = meetings.get(app_id)
 
-    return render_template('track_user.html', app_id=app_id, app=app, meetup=meetup)
+    return render_template('track_user.html', applications=[{
+        'app_id': app_id,
+        'pet': app['pet'],
+        'status': app['status'],
+        'finalized': app['finalized'],
+        'review': app['review'],
+        'meetup': meetup
+    }])
 
 @app.route('/track_admin')
 def track_admin():
@@ -120,11 +142,11 @@ def track_admin():
 
     return render_template('track_admin.html', applications=all_data)
 
-@app.route('/delete/<app_id>', methods=['POST'])
-def delete(app_id):
+@app.route('/delete/<application_id>', methods=['POST'])
+def delete(application_id):
     if 'role' in session and session['role'] == 'admin':
-        applications.pop(app_id, None)
-        meetings.pop(app_id, None)
+        applications.pop(application_id, None)
+        meetings.pop(application_id, None)
     return redirect(url_for('track_admin'))
 
 @app.route('/submit_review', methods=['POST'])
@@ -141,6 +163,11 @@ def submit_review():
     if session.get('role') == 'admin':
         return redirect(url_for('track_admin'))
     return redirect(url_for('track_user'))
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)
