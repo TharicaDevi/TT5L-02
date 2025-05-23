@@ -4,27 +4,42 @@
     <title>Admin Dashboard</title>
 </head>
 <body>
-    <h1>All Applications</h1>
-    {% for app in applications %}
-        <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
-            <p><strong>Application ID:</strong> {{ app.app_id }}</p>
-            <p><strong>Pet:</strong> {{ app.pet }}</p>
-            <p><strong>Status:</strong> {{ app.status }}</p>
-            <p><strong>Finalized:</strong> {{ app.finalized }}</p>
-            <p><strong>Review:</strong> {{ app.review.feedback if app.review else 'None' }}</p>
+    <h2>Admin Panel</h2>
 
-            {% if app.meetup %}
-                <h3>Meeting</h3>
-                <p><strong>Date:</strong> {{ app.meetup.date }}</p>
-                <p><strong>Time:</strong> {{ app.meetup.time }}</p>
-                <p><strong>Notes:</strong> {{ app.meetup.notes }}</p>
-            {% endif %}
+    <table border="1">
+        <tr>
+            <th>Application ID</th>
+            <th>Pet</th>
+            <th>Status</th>
+            <th>Finalized</th>
+            <th>Meeting</th>
+            <th>Review</th>
+        </tr>
+        {% for app_id, app in applications.items() %}
+        <tr>
+            <td>{{ app_id }}</td>
+            <td>{{ app.pet }}</td>
+            <td>{{ app.status }}</td>
+            <td>{{ app.finalized }}</td>
+            <td>
+                {% if meetings.get(app_id) %}
+                    {{ meetings[app_id].date }} {{ meetings[app_id].time }}
+                {% else %}
+                    None
+                {% endif %}
+            </td>
+            <td>
+                {% if app.review %}
+                    {{ app.review.feedback }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
 
-            <form method="POST" action="{{ url_for('delete', application_id=app.app_id) }}">
-                <button type="submit">Delete Application</button>
-            </form>
-        </div>
-    {% endfor %}
+    <br>
     <a href="{{ url_for('logout') }}">Logout</a>
 </body>
 </html>
