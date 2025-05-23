@@ -36,21 +36,26 @@
             resize: vertical;
         }
 
-        button, .back-btn {
+        button {
             padding: 10px 20px;
             background-color: #28a745;
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 10px;
         }
 
-        button:hover,
-        .back-btn:hover {
+        button:hover {
             background-color: #218838;
+        }
+
+        .back-btn {
+            background-color: #6c757d;
+            margin-top: 15px;
+        }
+
+        .back-btn:hover {
+            background-color: #5a6268;
         }
 
         h2 {
@@ -78,7 +83,7 @@
             <input type="date" name="date" required><br>
 
             <label for="time">Time:</label><br>
-            <input type="time" name="time" required><br>
+            <input type="time" name="time" min="08:00" max="22:00" required><br>
 
             <label for="notes">Notes (Optional):</label><br>
             <textarea name="notes" rows="4" placeholder="Add notes about the meetup..."></textarea><br>
@@ -100,7 +105,9 @@
         </div>
         {% endif %}
 
-        <a href="{{ url_for('index') }}" class="back-btn">Go Back to Status Page</a>
+        <form action="{{ url_for('index') }}">
+            <button type="submit" class="back-btn">Back to Home</button>
+        </form>
     </div>
 </body>
 </html>
