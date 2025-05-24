@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+
+    {% if session.get("role") == "admin" %}
+        <a href="/admin">Admin Dashboard</a>
+    {% elif session.get("username") %}
+        <a href="/account">My Account</a>
+    {% else %}
+        <a href="/">Login</a>
+    {% endif %}
+
+</html>
