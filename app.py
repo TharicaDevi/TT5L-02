@@ -10,6 +10,10 @@ UPLOAD_FOLDER = 'static/profile_pics'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# admin credentials
+ADMIN_USERNAME = "TEFadmin"
+ADMIN_PASSWORD = "admin@123"
+
 # signup route
 @app.route("/signup", methods=['GET', 'POST']) # post = submit
 def signup():
@@ -40,9 +44,17 @@ def login():
         # check if user exists
         user = database.get_user(username, password)
 
+        # check if admin
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session["username"] = username
+            session["role"] = "admin"
+            return redirect(url_for('admin_dashboard'))
+        
+        # user login
         if user:
             # store username in session (successful login)
             session["username"] = username 
+            session["role"] = "user"
             return redirect(url_for('welcome', username=username, success=1))
         else:
             return redirect(url_for('welcome', username=username, success=0))
@@ -77,7 +89,35 @@ def welcome():
     success = request.args.get("success") == "1" # check if login successful
     # welcome page with success/failure message
     return render_template('welcome.html', username=username, success=success)
-    
+
+# admin dashboard route    
+@app.route("/admin")
+def admin_dashboard():
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+    return render_template("admin_dashboard.html")
+
+# add pet route
+@app.route("/admin/add_pet")
+def add_pet():
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+    return "Add new pet (admin only) - coming soon!"
+
+# update pet details route
+@app.route("/admin/update_pet")
+def update_pet():
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+    return "Update pet info (admin only) - coming soon!"
+
+# review adoption requests route
+@app.route("/admin/review_adoptions")
+def review_adoptions():
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+    return "Review adoption requests (admin only) - coming soon!"
+
 # account info route
 @app.route("/account", methods=['GET', 'POST'])
 def account():
