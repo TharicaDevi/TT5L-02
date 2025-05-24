@@ -29,7 +29,7 @@ def submit_request():
 
     if not all([fullname, email, phone, address, pet_type, reason, living, agree]):
         flash("Please fill out all required fields.")
-        return redirect(url_for('request'))
+        return redirect(url_for('req_form'))
 
     message = f"Full Name: {fullname}\nEmail: {email}\nPhone: {phone}\nAddress: {address}\n" \
               f"Pet Type: {pet_type}\nReason: {reason}\nLiving Situation: {living}"

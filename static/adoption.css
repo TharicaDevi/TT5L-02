@@ -48,7 +48,7 @@ select {
   font-size: 15px;
   font-family: 'Times New Roman', Times, serif;
   background: #e0e5ec;
-  box-shadow: inset 2px 2px 4px #444, inset -5px -5px 10px #fff;
+  box-shadow: inset 2px 2px 4px #a3b1c6, inset -5px -5px 10px #fff;
   outline: none;
 }
 
@@ -67,7 +67,7 @@ textarea {
   font-size: 15px;
   font-family: 'Times New Roman', Times, serif;
   background: #e0e5ec;
-  box-shadow: inset 2px 2px 4px #444, inset -5px -5px 10px #fff;
+  box-shadow: inset 2px 2px 4px #a3b1c6, inset -5px -5px 10px #fff;
   outline: none;
 }
 
@@ -95,4 +95,32 @@ textarea {
 
 .form-actions button:hover {
   box-shadow: inset 4px 4px 8px #a3b1c6, inset -4px -4px 8px #ffffff;
+}
+
+.summary p {
+  width: 100%;
+  word-break: break-word;
+  margin-bottom: 15px;
+  padding: 10px;
+}
+
+.flashes {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.flashes li {
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  color: #33cb00;
+  font-size: 20px;
+  font-weight: 700;
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+  text-align: center;
+
 }

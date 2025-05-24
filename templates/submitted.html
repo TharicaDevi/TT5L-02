@@ -1,19 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Request Submitted</title>
-</head>
-<body>
-  <h2>Adoption Request Submitted!</h2>
-  <p><strong>Full Name:</strong> {{ fullname }}</p>
-  <p><strong>Email:</strong> {{ email }}</p>
-  <p><strong>Phone:</strong> {{ phone }}</p>
-  <p><strong>Address:</strong> {{ address }}</p>
-  <p><strong>Pet Type:</strong> {{ pet_type }}</p>
-  <p><strong>Reason for Adoption:</strong> {{ reason }}</p>
-  <p><strong>Living Situation:</strong> {{ living }}</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>request submitted</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='adoption.css') }}">
+  </head>
 
-  <a href="{{ url_for('req_form') }}">Submit another request</a>
-</body>
+  <body>
+    <div class="container">
+      <h2>Adoption Request Submitted!</h2>
+    
+      <div class="summary">
+        <p><strong>Full Name:</strong><br> {{ fullname }}</p>
+        <p><strong>Email:</strong><br> {{ email }}</p>
+        <p><strong>Phone:</strong><br> {{ phone }}</p>
+        <p><strong>Address:</strong><br> {{ address }}</p>
+        <p><strong>Pet Type:</strong><br> {{ pet_type }}</p>
+        <p><strong>Reason for Adoption:</strong><br> {{ reason }}</p>
+        <p><strong>Living Situation:</strong><br> {{ living }}</p>
+      </div>
+
+      <div class="form-actions">
+        <a href="{{ url_for('req_form') }}">
+          <button type="button">Submit Another Request</button>
+        </a>
+      </div>
+
+    </div>
+  </body>
 </html>
