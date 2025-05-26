@@ -1,11 +1,24 @@
 <!DOCTYPE html>
 <html>
-    <h1>Admin Dashboard</h1>
-    
-    <ul>
-        <li><a href="/admin/add_pet">Add New Pet</a></li>
-        <li><a href="/admin/update_pet">Update Pet Info</a></li>
-        <li><a href="/admin/review_adoptions">Review Adoption Requests</a></li>
-    </ul>
-    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>admin dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+
+    <body class="dashboard-bg">
+        <div class="container">
+            <h1>ADMIN DASHBOARD</h1>
+
+            <button>
+                <ul>
+                    <li><a href="/admin/add_pet">Add New Pet</a></li>
+                    <li><a href="/admin/update_pet">Update Pet Info</a></li>
+                    <li><a href="/admin/review_adoptions">Review Adoption Requests</a></li>
+                </ul>
+            </button>
+
+        </div>
+    </body>
 </html>
