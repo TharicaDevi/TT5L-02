@@ -6,16 +6,23 @@
 <body>
     <h2>Welcome, {{ app_id }}</h2>
 
-    <p>Pet: {{ data.pet }}</p>
-    <p>Status: {{ data.status }}</p>
-    <p>Finalized: {{ data.finalized }}</p>
+    <p>Pet: {{ app.pet }}</p>
+    <p>Status: {{ app.status }}</p>
+    <p>Finalized: {{ app.finalized }}</p>
 
     {% if meetup %}
         <p>Meeting Scheduled: {{ meetup.date }} at {{ meetup.time }}</p>
     {% endif %}
 
-    {% if data.review %}
-        <p>Your Review: {{ data.review.feedback }}</p>
+    {% if app.review %}
+        <p>Your Review: {{ app.review.feedback }}</p>
+    {% endif %}
+
+    {% if app.status == 'Approved' and not app.finalized %}
+        <form method="POST" action="{{ url_for('finalize') }}">
+            <input type="hidden" name="application_id" value="{{ app_id }}">
+            <button type="submit">Finalize Adoption</button>
+        </form>
     {% endif %}
 
     <br>
