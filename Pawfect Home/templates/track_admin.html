@@ -17,14 +17,21 @@
         <div class="main-content">
             <h2>Admin Panel</h2>
 
-            <form method="GET" action="{{ url_for('track_admin') }}" class="filter-form">
-                <input type="text" name="pet_name" placeholder="Filter by pet name" value="{{ request.args.get('pet_name', '') }}">
-                <input type="text" name="status" placeholder="Filter by status" value="{{ request.args.get('status', '') }}">
-                <button type="submit" class="btn filter-btn">Filter</button>
-                <button type="reset" class="btn clear-btn">Clear</button>
+            <form method="GET" action="{{ url_for('track_admin') }}" class="filter-form" style="margin-bottom: 20px;">
+                <input type="text" name="pet_name" placeholder="Filter by pet name" value="{{ request.args.get('pet_name', '') }}" style="margin-right: 10px;">
+
+                <select name="status" style="margin-right: 10px; padding: 6px; border-radius: 6px; border: 1px solid #ccc;">
+                    <option value="" {% if not request.args.get('status') %}selected{% endif %}>All Statuses</option>
+                    <option value="Approved" {% if request.args.get('status') == 'Approved' %}selected{% endif %}>Approved</option>
+                    <option value="Pending" {% if request.args.get('status') == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option value="Rejected" {% if request.args.get('status') == 'Rejected' %}selected{% endif %}>Rejected</option>
+                </select>
+
+                <button type="submit" class="btn filter-btn" style="padding: 6px 12px;">Filter</button>
+                <button type="button" class="btn clear-btn" style="padding: 6px 12px; margin-left: 5px;" onclick="window.location='{{ url_for('track_admin') }}'">Clear</button>
             </form>
 
-            <table border="1" style="margin-top: 20px; width: 100%; border-collapse: collapse;">
+            <table border="1" style="width: 100%; border-collapse: collapse;">
                 <thead>
                     <tr>
                         <th>Application ID</th>
@@ -59,10 +66,12 @@
                         </td>
                         <td>
                             <form method="POST" action="{{ url_for('delete', app_id=app.app_id) }}" onsubmit="return confirm('Are you sure you want to delete this application?');">
-                                <button type="submit" class="btn clear-btn" style="padding: 4px 8px;">Delete</button>
+                                <button type="submit" class="btn clear-btn" style="background-color: #dc3545; color: white; padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer;">Delete</button>
                             </form>
                         </td>
                     </tr>
+                    {% else %}
+                    <tr><td colspan="7" style="text-align:center;">No applications found.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
