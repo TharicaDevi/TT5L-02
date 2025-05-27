@@ -122,3 +122,36 @@ button:hover {
     font-weight: bold;
     margin-bottom: 15px;
 }
+
+.filter-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 15px; /* optional spacing */
+}
+
+.btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.filter-btn {
+    background-color: #0077cc;
+}
+
+.filter-btn:hover {
+    background-color: #005fa3;
+}
+
+.clear-btn {
+    background-color: #6c757d;
+}
+
+.clear-btn:hover {
+    background-color: #5a6268;
+}
