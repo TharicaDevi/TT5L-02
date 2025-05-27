@@ -10,6 +10,9 @@
             <h2>User</h2>
             <ul>
                 <li><a href="{{ url_for('track_user') }}">Dashboard</a></li>
+                {% if app.finalized and not meetup %}
+                    <li><a href="{{ url_for('schedule', application_id=app_id) }}">Schedule Meetup</a></li>
+                {% endif %}
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
             </ul>
         </div>
@@ -21,8 +24,16 @@
             <p><strong>Status:</strong> {{ app.status }}</p>
             <p><strong>Finalized:</strong> {{ app.finalized }}</p>
 
+            {% if not app.finalized and app.status == 'Approved' %}
+                <form method="POST" action="{{ url_for('finalize') }}">
+                    <input type="hidden" name="application_id" value="{{ app_id }}">
+                    <button type="submit">Finalize Adoption</button>
+                </form>
+            {% endif %}
+
             {% if meetup %}
                 <p><strong>Meeting Scheduled:</strong> {{ meetup.date }} at {{ meetup.time }}</p>
+                <p><strong>Notes:</strong> {{ meetup.notes }}</p>
             {% endif %}
 
             {% if app.review %}
