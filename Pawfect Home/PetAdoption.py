@@ -113,8 +113,21 @@ def track_admin():
     if 'role' not in session or session['role'] != 'admin':
         return redirect(url_for('login'))
 
+    status_filter = request.args.get('status', '').lower()
+    pet_filter = request.args.get('pet', '').lower()
+    finalized_filter = request.args.get('finalized', '').lower()
+
     all_data = []
     for app_id, data in applications.items():
+        if status_filter and status_filter not in data['status'].lower():
+            continue
+        if pet_filter and pet_filter not in data['pet'].lower():
+            continue
+        if finalized_filter:
+            is_finalized = 'true' if data['finalized'] else 'false'
+            if finalized_filter != is_finalized:
+                continue
+
         all_data.append({
             'app_id': app_id,
             'pet': data['pet'],
@@ -124,7 +137,8 @@ def track_admin():
             'meetup': meetings.get(app_id)
         })
 
-    return render_template('track_admin.html', applications=all_data)
+    return render_template('track_admin.html', applications=all_data,
+                           status_filter=status_filter, pet_filter=pet_filter, finalized_filter=finalized_filter)
 
 @app.route('/delete/<app_id>', methods=['POST'])
 def delete(app_id):
