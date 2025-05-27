@@ -2,30 +2,33 @@
 <html>
 <head>
     <title>User Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h2>Welcome, {{ app_id }}</h2>
 
-    <p>Pet: {{ app.pet }}</p>
-    <p>Status: {{ app.status }}</p>
-    <p>Finalized: {{ app.finalized }}</p>
+    <div class="sidebar">
+        <h2>User Panel</h2>
+        <a href="{{ url_for('track_user') }}">Application Status</a>
+        <a href="{{ url_for('schedule', application_id=app_id) }}">Schedule Meeting</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
 
-    {% if meetup %}
-        <p>Meeting Scheduled: {{ meetup.date }} at {{ meetup.time }}</p>
-    {% endif %}
+    <div class="main-content">
+        <div class="card">
+            <h1>Welcome, {{ app_id }}</h1>
+            <p><strong>Pet:</strong> {{ app.pet }}</p>
+            <p><strong>Status:</strong> {{ app.status }}</p>
+            <p><strong>Finalized:</strong> {{ app.finalized }}</p>
 
-    {% if app.review %}
-        <p>Your Review: {{ app.review.feedback }}</p>
-    {% endif %}
+            {% if meetup %}
+                <p><strong>Meeting Scheduled:</strong> {{ meetup.date }} at {{ meetup.time }}</p>
+            {% endif %}
 
-    {% if app.status == 'Approved' and not app.finalized %}
-        <form method="POST" action="{{ url_for('finalize') }}">
-            <input type="hidden" name="application_id" value="{{ app_id }}">
-            <button type="submit">Finalize Adoption</button>
-        </form>
-    {% endif %}
+            {% if app.review %}
+                <p><strong>Your Review:</strong> {{ app.review.feedback }}</p>
+            {% endif %}
+        </div>
+    </div>
 
-    <br>
-    <a href="{{ url_for('logout') }}">Logout</a>
 </body>
 </html>
