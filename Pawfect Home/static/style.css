@@ -3,40 +3,55 @@ body {
     background-color: #f5f5f5;
     margin: 0;
     padding: 0;
+    display: flex;
+    min-height: 100vh;
 }
 
-.center-box {
-    width: 400px;
-    margin: 80px auto;
+.sidebar {
+    width: 220px;
+    background-color: #0077cc;
+    color: white;
+    padding: 20px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.sidebar h2 {
+    font-size: 24px;
+    margin-top: 0;
+}
+
+.sidebar a {
+    display: block;
+    padding: 10px 15px;
+    margin: 10px 0;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    background-color: #005fa3;
+}
+
+.sidebar a:hover {
+    background-color: #004e8a;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 30px;
+    background-color: #f5f5f5;
+}
+
+.card {
     background: white;
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-input[type="text"] {
-    width: 80%;
-    padding: 10px;
-    margin-top: 10px;
     margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-button {
-    padding: 10px 20px;
-    background-color: #0077cc;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #005fa3;
-}
-
-p {
-    margin-top: 15px;
+.card h1, .card h2 {
+    margin-top: 0;
 }
