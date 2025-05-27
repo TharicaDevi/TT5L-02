@@ -16,7 +16,7 @@ users = {
     'admin': {'password': 'admin123', 'role': 'admin'}
 }
 
-@app.route('/', methods=['GET'])
+@app.route('/')
 def index():
     return redirect(url_for('login'))
 
@@ -39,6 +39,11 @@ def login():
             error = "Invalid credentials"
 
     return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 @app.route('/finalize', methods=['POST'])
 def finalize():
