@@ -14,16 +14,17 @@
             <th>Finalized</th>
             <th>Meeting</th>
             <th>Review</th>
+            <th>Actions</th>
         </tr>
-        {% for app_id, app in applications.items() %}
+        {% for app in applications %}
         <tr>
-            <td>{{ app_id }}</td>
+            <td>{{ app.app_id }}</td>
             <td>{{ app.pet }}</td>
             <td>{{ app.status }}</td>
             <td>{{ app.finalized }}</td>
             <td>
-                {% if meetings.get(app_id) %}
-                    {{ meetings[app_id].date }} {{ meetings[app_id].time }}
+                {% if app.meetup %}
+                    {{ app.meetup.date }} {{ app.meetup.time }}
                 {% else %}
                     None
                 {% endif %}
@@ -34,6 +35,11 @@
                 {% else %}
                     -
                 {% endif %}
+            </td>
+            <td>
+                <form method="POST" action="{{ url_for('delete', app_id=app.app_id) }}">
+                    <button type="submit">Delete</button>
+                </form>
             </td>
         </tr>
         {% endfor %}
