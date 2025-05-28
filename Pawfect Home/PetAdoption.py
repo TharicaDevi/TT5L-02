@@ -141,7 +141,7 @@ def schedule(application_id):
         application_id=application_id,
         error=error,
         success=success,
-        meeting_info=meetings.get(application_id),
+        meeting=meetings.get(application_id),
         state_cities=state_cities,
         selected_state=selected_state,
         city_list=city_list
