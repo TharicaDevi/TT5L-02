@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>Edit Meetup - Application {{ app_id }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
@@ -19,16 +20,17 @@
     </div>
 
     <div class="main-content">
-        <h1>Edit Meetup for Application {{ app_id }}</h1>
+        <h1>Edit Meetup for Application ID {{ app_id }}</h1>
 
         {% if error %}
-            <div class="error-message">Error: {{ error }}</div>
+            <div class="error-message">⚠️ {{ error }}</div>
         {% endif %}
         {% if success %}
-            <div class="message">{{ success }}</div>
+            <div class="success-message">✅ {{ success }}</div>
         {% endif %}
 
-        <form method="post">
+        <form method="post" class="edit-meeting-form">
+
             <label for="date">Date:</label>
             <input type="date" id="date" name="date" required value="{{ meeting.date if meeting else '' }}">
 
@@ -37,10 +39,10 @@
 
             <label for="phone">Phone (e.g. +60123456789):</label>
             <input type="tel" id="phone" name="phone" pattern="^\+60[1-9][0-9]{7,10}$" required
-                   value="{{ meeting.phone if meeting else '' }}" placeholder="+60123456789">
+                   placeholder="+60123456789" value="{{ meeting.phone if meeting else '' }}">
 
             <label for="state">State:</label>
-            <select id="state" name="state" onchange="this.form.submit()" required>
+            <select id="state" name="state" required onchange="this.form.submit()">
                 <option value="">-- Select State --</option>
                 {% for state in state_cities.keys() %}
                     <option value="{{ state }}" {% if state == selected_state %}selected{% endif %}>{{ state }}</option>
@@ -61,7 +63,11 @@
             <button type="submit" class="btn">Update Meetup</button>
         </form>
 
-        <p style="margin-top: 30px;"><a href="{{ url_for('track_admin') }}" class="btn" style="background-color: var(--secondary-color); padding: 10px 20px;">Back to Meetup List</a></p>
+        <p style="margin-top: 30px;">
+            <a href="{{ url_for('track_admin') }}" class="btn" style="background-color: var(--secondary-color); padding: 10px 20px;">
+                Back to Meetup List
+            </a>
+        </p>
     </div>
 
 </div>
