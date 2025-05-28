@@ -17,6 +17,25 @@ users = {
     'admin': {'password': 'admin123', 'role': 'admin'}
 }
 
+negeri_daerahs = {
+    "Johor": ["Batu Pahat", "Johor Bahru", "Kluang", "Mersing", "Muar", "Pontian", "Segamat", "Kulai", "Tangkak"],
+    "Kedah": ["Baling", "Bandar Baharu", "Kota Setar", "Kubang Pasu", "Kuala Muda", "Langkawi", "Padang Terap", "Sik", "Yan"],
+    "Kelantan": ["Bachok", "Gua Musang", "Jeli", "Kota Bharu", "Machang", "Pasir Mas", "Pasir Puteh", "Tanah Merah", "Tumpat"],
+    "Melaka": ["Alor Gajah", "Jasin", "Melaka Tengah"],
+    "Negeri Sembilan": ["Jempol", "Kuala Pilah", "Port Dickson", "Rembau", "Seremban", "Tampin"],
+    "Pahang": ["Bentong", "Cameron Highlands", "Jerantut", "Kuantan", "Lipis", "Maran", "Pekan", "Raub", "Temerloh"],
+    "Perak": ["Bagan Datuk", "Batang Padang", "Manjung", "Kinta", "Kerian", "Larut, Matang dan Selama", "Hilir Perak", "Perak Tengah", "Kampar"],
+    "Perlis": ["Kangar", "Arau"],
+    "Pulau Pinang": ["Barat Daya", "Seberang Perai Selatan", "Seberang Perai Tengah", "Seberang Perai Utara", "Timur Laut"],
+    "Sabah": ["Kota Kinabalu", "Sandakan", "Tawau", "Keningau", "Lahad Datu", "Kunak", "Beaufort"],
+    "Sarawak": ["Kuching", "Miri", "Sibu", "Bintulu", "Sri Aman", "Betong", "Limbang"],
+    "Selangor": ["Gombak", "Hulu Langat", "Hulu Selangor", "Klang", "Kuala Langat", "Kuala Selangor", "Petaling", "Sabak Bernam", "Sepang"],
+    "Terengganu": ["Besut", "Dungun", "Hulu Terengganu", "Kemaman", "Kuala Terengganu", "Marang"],
+    "Wilayah Persekutuan Kuala Lumpur": ["Kuala Lumpur"],
+    "Wilayah Persekutuan Labuan": ["Labuan"],
+    "Wilayah Persekutuan Putrajaya": ["Putrajaya"],
+}
+
 @app.route('/')
 def index():
     return redirect(url_for('login'))
@@ -69,40 +88,70 @@ def schedule(application_id):
     success = None
     meeting_info = None
 
+    selected_negeri = ''
+    daerah_list = []
+
     if request.method == 'POST':
-        date_str = request.form['date']
-        time = request.form['time']
-        phone = request.form.get('phone', '').strip()
-        notes = request.form['notes']
+        selected_negeri = request.form.get('negeri', '').strip()
+        daerah_list = negeri_daerahs.get(selected_negeri, [])
 
-        malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
+        # Final submit is detected by presence of 'final_submit' form key
+        if 'final_submit' in request.form:
+            date_str = request.form.get('date', '')
+            time = request.form.get('time', '')
+            phone = request.form.get('phone', '').strip()
+            daerah = request.form.get('daerah', '').strip()
+            notes = request.form.get('notes', '')
 
-        try:
-            chosen_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-            today = datetime.today().date()
+            malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
 
-            meeting_time = datetime.strptime(time, '%H:%M').time()
-            if not malaysia_phone_regex.match(phone):
+            if not selected_negeri or not daerah:
+                error = "Please select both Negeri and Daerah."
+            elif not malaysia_phone_regex.match(phone):
                 error = "Invalid Malaysian phone number format. It should start with +60 followed by 8 to 11 digits."
-            elif not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
-                error = "Meetings must be scheduled between 08:00 and 22:00."
-            elif chosen_date < today:
-                error = "You cannot schedule a meeting for a past date."
             else:
-                meetings[application_id] = {
-                    'date': chosen_date.strftime('%d/%m/%Y'),
-                    'time': time,
-                    'phone': phone,
-                    'notes': notes,
-                    'approved': True,
-                    'by': application_id
-                }
-                success = "Your meeting has been approved!"
-                meeting_info = meetings[application_id]
-        except ValueError:
-            error = "Invalid date or time format."
+                try:
+                    chosen_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+                    today = datetime.today().date()
+                    meeting_time = datetime.strptime(time, '%H:%M').time()
 
-    return render_template('schedule.html', application_id=application_id, error=error, success=success, meeting_info=meeting_info)
+                    if chosen_date < today:
+                        error = "You cannot schedule a meeting for a past date."
+                    elif not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
+                        error = "Meetings must be scheduled between 08:00 and 22:00."
+                    else:
+                        meetings[application_id] = {
+                            'date': chosen_date.strftime('%d/%m/%Y'),
+                            'time': time,
+                            'phone': phone,
+                            'negeri': selected_negeri,
+                            'daerah': daerah,
+                            'notes': notes,
+                            'approved': True,
+                            'by': application_id
+                        }
+                        success = "Your meeting has been approved!"
+                        meeting_info = meetings[application_id]
+                except ValueError:
+                    error = "Invalid date or time format."
+        else:
+            # User changed negeri, just update daerah list, no submission yet
+            pass
+    else:
+        # GET request
+        selected_negeri = ''
+        daerah_list = []
+
+    return render_template(
+        'schedule.html',
+        application_id=application_id,
+        error=error,
+        success=success,
+        meeting_info=meeting_info,
+        negeri_daerahs=negeri_daerahs,
+        selected_negeri=selected_negeri,
+        daerah_list=daerah_list,
+    )
 
 @app.route('/track_user')
 def track_user():
