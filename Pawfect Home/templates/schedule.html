@@ -8,10 +8,28 @@
     <div class="center-box">
         <h2>Schedule Meetup</h2>
         <form method="POST">
+            <label for="negeri">Negeri:</label><br>
+            <select name="negeri" onchange="this.form.submit()">
+                <option value="">-- Select Negeri --</option>
+                {% for negeri in negeri_daerahs.keys() %}
+                    <option value="{{ negeri }}" {% if negeri == selected_negeri %}selected{% endif %}>{{ negeri }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label for="daerah">Daerah:</label><br>
+            <select name="daerah" required>
+                <option value="">-- Select Daerah --</option>
+                {% for daerah in daerah_list %}
+                    <option value="{{ daerah }}" {% if meeting_info and meeting_info.daerah == daerah %}selected{% endif %}>{{ daerah }}</option>
+                {% endfor %}
+            </select><br><br>
+
             <label for="date">Date:</label><br>
-            <input type="date" name="date" required><br>
+            <input type="date" name="date" value="{{ meeting_info.date if meeting_info else '' }}" required><br>
+
             <label for="time">Time:</label><br>
-            <input type="time" name="time" min="08:00" max="22:00" required><br>
+            <input type="time" name="time" min="08:00" max="22:00" value="{{ meeting_info.time if meeting_info else '' }}" required><br>
+
             <label for="phone">Phone Number:</label><br>
             <input 
                 type="tel" 
@@ -19,10 +37,16 @@
                 placeholder="+60123456789" 
                 pattern="^\+60[1-9][0-9]{7,10}$" 
                 title="Please enter a Malaysian phone number starting with +60 followed by 8 to 11 digits" 
+                value="{{ meeting_info.phone if meeting_info else '' }}"
                 required>
             <br>
+
             <label for="notes">Notes (Optional):</label><br>
-            <textarea name="notes" rows="4" placeholder="Add notes about the meetup..."></textarea><br>
+            <textarea name="notes" rows="4" placeholder="Add notes about the meetup...">{{ meeting_info.notes if meeting_info else '' }}</textarea><br>
+
+            <!-- Hidden input to detect final submit -->
+            <input type="hidden" name="final_submit" value="1">
+
             <button type="submit">Schedule</button>
         </form>
 
@@ -37,6 +61,8 @@
             <p><strong>Date:</strong> {{ meeting_info.date }}</p>
             <p><strong>Time:</strong> {{ meeting_info.time }}</p>
             <p><strong>Phone:</strong> {{ meeting_info.phone }}</p>
+            <p><strong>Negeri:</strong> {{ meeting_info.negeri }}</p>
+            <p><strong>Daerah:</strong> {{ meeting_info.daerah }}</p>
             <p><strong>Notes:</strong> {{ meeting_info.notes }}</p>
         </div>
         {% endif %}
