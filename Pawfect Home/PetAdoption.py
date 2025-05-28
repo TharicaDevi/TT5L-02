@@ -6,9 +6,12 @@ app = Flask(__name__)
 app.secret_key = 'secret'
 
 applications = {
-    'APP123': {'status': 'Approved', 'pet': 'Buddy', 'finalized': False, 'review': None},
-    'APP124': {'status': 'Pending', 'pet': 'Milo', 'finalized': False, 'review': None},
-    'APP125': {'status': 'Rejected', 'pet': 'Luna', 'finalized': False, 'review': None}
+    'APP123': {'status': 'Approved', 'pet': 'Buddy', 'finalized': False, 'review': None,
+               'name': 'Alice', 'email': 'alice@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP124': {'status': 'Pending', 'pet': 'Milo', 'finalized': False, 'review': None,
+               'name': 'Bob', 'email': 'bob@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP125': {'status': 'Rejected', 'pet': 'Luna', 'finalized': False, 'review': None,
+               'name': 'Carol', 'email': 'carol@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''}
 }
 
 meetings = {}
@@ -56,7 +59,6 @@ def login():
             return redirect(url_for('track_user'))
         else:
             error = "Invalid credentials."
-
     return render_template('login.html', error=error)
 
 @app.route('/logout')
@@ -68,16 +70,12 @@ def logout():
 def finalize():
     app_id = request.form.get('application_id', '').strip().upper()
     app_data = applications.get(app_id)
-
     if not app_data:
         return "Application ID not found.", 404
-
     if app_data["status"] != "Approved":
         return "Application not approved. Cannot finalize.", 403
-
     if app_data['finalized']:
         return f"Adoption already finalized for {app_data['pet']}."
-
     app_data['finalized'] = True
     session['application_id'] = app_id
     return redirect(url_for('schedule', application_id=app_id))
@@ -134,7 +132,6 @@ def schedule(application_id):
                         success = "Your meeting has been approved!"
                 except ValueError:
                     error = "Invalid date or time format."
-
     else:
         selected_state = meetings.get(application_id, {}).get('state', '')
         city_list = state_cities.get(selected_state, [])
@@ -154,14 +151,11 @@ def schedule(application_id):
 def track_user():
     if session.get('role') != 'user':
         return redirect(url_for('login'))
-
     app_id = session.get('application_id')
     if not app_id:
         return redirect(url_for('login'))
-
     app = applications.get(app_id)
     meetup = meetings.get(app_id)
-
     return render_template('track_user.html', app_id=app_id, app=app, meetup=meetup)
 
 @app.route('/track_admin')
@@ -169,20 +163,31 @@ def track_admin():
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
 
-    pet_filter = request.args.get('pet_name', '').strip().lower()
-    status_filter = request.args.get('status', '').strip().lower()
+    search_name = request.args.get('search_name', '').strip().lower()
+    search_email = request.args.get('search_email', '').strip().lower()
+    filter_state = request.args.get('filter_state', '').strip()
 
     filtered_apps = {}
     for app_id, data in applications.items():
-        if pet_filter and pet_filter not in data['pet'].lower():
+        if search_name and search_name not in data.get('name', '').lower():
             continue
-        if status_filter and status_filter != data['status'].lower():
+        if search_email and search_email not in data.get('email', '').lower():
+            continue
+        if filter_state and filter_state != data.get('state', ''):
             continue
         filtered_apps[app_id] = data
 
     all_data = [
         {
             'app_id': app_id,
+            'name': data.get('name', ''),
+            'email': data.get('email', ''),
+            'date': data.get('date', ''),
+            'time': data.get('time', ''),
+            'state': data.get('state', ''),
+            'city': data.get('city', ''),
+            'phone': data.get('phone', ''),
+            'notes': data.get('notes', ''),
             'pet': data['pet'],
             'status': data['status'],
             'finalized': data['finalized'],
@@ -192,7 +197,7 @@ def track_admin():
         for app_id, data in filtered_apps.items()
     ]
 
-    return render_template('track_admin.html', applications=all_data)
+    return render_template('track_admin.html', applications=all_data, state_cities=state_cities)
 
 @app.route('/delete/<app_id>', methods=['POST'])
 def delete(app_id):
@@ -258,7 +263,7 @@ def edit_meeting(app_id):
                     'city': city,
                     'notes': notes,
                 })
-                meeting = meetings[app_id]  # Update local reference
+                meeting = meetings[app_id]
                 selected_state = state
                 city_list = state_cities.get(state, [])
                 success = "Meeting updated successfully!"
@@ -275,6 +280,12 @@ def edit_meeting(app_id):
         selected_state=selected_state,
         city_list=city_list,
     )
+
+@app.route('/dashboard')
+def dashboard():
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
+    return render_template('dashboard.html')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
