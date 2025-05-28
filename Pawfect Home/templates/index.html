@@ -1,24 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Check Adoption Status</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Adoption Status Tracker</h1>
-    <form method="POST">
-        <input type="text" name="application_id" placeholder="Enter Application ID" required>
-        <button type="submit">Check Status</button>
-    </form>
+    <div class="center-box">
+        <h1>Adoption Status Tracker</h1>
 
-    {% if status %}
-        <p>Status for {{ app_id }}: {{ status }}</p>
-    {% endif %}
-
-    {% if show_finalize %}
-        <form method="POST" action="{{ url_for('finalize') }}">
-            <input type="hidden" name="application_id" value="{{ app_id }}">
-            <button type="submit">Finalize Adoption</button>
+        <form method="POST" class="login-form">
+            <input type="text" name="application_id" placeholder="Enter Application ID" required>
+            <button type="submit" class="btn">Check Status</button>
         </form>
-    {% endif %}
+
+        {% if status %}
+            <div class="message">
+                <h3>Status for {{ app_id }}:</h3>
+                <p>{{ status }}</p>
+            </div>
+        {% endif %}
+
+        {% if show_finalize %}
+            <form method="POST" action="{{ url_for('finalize') }}">
+                <input type="hidden" name="application_id" value="{{ app_id }}">
+                <button type="submit" class="btn">Finalize Adoption</button>
+            </form>
+        {% endif %}
+    </div>
 </body>
 </html>
