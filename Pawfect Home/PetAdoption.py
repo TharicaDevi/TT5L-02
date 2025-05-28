@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from datetime import datetime
+import re
 
 app = Flask(__name__)
 app.secret_key = 'secret'
@@ -71,14 +72,19 @@ def schedule(application_id):
     if request.method == 'POST':
         date_str = request.form['date']
         time = request.form['time']
+        phone = request.form.get('phone', '').strip()
         notes = request.form['notes']
+
+        malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
 
         try:
             chosen_date = datetime.strptime(date_str, '%Y-%m-%d').date()
             today = datetime.today().date()
 
             meeting_time = datetime.strptime(time, '%H:%M').time()
-            if not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
+            if not malaysia_phone_regex.match(phone):
+                error = "Invalid Malaysian phone number format. It should start with +60 followed by 8 to 11 digits."
+            elif not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
                 error = "Meetings must be scheduled between 08:00 and 22:00."
             elif chosen_date < today:
                 error = "You cannot schedule a meeting for a past date."
@@ -86,6 +92,7 @@ def schedule(application_id):
                 meetings[application_id] = {
                     'date': chosen_date.strftime('%d/%m/%Y'),
                     'time': time,
+                    'phone': phone,
                     'notes': notes,
                     'approved': True,
                     'by': application_id
@@ -141,6 +148,7 @@ def track_admin():
         })
 
     return render_template('track_admin.html', applications=all_data)
+
 @app.route('/delete/<app_id>', methods=['POST'])
 def delete(app_id):
     if 'role' in session and session['role'] == 'admin':
