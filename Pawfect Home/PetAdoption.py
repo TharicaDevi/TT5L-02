@@ -212,7 +212,7 @@ def edit_meeting(app_id):
     error = None
     success = None
     selected_state = meeting.get('state', '')
-    city_list = negeri_daerahs.get(selected_state, [])
+    city_list = state_cities.get(selected_state, [])
 
     if request.method == 'POST':
         try:
@@ -245,7 +245,7 @@ def edit_meeting(app_id):
                     'notes': notes,
                 })
                 success = "Meeting updated successfully!"
-                city_list = negeri_daerahs.get(state, [])
+                city_list = state_cities.get(state, [])
 
         except Exception as e:
             error = str(e)
@@ -253,10 +253,10 @@ def edit_meeting(app_id):
     return render_template(
         'edit_meeting.html',
         app_id=app_id,
-        meeting=meetings.get(app_id),
+        meeting=meeting,
         error=error,
         success=success,
-        negeri_daerahs=negeri_daerahs,
+        state_cities=state_cities,
         selected_state=selected_state,
         city_list=city_list,
     )
