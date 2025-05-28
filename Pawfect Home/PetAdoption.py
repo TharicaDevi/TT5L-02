@@ -123,8 +123,10 @@ def track_admin():
 
         if pet_filter and pet_filter not in pet_name:
             continue
-        if status_filter and status_filter != status:
+
+        if status_filter and status_filter not in status:
             continue
+
         filtered_apps[app_id] = data
 
     all_data = []
@@ -139,7 +141,6 @@ def track_admin():
         })
 
     return render_template('track_admin.html', applications=all_data)
-
 @app.route('/delete/<app_id>', methods=['POST'])
 def delete(app_id):
     if 'role' in session and session['role'] == 'admin':
