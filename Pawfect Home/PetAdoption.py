@@ -27,13 +27,10 @@ negeri_daerahs = {
     "Perak": ["Bagan Datuk", "Batang Padang", "Manjung", "Kinta", "Kerian", "Larut, Matang dan Selama", "Hilir Perak", "Perak Tengah", "Kampar"],
     "Perlis": ["Kangar", "Arau"],
     "Pulau Pinang": ["Barat Daya", "Seberang Perai Selatan", "Seberang Perai Tengah", "Seberang Perai Utara", "Timur Laut"],
-    "Sabah": ["Kota Kinabalu", "Sandakan", "Tawau", "Keningau", "Lahad Datu", "Kunak", "Beaufort"],
+    "Sabah": ["Kota Kinabalu", "Sandakan", "Tawau", "Keningau", "Lahad Datu", "Kunak", "Beaufort", "Labuan"],
     "Sarawak": ["Kuching", "Miri", "Sibu", "Bintulu", "Sri Aman", "Betong", "Limbang"],
-    "Selangor": ["Gombak", "Hulu Langat", "Hulu Selangor", "Klang", "Kuala Langat", "Kuala Selangor", "Petaling", "Sabak Bernam", "Sepang"],
+    "Selangor": ["Gombak", "Hulu Langat", "Hulu Selangor", "Klang", "Kuala Langat", "Kuala Lumpur", "Kuala Selangor", "Petaling","Putrajaya", "Sabak Bernam", "Sepang"],
     "Terengganu": ["Besut", "Dungun", "Hulu Terengganu", "Kemaman", "Kuala Terengganu", "Marang"],
-    "Wilayah Persekutuan Kuala Lumpur": ["Kuala Lumpur"],
-    "Wilayah Persekutuan Labuan": ["Labuan"],
-    "Wilayah Persekutuan Putrajaya": ["Putrajaya"],
 }
 
 @app.route('/')
