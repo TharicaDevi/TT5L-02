@@ -1,73 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8" />
     <title>Schedule Meetup</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="center-box">
+
+<div class="admin-container">
+
+    <div class="sidebar">
+        <h2>Admin Panel</h2>
+        <ul>
+            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('track_admin') }}">Applications</a></li>
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
         <h2>Schedule Meetup</h2>
         <form method="POST">
-            <label for="date">Date:</label><br>
-            <input type="date" name="date" value="{{ meeting_info.date if meeting_info else '' }}" required><br>
+            <label for="date">Date:</label>
+            <input type="date" name="date" value="{{ meeting_info.date if meeting_info else '' }}" required>
 
-            <label for="time">Time:</label><br>
-            <input type="time" name="time" min="08:00" max="22:00" value="{{ meeting_info.time if meeting_info else '' }}" required><br>
+            <label for="time">Time:</label>
+            <input type="time" name="time" min="08:00" max="22:00" value="{{ meeting_info.time if meeting_info else '' }}" required>
 
-            <label for="phone">Phone Number:</label><br>
-            <input 
-                type="tel" 
-                name="phone" 
-                placeholder="+60123456789" 
-                pattern="^\+60[1-9][0-9]{7,10}$" 
-                title="Please enter a Malaysian phone number starting with +60 followed by 8 to 11 digits" 
+            <label for="phone">Phone Number:</label>
+            <input
+                type="tel"
+                name="phone"
+                placeholder="+60123456789"
+                pattern="^\+60[1-9][0-9]{7,10}$"
+                title="Please enter a Malaysian phone number starting with +60 followed by 8 to 11 digits"
                 value="{{ meeting_info.phone if meeting_info else '' }}"
-                required><br>
+                required>
 
-            <label for="state">State:</label><br>
+            <label for="state">State:</label>
             <select name="state" onchange="this.form.submit()" required>
                 <option value="">-- Select State --</option>
                 {% for state in state_cities.keys() %}
                     <option value="{{ state }}" {% if state == selected_state %}selected{% endif %}>{{ state }}</option>
                 {% endfor %}
-            </select><br><br>
+            </select>
 
-            <label for="city">City:</label><br>
+            <label for="city">City:</label>
             <select name="city" required>
                 <option value="">-- Select City --</option>
                 {% for city in city_list %}
                     <option value="{{ city }}" {% if meeting_info and meeting_info.city == city %}selected{% endif %}>{{ city }}</option>
                 {% endfor %}
-            </select><br><br>
+            </select>
 
-            <label for="notes">Notes (Optional):</label><br>
-            <textarea name="notes" rows="4" placeholder="Add notes about the meetup...">{{ meeting_info.notes if meeting_info else '' }}</textarea><br>
+            <label for="notes">Notes (Optional):</label>
+            <textarea name="notes" rows="4" placeholder="Add notes about the meetup...">{{ meeting_info.notes if meeting_info else '' }}</textarea>
 
             <input type="hidden" name="final_submit" id="final_submit" value="">
 
-            <button type="submit" onclick="document.getElementById('final_submit').value='1'">Schedule</button>
-        </form>
-
-        {% if error %}
-            <p class="error-message">{{ error }}</p>
-        {% endif %}
-
-        {% if success %}
-        <div class="message" style="border: 1px solid #4CAF50; background-color: #e8f5e9; padding: 15px; margin-top: 20px;">
-            <h3>{{ success }}</h3>
-            <p><strong>Approved By:</strong> {{ meeting_info.by }}</p>
-            <p><strong>Date:</strong> {{ meeting_info.date }}</p>
-            <p><strong>Time:</strong> {{ meeting_info.time }}</p>
-            <p><strong>Phone:</strong> {{ meeting_info.phone }}</p>
-            <p><strong>State:</strong> {{ meeting_info.state }}</p>
-            <p><strong>City:</strong> {{ meeting_info.city }}</p>
-            <p><strong>Notes:</strong> {{ meeting_info.notes }}</p>
-        </div>
-        {% endif %}
-
-        <form action="{{ url_for('index') }}">
-            <button type="submit" class="back-btn">Back to Home</button>
-        </form>
-    </div>
-</body>
-</html>
+            <button type="submit
