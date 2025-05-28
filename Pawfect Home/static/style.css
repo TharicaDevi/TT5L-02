@@ -24,8 +24,10 @@ body {
 .admin-container {
     display: flex;
     min-height: 100vh;
+    background-color: var(--bg-light);
 }
 
+/* Sidebar */
 .sidebar {
     width: 240px;
     background-color: var(--primary-color);
@@ -38,6 +40,7 @@ body {
     position: fixed;
     height: 100vh;
     overflow-y: auto;
+    transition: background-color 0.3s ease;
 }
 
 .sidebar h2 {
@@ -67,13 +70,16 @@ body {
     display: block;
     padding: 8px 10px;
     border-radius: 6px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.sidebar a:hover {
+.sidebar a:hover,
+.sidebar a:focus {
     background-color: var(--primary-hover);
+    outline: none;
 }
 
+/* Main content area */
 .main-content {
     margin-left: 240px;
     padding: 40px 50px;
@@ -82,12 +88,14 @@ body {
     min-height: 100vh;
 }
 
+/* Headings */
 h1, h2 {
     font-weight: 700;
     margin-bottom: 25px;
     color: var(--primary-color);
 }
 
+/* Section container */
 .section {
     background-color: var(--bg-white);
     border-radius: 12px;
@@ -96,6 +104,7 @@ h1, h2 {
     box-shadow: var(--box-shadow);
 }
 
+/* Form labels */
 form label {
     display: block;
     font-weight: 600;
@@ -104,6 +113,7 @@ form label {
     color: #444;
 }
 
+/* Inputs and selects */
 input[type="text"],
 input[type="date"],
 input[type="time"],
@@ -117,8 +127,9 @@ textarea {
     border: 1.5px solid #ccc;
     border-radius: 8px;
     font-size: 1rem;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
     font-family: var(--font-family);
+    box-sizing: border-box;
 }
 
 input[type="text"]:focus,
@@ -129,13 +140,16 @@ select:focus,
 textarea:focus {
     outline: none;
     border-color: var(--primary-color);
+    box-shadow: 0 0 5px var(--primary-color);
 }
 
+/* Textarea */
 textarea {
     resize: vertical;
     min-height: 100px;
 }
 
+/* Buttons */
 button, .btn {
     padding: 10px 25px;
     background-color: var(--primary-color);
@@ -145,14 +159,45 @@ button, .btn {
     cursor: pointer;
     font-size: 1rem;
     font-weight: 600;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.2s ease;
     margin-top: 24px;
+    user-select: none;
 }
 
-button:hover, .btn:hover {
+button:hover, button:focus,
+.btn:hover, .btn:focus {
     background-color: var(--primary-hover);
+    box-shadow: 0 4px 10px rgba(0, 119, 204, 0.4);
+    outline: none;
 }
 
+/* When multiple buttons side by side, add spacing */
+form > button + button {
+    margin-left: 12px;
+}
+
+/* Error and success messages */
+.error {
+    color: var(--danger-color);
+    background-color: #f8d7da;
+    border: 1px solid var(--danger-color);
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.success {
+    color: var(--success-color);
+    background-color: #d4edda;
+    border: 1px solid var(--success-color);
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Responsive */
 @media (max-width: 900px) {
     .admin-container {
         flex-direction: column;
@@ -164,18 +209,11 @@ button:hover, .btn:hover {
         position: relative;
         padding: 15px 10px;
         text-align: center;
+        box-shadow: none;
     }
 
     .main-content {
         margin-left: 0;
         padding: 20px 15px;
     }
-}
-
-.section {
-    background-color: var(--bg-white);
-    border-radius: 12px;
-    padding: 24px 30px;
-    margin-top: 25px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
