@@ -6,16 +6,18 @@
 </head>
 <body>
     <div class="admin-container">
-        <div class="sidebar">
-            <h2>Admin</h2>
-            <ul>
-                <li><a href="{{ url_for('track_admin') }}">Dashboard</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            </ul>
-        </div>
-
-        <div class="main-content">
+        <aside class="sidebar">
             <h2>Admin Panel</h2>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('track_admin') }}" class="active">Dashboard</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <h1>Application Tracker</h1>
 
             <form method="GET" action="{{ url_for('track_admin') }}" class="filter-form">
                 <input type="text" name="pet_name" placeholder="Filter by pet name" value="{{ request.args.get('pet_name', '') }}">
@@ -24,7 +26,7 @@
                     <option value="Approved" {% if request.args.get('status') == 'Approved' %}selected{% endif %}>Approved</option>
                     <option value="Pending" {% if request.args.get('status') == 'Pending' %}selected{% endif %}>Pending</option>
                     <option value="Rejected" {% if request.args.get('status') == 'Rejected' %}selected{% endif %}>Rejected</option>
-                </select>
+                </select>     
                 <button type="submit" class="filter-btn">Filter</button>
                 <button type="button" class="clear-btn" onclick="window.location='{{ url_for('track_admin') }}'">Clear</button>
             </form>
@@ -33,7 +35,7 @@
                 <thead>
                     <tr>
                         <th>Application ID</th>
-                        <th>Pet</th>
+                        <th>Pet Name</th>
                         <th>Status</th>
                         <th>Finalized</th>
                         <th>Meeting</th>
@@ -42,30 +44,39 @@
                     </tr>
                 </thead>
                 <tbody>
-                {% for app in applications %}
+                {% if applications %}
+                    {% for app in applications %}
+                        <tr>
+                            <td>{{ app.app_id }}</td>
+                            <td>{{ app.pet }}</td>
+                            <td>{{ app.status }}</td>
+                            <td>{{ 'Yes' if app.finalized else 'No' }}</td>
+                            <td>
+                                {% if app.meetup %}
+                                    {{ app.meetup.date }} {{ app.meetup.time }}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </td>
+                            <td>{{ app.review.feedback if app.review else '-' }}</td>
+                            <td>
+                                <form method="POST" action="{{ url_for('delete', app_id=app.app_id) }}" onsubmit="return confirm('Are you sure you want to delete this application?');" style="display:inline;">
+                                    <button type="submit" class="delete-btn">Delete</button>
+                                </form>
+                                {% if app.finalized %}
+                                    <a href="{{ url_for('edit_meeting', application_id=app.app_id) }}" class="edit-btn">Edit Meetup</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
                     <tr>
-                        <td>{{ app.app_id }}</td>
-                        <td>{{ app.pet }}</td>
-                        <td>{{ app.status }}</td>
-                        <td>{{ app.finalized }}</td>
-                        <td>
-                            {% if app.meetup %}
-                                {{ app.meetup.date }} {{ app.meetup.time }}
-                            {% else %}
-                                None
-                            {% endif %}
-                        </td>
-                        <td>{{ app.review.feedback if app.review else '-' }}</td>
-                        <td>
-                            <form method="POST" action="{{ url_for('delete', app_id=app.app_id) }}" onsubmit="return confirm('Are you sure you want to delete this application?');">
-                                <button type="submit" class="delete-btn">Delete</button>
-                            </form>
-                        </td>
+                        <td colspan="7" style="text-align:center;">No applications found.</td>
                     </tr>
-                {% endfor %}
+                {% endif %}
                 </tbody>
             </table>
-        </div>
+        </main>
     </div>
 </body>
 </html>
