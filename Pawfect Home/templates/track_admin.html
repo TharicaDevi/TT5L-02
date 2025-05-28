@@ -12,7 +12,7 @@
     <div class="sidebar">
         <h2>Admin Panel</h2>
         <ul>
-            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('track_admin') }}">Dashboard</a></li>
             <li><a href="{{ url_for('track_admin') }}">Applications</a></li>
             <li><a href="{{ url_for('logout') }}">Logout</a></li>
         </ul>
@@ -40,8 +40,6 @@
                     <th>Application ID</th>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Pet</th>
-                    <th>Status</th>
                     <th>Date</th>
                     <th>Time</th>
                     <th>State</th>
@@ -59,14 +57,12 @@
                         <td>{{ app.app_id }}</td>
                         <td>{{ app.name }}</td>
                         <td>{{ app.email }}</td>
-                        <td>{{ app.pet }}</td>
-                        <td>{{ app.status }}</td>
-                        <td>{{ app.meetup.date if app.meetup else '-' }}</td>
-                        <td>{{ app.meetup.time if app.meetup else '-' }}</td>
-                        <td>{{ app.meetup.state if app.meetup else '-' }}</td>
-                        <td>{{ app.meetup.city if app.meetup else '-' }}</td>
-                        <td>{{ app.meetup.phone if app.meetup else '-' }}</td>
-                        <td>{{ app.meetup.notes if app.meetup else '-' }}</td>
+                        <td>{{ app.date }}</td>
+                        <td>{{ app.time }}</td>
+                        <td>{{ app.state }}</td>
+                        <td>{{ app.city }}</td>
+                        <td>{{ app.phone }}</td>
+                        <td>{{ app.notes }}</td>
                         <td>{{ app.review.feedback if app.review else '-' }}</td>
                         <td>
                             <a href="{{ url_for('edit_meeting', app_id=app.app_id) }}" class="edit-btn">Edit Meetup</a>
@@ -74,7 +70,7 @@
                     </tr>
                     {% endfor %}
                 {% else %}
-                    <tr><td colspan="13" style="text-align:center;">No applications found.</td></tr>
+                    <tr><td colspan="11" style="text-align:center;">No applications found.</td></tr>
                 {% endif %}
             </tbody>
         </table>
