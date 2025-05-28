@@ -5,7 +5,11 @@ app = Flask(__name__)
 init_db()
 
 @app.route('/')
-def home():
+def landing_page():
+    return render_template("landing_page.html")  
+
+@app.route('/browse')
+def browse():
     pets = get_all_pets()
     return render_template("browse.html", pets=pets)
 
@@ -19,11 +23,7 @@ def filter():
     breed = request.form.get("breed")
     age = request.form.get("age")
     pets = filter_pets(breed, age)
-    return render_template("homepage.html", pets=pets)
-
-@app.route('/home')
-def landing_page():
-    return render_template("landing_page.html")
+    return render_template("browse.html", pets=pets)
 
 if __name__ == '__main__':
     app.run(debug=True)

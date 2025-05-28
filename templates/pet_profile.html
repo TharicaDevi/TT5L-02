@@ -31,10 +31,10 @@
     <div class="profile-card">
         <img src="{{ pet.image_url }}" alt="{{ pet.name }}">
         <h2>{{ pet.name }}</h2>
-        <p><strong>Type:</strong> {{ pet.type }}</p>
-        <p><strong>Color:</strong> {{ pet.color }}</p>
-        <p><strong>Breed:</strong> {{ pet.breed }}</p>
-        <p><strong>Age:</strong> {{ pet.age }}</p>
+        <p><strong>Type:</strong> {{  pet[2] }}</p>
+        <p><strong>Color:</strong> {{  pet[3] }}</p>
+        <p><strong>Breed:</strong> {{ pet[4] }}</p>
+        <p><strong>Age:</strong> {{ pet[5]}}</p>
         <br>
         <a href="{{ url_for('home') }}">← Back to Browse</a>
     </div>
