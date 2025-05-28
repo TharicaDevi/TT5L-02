@@ -19,18 +19,21 @@ users = {
 
 state_cities = {
     "Johor": ["Batu Pahat", "Johor Bahru", "Kluang", "Mersing", "Muar", "Pontian", "Segamat", "Kulai", "Tangkak"],
-    "Kedah": ["Baling", "Bandar Baharu", "Kota Setar", "Kubang Pasu", "Kuala Muda", "Langkawi", "Padang Terap", "Sik", "Yan"],
+    "Kedah": ["Baling", "Bandar Baharu", "Kota Setar", "Kubang Pasu", "Kuala Muda", "Langkawi", "Padang Terap", "Pendang", "Pokok Sena", "Sik", "Yan"],
     "Kelantan": ["Bachok", "Gua Musang", "Jeli", "Kota Bharu", "Machang", "Pasir Mas", "Pasir Puteh", "Tanah Merah", "Tumpat"],
     "Melaka": ["Alor Gajah", "Jasin", "Melaka Tengah"],
     "Negeri Sembilan": ["Jempol", "Kuala Pilah", "Port Dickson", "Rembau", "Seremban", "Tampin"],
-    "Pahang": ["Bentong", "Cameron Highlands", "Jerantut", "Kuantan", "Lipis", "Maran", "Pekan", "Raub", "Temerloh"],
-    "Perak": ["Bagan Datuk", "Batang Padang", "Manjung", "Kinta", "Kerian", "Larut, Matang dan Selama", "Hilir Perak", "Perak Tengah", "Kampar"],
-    "Perlis": ["Kangar", "Arau"],
-    "Pulau Pinang": ["Barat Daya", "Seberang Perai Selatan", "Seberang Perai Tengah", "Seberang Perai Utara", "Timur Laut"],
-    "Sabah": ["Kota Kinabalu", "Sandakan", "Tawau", "Keningau", "Lahad Datu", "Kunak", "Beaufort", "Labuan"],
-    "Sarawak": ["Kuching", "Miri", "Sibu", "Bintulu", "Sri Aman", "Betong", "Limbang"],
-    "Selangor": ["Gombak", "Hulu Langat", "Hulu Selangor", "Klang", "Kuala Langat", "Kuala Lumpur", "Kuala Selangor", "Petaling", "Putrajaya", "Sabak Bernam", "Sepang"],
-    "Terengganu": ["Besut", "Dungun", "Hulu Terengganu", "Kemaman", "Kuala Terengganu", "Marang"]
+    "Pahang": ["Bentong", "Cameron Highlands", "Jerantut", "Kuantan", "Lipis", "Maran", "Pekan", "Raub", "Rompin", "Temerloh", "Bera"],
+    "Perak": ["Bagan Datuk", "Batang Padang", "Hilir Perak", "Kampar", "Kerian", "Kinta", "Kuala Kangsar", "Larut, Matang dan Selama", "Manjung", "Muallim", "Perak Tengah"],
+    "Perlis": ["Kangar", "Arau", "Padang Besar"],
+    "Pulau Pinang": ["Timur Laut", "Barat Daya", "Seberang Perai Utara", "Seberang Perai Tengah", "Seberang Perai Selatan"],
+    "Sabah": ["Beaufort", "Beluran", "Keningau", "Kota Belud", "Kota Kinabalu", "Kota Marudu", "Kuala Penyu", "Kudat", "Kunak", "Lahad Datu", "Nabawan", "Papar", "Penampang", "Pitas", "Putatan", "Ranau", "Sandakan", "Semporna", "Sipitang", "Tambunan", "Tawau", "Tenom", "Tongod", "Tuaran"],
+    "Sarawak": ["Betong", "Bintulu", "Kapit", "Kuching", "Limbang", "Miri", "Mukah", "Samarahan", "Sarikei", "Serian", "Sibu", "Sri Aman"],
+    "Selangor": ["Gombak", "Hulu Langat", "Hulu Selangor", "Klang", "Kuala Langat", "Kuala Selangor", "Petaling", "Sabak Bernam", "Sepang"],
+    "Terengganu": ["Besut", "Dungun", "Hulu Terengganu", "Kemaman", "Kuala Terengganu", "Marang", "Setiu"],
+    "Kuala Lumpur": ["Bukit Bintang", "Cheras", "Kepong", "Lembah Pantai", "Sentul", "Setapak", "Titiwangsa", "Wangsa Maju"],
+    "Putrajaya": ["Putrajaya"],
+    "Labuan": ["Labuan"]
 }
 
 @app.route('/')
