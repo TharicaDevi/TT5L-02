@@ -24,19 +24,19 @@
                 value="{{ meeting_info.phone if meeting_info else '' }}"
                 required><br>
 
-            <label for="negeri">Negeri:</label><br>
-            <select name="negeri" onchange="this.form.submit()" required>
-                <option value="">-- Select Negeri --</option>
-                {% for negeri in negeri_daerahs.keys() %}
-                    <option value="{{ negeri }}" {% if negeri == selected_negeri %}selected{% endif %}>{{ negeri }}</option>
+            <label for="state">State:</label><br>
+            <select name="state" onchange="this.form.submit()" required>
+                <option value="">-- Select State --</option>
+                {% for state in state_cities.keys() %}
+                    <option value="{{ state }}" {% if state == selected_state %}selected{% endif %}>{{ state }}</option>
                 {% endfor %}
             </select><br><br>
 
-            <label for="daerah">Daerah:</label><br>
-            <select name="daerah" required>
-                <option value="">-- Select Daerah --</option>
-                {% for daerah in daerah_list %}
-                    <option value="{{ daerah }}" {% if meeting_info and meeting_info.daerah == daerah %}selected{% endif %}>{{ daerah }}</option>
+            <label for="city">City:</label><br>
+            <select name="city" required>
+                <option value="">-- Select City --</option>
+                {% for city in city_list %}
+                    <option value="{{ city }}" {% if meeting_info and meeting_info.city == city %}selected{% endif %}>{{ city }}</option>
                 {% endfor %}
             </select><br><br>
 
@@ -58,8 +58,8 @@
             <p><strong>Date:</strong> {{ meeting_info.date }}</p>
             <p><strong>Time:</strong> {{ meeting_info.time }}</p>
             <p><strong>Phone:</strong> {{ meeting_info.phone }}</p>
-            <p><strong>Negeri:</strong> {{ meeting_info.negeri }}</p>
-            <p><strong>Daerah:</strong> {{ meeting_info.daerah }}</p>
+            <p><strong>State:</strong> {{ meeting_info.state }}</p>
+            <p><strong>City:</strong> {{ meeting_info.city }}</p>
             <p><strong>Notes:</strong> {{ meeting_info.notes }}</p>
         </div>
         {% endif %}
