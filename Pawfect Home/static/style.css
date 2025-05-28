@@ -127,7 +127,7 @@ button:hover {
     display: flex;
     gap: 10px;
     align-items: center;
-    margin-top: 15px; /* optional spacing */
+    margin-top: 15px;
 }
 
 .btn {
