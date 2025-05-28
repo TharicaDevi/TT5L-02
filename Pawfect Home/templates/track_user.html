@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>User Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <div class="admin-container">
@@ -20,24 +22,39 @@
         <div class="main-content">
             <h2>Welcome, {{ app_id }}</h2>
 
-            <p><strong>Pet:</strong> {{ app.pet }}</p>
-            <p><strong>Status:</strong> {{ app.status }}</p>
-            <p><strong>Finalized:</strong> {{ app.finalized }}</p>
+            <div class="section">
+                <p><strong>Pet:</strong> {{ app.pet }}</p>
+                <p><strong>Status:</strong> {{ app.status }}</p>
+                <p><strong>Finalized:</strong> {{ 'Yes' if app.finalized else 'No' }}</p>
+            </div>
 
             {% if not app.finalized and app.status == 'Approved' %}
-                <form method="POST" action="{{ url_for('finalize') }}">
-                    <input type="hidden" name="application_id" value="{{ app_id }}">
-                    <button type="submit">Finalize Adoption</button>
-                </form>
+                <div class="section">
+                    <form method="POST" action="{{ url_for('finalize') }}">
+                        <input type="hidden" name="application_id" value="{{ app_id }}">
+                        <button type="submit">Finalize Adoption</button>
+                    </form>
+                </div>
             {% endif %}
 
             {% if meetup %}
-                <p><strong>Meeting Scheduled:</strong> {{ meetup.date }} at {{ meetup.time }}</p>
-                <p><strong>Notes:</strong> {{ meetup.notes }}</p>
+                <div class="section">
+                    <h3>Meeting Details</h3>
+                    <p><strong>Date:</strong> {{ meetup.date }}</p>
+                    <p><strong>Time:</strong> {{ meetup.time }}</p>
+                    <p><strong>Location:</strong> {{ meetup.city }}, {{ meetup.state }}</p>
+                    <p><strong>Phone:</strong> {{ meetup.phone }}</p>
+                    {% if meetup.notes %}
+                        <p><strong>Notes:</strong> {{ meetup.notes }}</p>
+                    {% endif %}
+                </div>
             {% endif %}
 
             {% if app.review %}
-                <p><strong>Your Review:</strong> {{ app.review.feedback }}</p>
+                <div class="section">
+                    <h3>Your Review</h3>
+                    <p>{{ app.review.feedback }}</p>
+                </div>
             {% endif %}
         </div>
     </div>
