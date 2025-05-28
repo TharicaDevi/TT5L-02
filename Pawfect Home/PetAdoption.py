@@ -92,7 +92,6 @@ def schedule(application_id):
         selected_negeri = request.form.get('negeri', '').strip()
         daerah_list = negeri_daerahs.get(selected_negeri, [])
 
-        # Final submit is detected by presence of 'final_submit' form key
         if 'final_submit' in request.form:
             date_str = request.form.get('date', '')
             time = request.form.get('time', '')
@@ -132,10 +131,8 @@ def schedule(application_id):
                 except ValueError:
                     error = "Invalid date or time format."
         else:
-            # User changed negeri, just update daerah list, no submission yet
             pass
     else:
-        # GET request
         selected_negeri = ''
         daerah_list = []
 
