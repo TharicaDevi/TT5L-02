@@ -1,50 +1,62 @@
 :root {
-    --primary-color: #0077cc;
-    --primary-hover: #005fa3;
+    /* Color Palette */
+    --primary-color: #FF6B6B;
+    --primary-hover: #E05353;
     --danger-color: #dc3545;
     --danger-hover: #c82333;
     --success-color: #28a745;
     --success-hover: #218838;
     --secondary-color: #6c757d;
     --secondary-hover: #5a6268;
-    --bg-light: #f5f7fa;
+    --bg-light: #fefefe;
     --bg-white: #ffffff;
+
+    /* Typography & Effects */
     --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    --box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
-body {
+/* General Reset */
+* {
+    box-sizing: border-box;
     margin: 0;
+    padding: 0;
+}
+
+/* Body and Global */
+body {
     font-family: var(--font-family);
     background-color: var(--bg-light);
     color: #333;
     line-height: 1.6;
 }
 
+/* Layout */
 .admin-container {
     display: flex;
     min-height: 100vh;
+    background-color: var(--bg-light);
 }
 
+/* Sidebar */
 .sidebar {
     width: 240px;
     background-color: var(--primary-color);
     color: white;
     padding: 30px 20px;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     position: fixed;
     height: 100vh;
     overflow-y: auto;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar h2 {
-    margin-top: 0;
-    font-weight: 700;
     font-size: 1.8rem;
+    font-weight: 700;
     margin-bottom: 30px;
+    text-align: center;
     letter-spacing: 1px;
 }
 
@@ -52,7 +64,6 @@ body {
     list-style: none;
     padding: 0;
     margin: 0;
-    flex-grow: 1;
 }
 
 .sidebar li {
@@ -63,9 +74,9 @@ body {
     color: white;
     text-decoration: none;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     display: block;
-    padding: 8px 10px;
+    padding: 10px 14px;
     border-radius: 6px;
     transition: background-color 0.3s ease;
 }
@@ -74,88 +85,92 @@ body {
     background-color: var(--primary-hover);
 }
 
+/* Main Content */
 .main-content {
     margin-left: 240px;
     padding: 40px 50px;
     flex-grow: 1;
-    background-color: var(--bg-light);
     min-height: 100vh;
+    background-color: var(--bg-light);
 }
 
-h1 {
+h1, h2 {
     font-weight: 700;
-    margin-bottom: 25px;
     color: var(--primary-color);
+    margin-bottom: 20px;
 }
 
+/* Tables */
 table {
     width: 100%;
     border-collapse: collapse;
     background-color: var(--bg-white);
     border-radius: 10px;
-    overflow: hidden;
     box-shadow: var(--box-shadow);
+    overflow: hidden;
     margin-top: 20px;
 }
 
 th, td {
     padding: 14px 20px;
-    border-bottom: 1px solid #e1e1e1;
     text-align: center;
     font-size: 0.95rem;
+    border-bottom: 1px solid #eee;
 }
 
 th {
     background-color: var(--primary-color);
     color: white;
     font-weight: 600;
-    letter-spacing: 0.05em;
 }
 
 tr:nth-child(even) {
-    background-color: #f8fbff;
+    background-color: #fff5f5;
+}
+
+/* Buttons */
+button,
+.btn {
+    display: inline-block;
+    padding: 10px 22px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+button:hover,
+.btn:hover {
+    background-color: var(--primary-hover);
 }
 
 .edit-btn {
     background-color: var(--success-color);
-    color: white;
-    padding: 7px 14px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    text-decoration: none;
-    font-weight: 600;
     font-size: 0.9rem;
-    transition: background-color 0.3s ease;
+    padding: 7px 14px;
+    border-radius: 6px;
 }
 
 .edit-btn:hover {
     background-color: var(--success-hover);
 }
 
-button, .btn {
-    padding: 10px 25px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-}
-
-button:hover, .btn:hover {
-    background-color: var(--primary-hover);
-}
-
 .back-btn {
-    margin-top: 25px;
     background-color: var(--secondary-color);
 }
 
 .back-btn:hover {
     background-color: var(--secondary-hover);
+}
+
+/* Forms */
+form {
+    margin-top: 20px;
 }
 
 input[type="text"],
@@ -171,14 +186,11 @@ textarea {
     border: 1.5px solid #ccc;
     border-radius: 8px;
     font-size: 1rem;
-    transition: border-color 0.3s ease;
     font-family: var(--font-family);
+    transition: border-color 0.3s ease;
 }
 
-input[type="text"]:focus,
-input[type="date"]:focus,
-input[type="time"]:focus,
-input[type="tel"]:focus,
+input:focus,
 select:focus,
 textarea:focus {
     outline: none;
@@ -190,38 +202,36 @@ textarea {
     min-height: 100px;
 }
 
+/* Alerts & Messages */
 .error-message {
+    background-color: #ffe6e6;
     color: var(--danger-color);
-    font-weight: 700;
-    margin-top: 10px;
+    font-weight: 600;
     text-align: center;
-    background: #ffe6e6;
-    padding: 10px 15px;
+    padding: 12px 16px;
+    border: 1.5px solid var(--danger-color);
     border-radius: 8px;
-    border: 1px solid var(--danger-color);
+    margin: 20px 0;
 }
 
+.success-message,
 .message {
-    margin-top: 20px;
-    border: 1.5px solid var(--success-color);
     background-color: #e8f5e9;
-    padding: 20px;
-    text-align: left;
-    border-radius: 10px;
-}
-
-.message h3 {
     color: var(--success-color);
-    margin-top: 0;
-    font-weight: 700;
+    font-weight: 600;
+    padding: 15px 20px;
+    border: 1.5px solid var(--success-color);
+    border-radius: 10px;
+    margin: 20px 0;
 }
 
+/* Filter Form */
 .filter-form {
     display: flex;
-    gap: 15px;
-    align-items: center;
-    margin-bottom: 25px;
     flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+    align-items: center;
 }
 
 .filter-form input,
@@ -231,9 +241,10 @@ textarea {
     border-radius: 8px;
     font-size: 1rem;
     flex-grow: 1;
-    min-width: 150px;
+    min-width: 160px;
 }
 
+/* Responsive Design */
 @media (max-width: 900px) {
     .admin-container {
         flex-direction: column;
@@ -243,7 +254,7 @@ textarea {
         width: 100%;
         height: auto;
         position: relative;
-        padding: 15px 10px;
+        padding: 20px;
         text-align: center;
     }
 
