@@ -17,7 +17,7 @@ users = {
     'admin': {'password': 'admin123', 'role': 'admin'}
 }
 
-negeri_daerahs = {
+state_cities = {
     "Johor": ["Batu Pahat", "Johor Bahru", "Kluang", "Mersing", "Muar", "Pontian", "Segamat", "Kulai", "Tangkak"],
     "Kedah": ["Baling", "Bandar Baharu", "Kota Setar", "Kubang Pasu", "Kuala Muda", "Langkawi", "Padang Terap", "Sik", "Yan"],
     "Kelantan": ["Bachok", "Gua Musang", "Jeli", "Kota Bharu", "Machang", "Pasir Mas", "Pasir Puteh", "Tanah Merah", "Tumpat"],
@@ -29,8 +29,8 @@ negeri_daerahs = {
     "Pulau Pinang": ["Barat Daya", "Seberang Perai Selatan", "Seberang Perai Tengah", "Seberang Perai Utara", "Timur Laut"],
     "Sabah": ["Kota Kinabalu", "Sandakan", "Tawau", "Keningau", "Lahad Datu", "Kunak", "Beaufort", "Labuan"],
     "Sarawak": ["Kuching", "Miri", "Sibu", "Bintulu", "Sri Aman", "Betong", "Limbang"],
-    "Selangor": ["Gombak", "Hulu Langat", "Hulu Selangor", "Klang", "Kuala Langat", "Kuala Lumpur", "Kuala Selangor", "Petaling","Putrajaya", "Sabak Bernam", "Sepang"],
-    "Terengganu": ["Besut", "Dungun", "Hulu Terengganu", "Kemaman", "Kuala Terengganu", "Marang"],
+    "Selangor": ["Gombak", "Hulu Langat", "Hulu Selangor", "Klang", "Kuala Langat", "Kuala Lumpur", "Kuala Selangor", "Petaling", "Putrajaya", "Sabak Bernam", "Sepang"],
+    "Terengganu": ["Besut", "Dungun", "Hulu Terengganu", "Kemaman", "Kuala Terengganu", "Marang"]
 }
 
 @app.route('/')
@@ -47,7 +47,6 @@ def login():
         if username == 'admin' and password == users['admin']['password']:
             session['role'] = 'admin'
             return redirect(url_for('track_admin'))
-
         elif username.upper() in applications:
             session['role'] = 'user'
             session['application_id'] = username.upper()
@@ -90,7 +89,7 @@ def schedule(application_id):
 
     if request.method == 'POST':
         selected_state = request.form.get('state', '').strip()
-        city_list = negeri_daerahs.get(selected_state, [])
+        city_list = state_cities.get(selected_state, [])
 
         if 'final_submit' in request.form:
             date_str = request.form.get('date', '')
@@ -104,7 +103,7 @@ def schedule(application_id):
             if not selected_state or not city:
                 error = "Please select both State and City."
             elif not malaysia_phone_regex.match(phone):
-                error = "Invalid Malaysian phone number format. It should start with +60 followed by 8 to 11 digits."
+                error = "Invalid Malaysian phone number format."
             else:
                 try:
                     chosen_date = datetime.strptime(date_str, '%Y-%m-%d').date()
@@ -130,16 +129,15 @@ def schedule(application_id):
                         meeting_info = meetings[application_id]
                 except ValueError:
                     error = "Invalid date or time format."
-
     return render_template(
         'schedule.html',
         application_id=application_id,
         error=error,
         success=success,
-        meeting_info=meeting_info,
-        state_cities=negeri_daerahs,
+        meeting_info=meetings.get(application_id),
+        state_cities=state_cities,
         selected_state=selected_state,
-        city_list=city_list,
+        city_list=city_list
     )
 
 @app.route('/track_user')
@@ -163,15 +161,10 @@ def track_admin():
 
     filtered_apps = {}
     for app_id, data in applications.items():
-        pet_name = data['pet'].lower()
-        status = data['status'].lower()
-
-        if pet_filter and pet_filter not in pet_name:
+        if pet_filter and pet_filter not in data['pet'].lower():
             continue
-
-        if status_filter and status_filter not in status:
+        if status_filter and status_filter != data['status'].lower():
             continue
-
         filtered_apps[app_id] = data
 
     all_data = []
@@ -205,9 +198,7 @@ def submit_review():
             'feedback': feedback
         }
 
-    if session.get('role') == 'admin':
-        return redirect(url_for('track_admin'))
-    return redirect(url_for('track_user'))
+    return redirect(url_for('track_admin' if session.get('role') == 'admin' else 'track_user'))
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
