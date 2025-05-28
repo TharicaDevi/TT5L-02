@@ -85,24 +85,24 @@ def schedule(application_id):
     success = None
     meeting_info = None
 
-    selected_negeri = ''
-    daerah_list = []
+    selected_state = ''
+    city_list = []
 
     if request.method == 'POST':
-        selected_negeri = request.form.get('negeri', '').strip()
-        daerah_list = negeri_daerahs.get(selected_negeri, [])
+        selected_state = request.form.get('state', '').strip()
+        city_list = negeri_daerahs.get(selected_state, [])
 
         if 'final_submit' in request.form:
             date_str = request.form.get('date', '')
             time = request.form.get('time', '')
             phone = request.form.get('phone', '').strip()
-            daerah = request.form.get('daerah', '').strip()
+            city = request.form.get('city', '').strip()
             notes = request.form.get('notes', '')
 
             malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
 
-            if not selected_negeri or not daerah:
-                error = "Please select both Negeri and Daerah."
+            if not selected_state or not city:
+                error = "Please select both State and City."
             elif not malaysia_phone_regex.match(phone):
                 error = "Invalid Malaysian phone number format. It should start with +60 followed by 8 to 11 digits."
             else:
@@ -120,8 +120,8 @@ def schedule(application_id):
                             'date': chosen_date.strftime('%d/%m/%Y'),
                             'time': time,
                             'phone': phone,
-                            'negeri': selected_negeri,
-                            'daerah': daerah,
+                            'state': selected_state,
+                            'city': city,
                             'notes': notes,
                             'approved': True,
                             'by': application_id
@@ -130,11 +130,6 @@ def schedule(application_id):
                         meeting_info = meetings[application_id]
                 except ValueError:
                     error = "Invalid date or time format."
-        else:
-            pass
-    else:
-        selected_negeri = ''
-        daerah_list = []
 
     return render_template(
         'schedule.html',
@@ -142,9 +137,9 @@ def schedule(application_id):
         error=error,
         success=success,
         meeting_info=meeting_info,
-        negeri_daerahs=negeri_daerahs,
-        selected_negeri=selected_negeri,
-        daerah_list=daerah_list,
+        state_cities=negeri_daerahs,
+        selected_state=selected_state,
+        city_list=city_list,
     )
 
 @app.route('/track_user')
