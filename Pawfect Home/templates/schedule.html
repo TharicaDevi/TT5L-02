@@ -8,64 +8,59 @@
 </head>
 <body>
 
-<div class="admin-container">
+<div class="container">
 
-    <div class="sidebar">
-        <h2>Admin Panel</h2>
-        <ul>
-            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
-            <li><a href="{{ url_for('track_admin') }}">Applications</a></li>
-            <li><a href="{{ url_for('logout') }}">Logout</a></li>
-        </ul>
-    </div>
+    <h2>Schedule Meetup for {{ application_id }}</h2>
 
-    <div class="main-content">
-        <h2>Schedule Meetup</h2>
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+    {% if success %}
+        <div class="success">{{ success }}</div>
+    {% endif %}
 
-        <div class="section">
-            <form method="POST">
-                <label for="date">Date:</label>
-                <input type="date" id="date" name="date" value="{{ meeting_info.date if meeting_info else '' }}" required>
+    <form method="POST">
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" value="{{ meeting_info.date if meeting_info else '' }}" required>
 
-                <label for="time">Time:</label>
-                <input type="time" id="time" name="time" min="08:00" max="22:00" value="{{ meeting_info.time if meeting_info else '' }}" required>
+        <label for="time">Time:</label>
+        <input type="time" id="time" name="time" min="08:00" max="22:00" value="{{ meeting_info.time if meeting_info else '' }}" required>
 
-                <label for="phone">Phone Number:</label>
-                <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    placeholder="+60123456789"
-                    pattern="^\+60[1-9][0-9]{7,10}$"
-                    title="Please enter a Malaysian phone number starting with +60 followed by 8 to 11 digits"
-                    value="{{ meeting_info.phone if meeting_info else '' }}"
-                    required>
+        <label for="phone">Phone Number:</label>
+        <input
+            type="tel"
+            id="phone"
+            name="phone"
+            placeholder="+60123456789"
+            pattern="^\+60[1-9][0-9]{7,10}$"
+            title="Please enter a Malaysian phone number starting with +60 followed by 8 to 11 digits"
+            value="{{ meeting_info.phone if meeting_info else '' }}"
+            required>
 
-                <label for="state">State:</label>
-                <select id="state" name="state" onchange="this.form.submit()" required>
-                    <option value="">-- Select State --</option>
-                    {% for state in state_cities.keys() %}
-                        <option value="{{ state }}" {% if state == selected_state %}selected{% endif %}>{{ state }}</option>
-                    {% endfor %}
-                </select>
+        <label for="state">State:</label>
+        <select id="state" name="state" onchange="this.form.submit()" required>
+            <option value="">-- Select State --</option>
+            {% for state in state_cities.keys() %}
+                <option value="{{ state }}" {% if state == selected_state %}selected{% endif %}>{{ state }}</option>
+            {% endfor %}
+        </select>
 
-                <label for="city">City:</label>
-                <select id="city" name="city" required>
-                    <option value="">-- Select City --</option>
-                    {% for city in city_list %}
-                        <option value="{{ city }}" {% if meeting_info and meeting_info.city == city %}selected{% endif %}>{{ city }}</option>
-                    {% endfor %}
-                </select>
+        <label for="city">City:</label>
+        <select id="city" name="city" required>
+            <option value="">-- Select City --</option>
+            {% for city in city_list %}
+                <option value="{{ city }}" {% if meeting_info and meeting_info.city == city %}selected{% endif %}>{{ city }}</option>
+            {% endfor %}
+        </select>
 
-                <label for="notes">Notes (Optional):</label>
-                <textarea id="notes" name="notes" rows="4" placeholder="Add notes about the meetup...">{{ meeting_info.notes if meeting_info else '' }}</textarea>
+        <label for="notes">Notes (Optional):</label>
+        <textarea id="notes" name="notes" rows="4" placeholder="Add notes about the meetup...">{{ meeting_info.notes if meeting_info else '' }}</textarea>
 
-                <input type="hidden" name="final_submit" id="final_submit" value="">
+        <input type="hidden" name="final_submit" id="final_submit" value="">
 
-                <button type="submit" class="btn">Schedule Meetup</button>
-            </form>
-        </div>
-    </div>
+        <button type="submit" onclick="document.getElementById('final_submit').value='';">Save Schedule</button>
+        <button type="submit" onclick="document.getElementById('final_submit').value='finalize';">Finalize Adoption</button>
+    </form>
 
 </div>
 
