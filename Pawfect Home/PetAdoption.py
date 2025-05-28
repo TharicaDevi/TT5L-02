@@ -225,7 +225,7 @@ def edit_meeting(app_id):
 
             malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
             if not malaysia_phone_regex.match(phone):
-                raise ValueError("Invalid phone number")
+                raise ValueError("Invalid phone number format. It must be +60 followed by 8-11 digits.")
 
             meeting_date = datetime.strptime(date_str, '%Y-%m-%d').date()
             today = datetime.today().date()
@@ -234,7 +234,7 @@ def edit_meeting(app_id):
             if meeting_date < today:
                 error = "Cannot choose a past date."
             elif not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
-                error = "Meetings must be between 08:00 and 22:00."
+                error = "Meeting time must be between 08:00 and 22:00."
             else:
                 meetings[app_id].update({
                     'date': meeting_date.strftime('%d/%m/%Y'),
@@ -245,6 +245,7 @@ def edit_meeting(app_id):
                     'notes': notes,
                 })
                 success = "Meeting updated successfully!"
+                selected_state = state
                 city_list = state_cities.get(state, [])
 
         except Exception as e:
