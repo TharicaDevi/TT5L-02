@@ -44,7 +44,6 @@
             <label for="notes">Notes (Optional):</label><br>
             <textarea name="notes" rows="4" placeholder="Add notes about the meetup...">{{ meeting_info.notes if meeting_info else '' }}</textarea><br>
 
-            <!-- Hidden input to detect final submit -->
             <input type="hidden" name="final_submit" value="1">
 
             <button type="submit">Schedule</button>
