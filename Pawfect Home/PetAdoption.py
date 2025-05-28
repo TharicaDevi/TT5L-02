@@ -200,5 +200,66 @@ def submit_review():
 
     return redirect(url_for('track_admin' if session.get('role') == 'admin' else 'track_user'))
 
+@app.route('/edit_meeting/<app_id>', methods=['GET', 'POST'])
+def edit_meeting(app_id):
+    if 'role' not in session or session['role'] != 'admin':
+        return redirect(url_for('login'))
+
+    meeting = meetings.get(app_id)
+    if not meeting:
+        return "No meeting found to edit."
+
+    error = None
+    success = None
+    selected_state = meeting.get('state', '')
+    city_list = negeri_daerahs.get(selected_state, [])
+
+    if request.method == 'POST':
+        try:
+            date_str = request.form['date']
+            time_str = request.form['time']
+            phone = request.form['phone']
+            state = request.form['state']
+            city = request.form['city']
+            notes = request.form.get('notes', '')
+
+            malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
+            if not malaysia_phone_regex.match(phone):
+                raise ValueError("Invalid phone number")
+
+            meeting_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            today = datetime.today().date()
+            meeting_time = datetime.strptime(time_str, '%H:%M').time()
+
+            if meeting_date < today:
+                error = "Cannot choose a past date."
+            elif not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
+                error = "Meetings must be between 08:00 and 22:00."
+            else:
+                meetings[app_id].update({
+                    'date': meeting_date.strftime('%d/%m/%Y'),
+                    'time': time_str,
+                    'phone': phone,
+                    'state': state,
+                    'city': city,
+                    'notes': notes,
+                })
+                success = "Meeting updated successfully!"
+                city_list = negeri_daerahs.get(state, [])
+
+        except Exception as e:
+            error = str(e)
+
+    return render_template(
+        'edit_meeting.html',
+        app_id=app_id,
+        meeting=meetings.get(app_id),
+        error=error,
+        success=success,
+        negeri_daerahs=negeri_daerahs,
+        selected_state=selected_state,
+        city_list=city_list,
+    )
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
