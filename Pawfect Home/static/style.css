@@ -75,7 +75,7 @@ button:hover, .btn:hover {
     background-color: #005fa3;
 }
 
-.delete-button {
+.delete-btn {
     padding: 6px 12px;
     background-color: #dc3545;
     color: white;
@@ -83,9 +83,10 @@ button:hover, .btn:hover {
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
+    transition: background-color 0.3s ease;
 }
 
-.delete-button:hover {
+.delete-btn:hover {
     background-color: #c82333;
 }
 
@@ -137,16 +138,6 @@ button:hover, .btn:hover {
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
-}
-
-.btn {
-    padding: 6px 12px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-    color: white;
-    transition: background-color 0.3s ease;
 }
 
 .filter-btn {
