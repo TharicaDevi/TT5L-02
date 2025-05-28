@@ -10,16 +10,19 @@
         <form method="POST">
             <label for="date">Date:</label><br>
             <input type="date" name="date" required><br>
-
             <label for="time">Time:</label><br>
             <input type="time" name="time" min="08:00" max="22:00" required><br>
-
-            <label for="phone">Phone Number:</label><br>
-            <input type="tel" name="phone" placeholder="+1234567890" pattern="[+0-9\s\-]{7,15}" required><br>
-
+            <label for="phone">Phone Number (Malaysian only, start with +60):</label><br>
+            <input 
+                type="tel" 
+                name="phone" 
+                placeholder="+60123456789" 
+                pattern="^\+60[1-9][0-9]{7,10}$" 
+                title="Please enter a Malaysian phone number starting with +60 followed by 8 to 11 digits" 
+                required>
+            <br>
             <label for="notes">Notes (Optional):</label><br>
             <textarea name="notes" rows="4" placeholder="Add notes about the meetup..."></textarea><br>
-
             <button type="submit">Schedule</button>
         </form>
 
@@ -28,7 +31,7 @@
         {% endif %}
 
         {% if success %}
-        <div class="message">
+        <div class="message" style="border: 1px solid #4CAF50; background-color: #e8f5e9; padding: 15px; margin-top: 20px;">
             <h3>{{ success }}</h3>
             <p><strong>Approved By:</strong> {{ meeting_info.by }}</p>
             <p><strong>Date:</strong> {{ meeting_info.date }}</p>
