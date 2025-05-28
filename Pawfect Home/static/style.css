@@ -221,12 +221,11 @@ form > button + button {
 }
 
 /* --- Login Page Styles --- */
-
 .login-wrapper {
     display: flex;
-    justify-content: center; /* horizontal center */
-    align-items: center;     /* vertical center */
-    height: 100vh;           /* full viewport height */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
     background-color: var(--bg-light);
     padding: 20px;
     box-sizing: border-box;
@@ -315,4 +314,111 @@ form > button + button {
     font-weight: 600;
     text-align: center;
     user-select: none;
+}
+
+body.schedule-page {
+  background-color: var(--bg-light, #f5f7fa);
+  font-family: var(--font-family, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
+  margin: 0;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.main-content {
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.section {
+  background-color: var(--bg-white, #fff);
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: var(--box-shadow, 0 2px 8px rgba(0,0,0,0.1));
+  box-sizing: border-box;
+}
+
+h2 {
+  color: var(--primary-color, #0077cc);
+  font-weight: 700;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+/* Optional: Add some spacing for form groups */
+.form-group {
+  margin-bottom: 18px;
+}
+
+/* Ensure buttons align nicely */
+.btn-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.btn {
+  flex: 1;
+  padding: 12px 0;
+  background-color: var(--primary-color, #0077cc);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover, .btn:focus {
+  background-color: var(--primary-hover, #005fa3);
+  outline: none;
+}
+
+/* Inputs and selects styling */
+input, select, textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #ccc;
+  font-size: 1rem;
+  box-sizing: border-box;
+  font-family: var(--font-family, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary-color, #0077cc);
+  box-shadow: 0 0 5px var(--primary-color, #0077cc);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Error and success styles */
+.error {
+  background-color: #f8d7da;
+  color: var(--danger-color, #dc3545);
+  border: 1px solid var(--danger-color, #dc3545);
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.success {
+  background-color: #d4edda;
+  color: var(--success-color, #28a745);
+  border: 1px solid var(--success-color, #28a745);
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  text-align: center;
 }
