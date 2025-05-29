@@ -1,15 +1,9 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session, flash
 from werkzeug.utils import secure_filename
 import database, os
-import random
-import smtplib
-from email.message import EmailMessage
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'  # needed for session (session = store information about the user across multiple pages)
-
-EMAIL_ADDRESS = 'elleyazmir@gmail.com'
-EMAIL_PASSWORD = 'thqp rzyv fdne leer'
 
 # folder for uploaded profile pictures
 UPLOAD_FOLDER = 'static/profile_pics'
@@ -134,59 +128,17 @@ def account():
 
     if request.method == 'POST':
         # extract submitted form data
-        new_email = request.form['email']
+        email = request.form['email']
         phone = request.form['phone']
         password = request.form['password']
 
         if user:
-            if new_email != user['email']:
-                otp = str(random.randint(100000, 999999))
-                session['pending_email'] = new_email
-                session['otp_code'] = otp
-                send_email(new_email, otp)
-                return redirect(url_for('verify_email'))
-            else:
-                database.update_account_info(username, new_email, phone, password)
-                message = "Changes saved!"
-                user = database.get_user_by_username(username)
+            database.update_account_info(username, email, phone, password)
+            message = "Changes saved!"
+            user = database.get_user_by_username(username)
         else:
             message = "User not found. Changes not saved."
     return render_template('account.html', user=user, message=message)
-
-# verify email route
-@app.route("/verify_email", methods=['GET', 'POST'])
-def verify_email():
-    username = session.get('username')
-
-    if request.method == 'POST':
-        input_code = request.form['code']
-        if input_code == session.get('otp_code'):
-            # Update email only after verification
-            new_email = session.get('pending_email')
-            user = database.get_user_by_username(username)
-            database.update_account_info(username, new_email, user['phone'], user['password'])
-
-            # Cleanup
-            session.pop('pending_email', None)
-            session.pop('otp_code', None)
-
-            return redirect(url_for('account'))
-        else:
-            return "❌ Invalid verification code."
-
-    return render_template("verify.html")
-
-# send email route
-def send_email(to_email, code):
-    msg = EmailMessage()
-    msg['Subject'] = 'Your Email Verification Code'
-    msg['From'] = EMAIL_ADDRESS
-    msg['To'] = to_email
-    msg.set_content(f'Your email verification code is: {code}')
-
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-        smtp.send_message(msg)
 
 # personal info route
 @app.route("/personal", methods=["GET", "POST"])
