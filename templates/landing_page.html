@@ -5,27 +5,44 @@
     <title>Welcome to Pawfect Home</title>
     <style>
         body {
-            text-align: center;
-            padding: 80px;
-            background: linear-gradient(to right, #f0faff, #e0f7ff);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-image: url("{{ url_for('static', filename='images/background.jpg') }}");
+            background-size: cover;            
+            background-repeat: no-repeat;     
+            background-position: center center; 
+            background-attachment: fixed;      
             font-family: Arial, sans-serif;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
         }
+    
         h1 {
             font-size: 3em;
             margin-bottom: 10px;
         }
+    
         p {
             font-size: 1.2em;
+            margin-bottom: 30px;
         }
-        .btn {
-            padding: 12px 24px;
-            font-size: 1em;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 6px;
+    
+        a {
             text-decoration: none;
-            cursor: pointer;
+            padding: 15px 30px;
+            background-color: rgba(0, 123, 255, 0.8);
+            color: white;
+            font-size: 1.2em;
+            border-radius: 8px;
+        }
+    
+        a:hover {
+            background-color: rgba(0, 86, 179, 0.8);
         }
     </style>
 </head>
