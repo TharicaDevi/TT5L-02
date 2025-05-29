@@ -5,7 +5,15 @@ def init_db():
     conn = sqlite3.connect("info.db")
     c = conn.cursor()
 
-    # Create user table
+    # Drop and recreate for resetting data during development
+    c.execute("DROP TABLE IF EXISTS users")
+    c.execute("DROP TABLE IF EXISTS accounts")
+    c.execute("DROP TABLE IF EXISTS profiles")
+    c.execute("DROP TABLE IF EXISTS addresses")
+    c.execute("DROP TABLE IF EXISTS privacy")
+    c.execute("DROP TABLE IF EXISTS security")
+
+    # user table
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -14,17 +22,23 @@ def init_db():
         )
     """)
 
-    # Drop and recreate for resetting data during development
-    c.execute("DROP TABLE IF EXISTS users")
-
-    # Create updated info table
+    # accounts table
     c.execute("""
-        CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE IF NOT EXISTS accounts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
             email TEXT,
-            phone TEXT,
+            pending_email TEXT,
+            email_verified INTEGER DEFAULT 1,
+            phone TEXT
+        )
+    """)     
+
+    # profiles table
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS profiles (
+            user_id INTEGER PRIMARY KEY,
             fullname TEXT,
             dob TEXT,
             gender TEXT,
@@ -32,15 +46,39 @@ def init_db():
             language TEXT,
             bio TEXT,
             profile_pic TEXT,
-            primary_address TEXT,
-            shipping_address TEXT,
-            visibility TEXT DEFAULT 'public',
-            activity_status TEXT DEFAULT 'show',
-            security_question TEXT,
-            security_answer TEXT
-        )
+            FOREIGN KEY (user_id) REFERENCES accounts(id) ON DELETE CASCADE
+        );
     """)
 
+    # addresses table
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS addresses (
+            user_id INTEGER PRIMARY KEY,
+            primary_address TEXT,
+            shipping_address TEXT,
+            FOREIGN KEY (user_id) REFERENCES accounts(id) ON DELETE CASCADE
+        );
+    """)
+
+    # privacy table
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS privacy (
+            user_id INTEGER PRIMARY KEY,
+            visibility TEXT DEFAULT 'public',
+            activity_status TEXT DEFAULT 'show',
+            FOREIGN KEY (user_id) REFERENCES accounts(id) ON DELETE CASCADE
+        );
+    """)
+
+    # security table
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS security (
+            user_id INTEGER PRIMARY KEY,
+            security_question TEXT,
+            security_answer TEXT,
+            FOREIGN KEY (user_id) REFERENCES accounts(id) ON DELETE CASCADE
+        )
+    """)
     conn.commit()
     conn.close()
 
@@ -48,7 +86,14 @@ def init_db():
 def add_user(username, password):
     conn = sqlite3.connect("info.db")
     c = conn.cursor()
+
     c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+    c.execute("INSERT INTO accounts (username, password) VALUES (?, ?)", (username, password))
+    account_id = c.lastrowid
+    c.execute("INSERT INTO profiles (user_id) VALUES (?)", (account_id,))
+    c.execute("INSERT INTO addresses (user_id) VALUES (?)", (account_id,))
+    c.execute("INSERT INTO privacy (user_id) VALUES (?)", (account_id,))
+    c.execute("INSERT INTO security (user_id) VALUES (?)", (account_id,))
     conn.commit()
     conn.close()
 
@@ -79,11 +124,20 @@ def update_password(username, new_password):
 
 def get_user_by_username(username):
     conn = sqlite3.connect("info.db")
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
     user = cursor.fetchone()
     conn.close()
     return user
+
+def get_account_id(username):
+    conn = sqlite3.connect("info.db")
+    c = conn.cursor()
+    c.execute("SELECT id FROM accounts WHERE username = ?", (username,))
+    result = c.fetchone()
+    conn.close()
+    return result[0] if result else None
 
 # save account information
 def update_account_info(username, email, phone, password):
@@ -91,76 +145,95 @@ def update_account_info(username, email, phone, password):
     cursor = conn.cursor()
 
     if email:
-        cursor.execute("UPDATE users SET email = ? WHERE username = ?", (email, username))
+        cursor.execute("UPDATE accounts SET pending_email = ?, email_verified = 0 WHERE username = ?", (email, username))
     if phone:
-        cursor.execute("UPDATE users SET phone = ? WHERE username = ?", (phone, username))
+        cursor.execute("UPDATE accounts SET phone = ? WHERE username = ?", (phone, username))
     if password:
-        cursor.execute("UPDATE users SET password = ? WHERE username = ?", (password, username))
+        cursor.execute("UPDATE accounts SET password = ? WHERE username = ?", (password, username))
+    conn.commit()
+    conn.close()
+
+def verify_pending_email(username):
+    conn = sqlite3.connect("info.db")
+    cursor = conn.cursor()
+    cursor.execute("UPDATE accounts SET email = pending_email, pending_email = NULL, email_verified = 1 WHERE username = ?", (username,))
     conn.commit()
     conn.close()
 
 # save personal information    
 def update_personal_info(username, fullname, dob, gender, nationality, language, bio, profile_pic):
+    user_id = get_account_id(username)
     conn = sqlite3.connect("info.db")
     c = conn.cursor()
+
     c.execute("""
-        UPDATE users SET 
+        UPDATE profiles SET 
             fullname = ?, dob = ?, gender = ?, nationality = ?, 
             language = ?, bio = ?, profile_pic = ?
-        WHERE username = ?
-    """, (fullname, dob, gender, nationality, language, bio, profile_pic, username))
+        WHERE user_id = ?
+    """, (fullname, dob, gender, nationality, language, bio, profile_pic, user_id))
     conn.commit()
     conn.close()
 
 def get_personal_info(username):
+    user_id = get_account_id(username)
     conn = sqlite3.connect("info.db")
     c = conn.cursor()
-    c.execute("SELECT fullname, dob, gender, nationality, language, bio, profile_pic FROM users WHERE username = ?", (username,))
+
+    c.execute("""
+              SELECT fullname, dob, gender, nationality, language, bio, profile_pic 
+              FROM profiles WHERE user_id = ?
+    """, (user_id,))
+
     row = c.fetchone()
     conn.close()
     return row
 
 # save contact information
 def update_contact_info(username, primary_address, shipping_address):
+    user_id = get_account_id(username)
     conn = sqlite3.connect("info.db")
     c = conn.cursor()
     c.execute("""
-        UPDATE users SET
+        UPDATE addresses SET
             primary_address = ?, shipping_address = ?
-        WHERE username = ?
-    """, (primary_address, shipping_address, username))
+        WHERE user_id = ?
+    """, (primary_address, shipping_address, user_id))
     conn.commit()
     conn.close()
 
 # save privacy settings
 def update_privacy_settings(username, visibility, activity_status):
+    user_id = get_account_id(username)
     conn = sqlite3.connect("info.db")
     c = conn.cursor()
     c.execute("""
-        UPDATE users SET
+        UPDATE privacy SET
             visibility = ?, activity_status = ?
-        WHERE username = ?
-    """, (visibility, activity_status, username))
+        WHERE user_id = ?
+    """, (visibility, activity_status, user_id))
     conn.commit()
     conn.close()
 
 def get_privacy_settings(username):
     conn = sqlite3.connect("info.db")
     c = conn.cursor()
-    c.execute("SELECT visibility, activity_status FROM users WHERE username = ?", (username,))
+    user_id = get_account_id(username)
+    c.execute("SELECT visibility, activity_status FROM privacy WHERE user_id = ?", (user_id,))
     result = c.fetchone()
     conn.close()
     return result
 
 # save security question & answer
 def update_security_settings(username, question, answer):
+    user_id = get_account_id(username)
     conn = sqlite3.connect("info.db")
     c = conn.cursor()
     c.execute("""
-        UPDATE users SET
+        UPDATE security SET
             security_question = ?, security_answer = ?
-        WHERE username = ?
-    """, (question, answer, username))
+        WHERE user_id = ?
+    """, (question, answer, user_id))
     conn.commit()
     conn.close()
 
@@ -168,6 +241,6 @@ def update_security_settings(username, question, answer):
 def delete_account(username):
     conn = sqlite3.connect("info.db")
     c = conn.cursor()
-    c.execute("DELETE FROM users WHERE username = ?", (username,))
+    c.execute("DELETE FROM accounts WHERE username = ?", (username,))
     conn.commit()
     conn.close()
