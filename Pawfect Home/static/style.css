@@ -10,7 +10,7 @@
     --bg-light: #f5f7fa;
     --bg-white: #ffffff;
     --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 body {
@@ -21,15 +21,13 @@ body {
     line-height: 1.6;
 }
 
-/* --- Admin Panel Styles --- */
-
+/* --- Admin Layout --- */
 .admin-container {
     display: flex;
     min-height: 100vh;
     background-color: var(--bg-light);
 }
 
-/* Sidebar */
 .sidebar {
     width: 240px;
     background-color: var(--primary-color);
@@ -38,7 +36,6 @@ body {
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     position: fixed;
     height: 100vh;
     overflow-y: auto;
@@ -46,10 +43,9 @@ body {
 }
 
 .sidebar h2 {
-    margin-top: 0;
+    margin: 0 0 30px;
     font-weight: 700;
     font-size: 1.8rem;
-    margin-bottom: 30px;
     letter-spacing: 1px;
 }
 
@@ -69,9 +65,9 @@ body {
     text-decoration: none;
     font-weight: 600;
     font-size: 1.1rem;
-    display: block;
     padding: 8px 10px;
     border-radius: 6px;
+    display: block;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -81,125 +77,15 @@ body {
     outline: none;
 }
 
-/* Main content */
 .main-content {
     margin-left: 240px;
     padding: 40px 50px;
     flex-grow: 1;
     background-color: var(--bg-light);
     min-height: 100vh;
+    max-width: 100%;
 }
 
-/* Headings */
-h1, h2 {
-    font-weight: 700;
-    margin-bottom: 25px;
-    color: var(--primary-color);
-}
-
-/* Section container */
-.section {
-    background-color: var(--bg-white);
-    border-radius: 12px;
-    padding: 24px 30px;
-    margin-top: 25px;
-    box-shadow: var(--box-shadow);
-}
-
-/* Form labels */
-form label {
-    display: block;
-    font-weight: 600;
-    margin-top: 18px;
-    margin-bottom: 6px;
-    color: #444;
-}
-
-/* Inputs and selects */
-input[type="text"],
-input[type="date"],
-input[type="time"],
-input[type="tel"],
-select,
-textarea {
-    width: 100%;
-    padding: 10px 14px;
-    margin-top: 6px;
-    margin-bottom: 16px;
-    border: 1.5px solid #ccc;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    font-family: var(--font-family);
-    box-sizing: border-box;
-}
-
-input[type="text"]:focus,
-input[type="date"]:focus,
-input[type="time"]:focus,
-input[type="tel"]:focus,
-select:focus,
-textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 5px var(--primary-color);
-}
-
-/* Textarea */
-textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
-/* Buttons */
-button, .btn {
-    padding: 10px 25px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: background-color 0.3s ease, box-shadow 0.2s ease;
-    margin-top: 24px;
-    user-select: none;
-}
-
-button:hover, button:focus,
-.btn:hover, .btn:focus {
-    background-color: var(--primary-hover);
-    box-shadow: 0 4px 10px rgba(0, 119, 204, 0.4);
-    outline: none;
-}
-
-/* When multiple buttons side by side, add spacing */
-form > button + button {
-    margin-left: 12px;
-}
-
-/* Error and success messages */
-.error {
-    color: var(--danger-color);
-    background-color: #f8d7da;
-    border: 1px solid var(--danger-color);
-    padding: 12px 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-weight: 600;
-}
-
-.success {
-    color: var(--success-color);
-    background-color: #d4edda;
-    border: 1px solid var(--success-color);
-    padding: 12px 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-weight: 600;
-}
-
-/* Responsive */
 @media (max-width: 900px) {
     .admin-container {
         flex-direction: column;
@@ -220,7 +106,114 @@ form > button + button {
     }
 }
 
-/* --- Login Page Styles --- */
+/* --- Sections --- */
+.section {
+    background-color: var(--bg-white);
+    border-radius: 12px;
+    padding: 30px 40px;
+    margin-top: 25px;
+    box-shadow: var(--box-shadow);
+    box-sizing: border-box;
+}
+
+/* --- Headings --- */
+h1, h2 {
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: var(--primary-color);
+    text-align: center;
+}
+
+/* --- Forms --- */
+form label,
+.login-form label {
+    display: block;
+    font-weight: 600;
+    margin-top: 18px;
+    margin-bottom: 6px;
+    color: #444;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: var(--font-family);
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px var(--primary-color);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+/* --- Buttons --- */
+button, .btn {
+    padding: 12px 25px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.2s ease;
+    user-select: none;
+}
+
+button:hover, button:focus,
+.btn:hover, .btn:focus {
+    background-color: var(--primary-hover);
+    box-shadow: 0 4px 10px rgba(0, 119, 204, 0.4);
+    outline: none;
+}
+
+.btn-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+form > button + button {
+    margin-left: 12px;
+}
+
+/* --- Messages --- */
+.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-left: 5px solid #dc3545;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.success {
+    background-color: #d4edda;
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* --- Login Page --- */
 .login-wrapper {
     display: flex;
     justify-content: center;
@@ -242,8 +235,7 @@ form > button + button {
 }
 
 .login-box h2 {
-    margin-top: 0;
-    margin-bottom: 25px;
+    margin: 0 0 25px;
     color: var(--primary-color);
     font-weight: 700;
     font-size: 1.8rem;
@@ -255,170 +247,27 @@ form > button + button {
     margin-bottom: 20px;
 }
 
-.login-form label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
-    color: #444;
-    user-select: none;
-}
-
 .login-form input[type="text"],
 .login-form input[type="password"] {
     width: 100%;
-    padding: 10px 14px;
-    font-size: 1rem;
-    border: 1.5px solid #ccc;
-    border-radius: 8px;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* --- Schedule Page --- */
+body.schedule-page {
+    background-color: var(--bg-light);
     font-family: var(--font-family);
+    margin: 0;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
     box-sizing: border-box;
 }
 
-.login-form input[type="text"]:focus,
-.login-form input[type="password"]:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 5px var(--primary-color);
-}
-
-.login-form button {
+body.schedule-page .main-content {
+    max-width: 700px;
     width: 100%;
-    padding: 12px 0;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.2s ease;
-    user-select: none;
-}
-
-.login-form button:hover,
-.login-form button:focus {
-    background-color: var(--primary-hover);
-    box-shadow: 0 4px 10px rgba(0, 119, 204, 0.4);
-    outline: none;
-}
-
-/* Error message styling for login */
-.error-message {
-    background-color: #f8d7da;
-    color: var(--danger-color);
-    border: 1px solid var(--danger-color);
-    padding: 12px 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-weight: 600;
-    text-align: center;
-    user-select: none;
-}
-
-body.schedule-page {
-  background-color: var(--bg-light, #f5f7fa);
-  font-family: var(--font-family, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
-  margin: 0;
-  padding: 40px 20px;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-}
-
-.main-content {
-  max-width: 700px;
-  width: 100%;
-  margin: 0 auto;
-}
-
-.section {
-  background-color: var(--bg-white, #fff);
-  padding: 30px 40px;
-  border-radius: 12px;
-  box-shadow: var(--box-shadow, 0 2px 8px rgba(0,0,0,0.1));
-  box-sizing: border-box;
-}
-
-h2 {
-  color: var(--primary-color, #0077cc);
-  font-weight: 700;
-  margin-bottom: 25px;
-  text-align: center;
-}
-
-/* Optional: Add some spacing for form groups */
-.form-group {
-  margin-bottom: 18px;
-}
-
-/* Ensure buttons align nicely */
-.btn-group {
-  display: flex;
-  gap: 12px;
-  margin-top: 30px;
-}
-
-.btn {
-  flex: 1;
-  padding: 12px 0;
-  background-color: var(--primary-color, #0077cc);
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn:hover, .btn:focus {
-  background-color: var(--primary-hover, #005fa3);
-  outline: none;
-}
-
-/* Inputs and selects styling */
-input, select, textarea {
-  width: 100%;
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1.5px solid #ccc;
-  font-size: 1rem;
-  box-sizing: border-box;
-  font-family: var(--font-family, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
-}
-
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: var(--primary-color, #0077cc);
-  box-shadow: 0 0 5px var(--primary-color, #0077cc);
-}
-
-textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-/* Error and success styles */
-.error {
-  background-color: #f8d7da;
-  color: var(--danger-color, #dc3545);
-  border: 1px solid var(--danger-color, #dc3545);
-  padding: 12px 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-weight: 600;
-  text-align: center;
-}
-
-.success {
-  background-color: #d4edda;
-  color: var(--success-color, #28a745);
-  border: 1px solid var(--success-color, #28a745);
-  padding: 12px 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-weight: 600;
-  text-align: center;
+    margin: 0 auto;
+    padding: 0;
 }
