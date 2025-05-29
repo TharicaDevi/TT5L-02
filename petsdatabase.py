@@ -118,8 +118,8 @@ def filter_pets(breed=None, age=None):
     query = "SELECT * FROM pets WHERE status = 'available'"
     params = []
     if breed:
-        query += " AND breed = ?"
-        params.append(breed)
+        query += " AND LOWER(breed) = ?"
+        params.append(breed.lower())
     if age:
         query += " AND age = ?"
         params.append(int(age))
