@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from datetime import datetime
 import re
 
 app = Flask(__name__)
-app.secret_key = 'secret'
+app.secret_key = 'your_secret_key'
 
 applications = {
     'APP123': {'status': 'Approved', 'pet': 'Buddy', 'finalized': False, 'review': None,
@@ -87,7 +87,6 @@ def schedule(application_id):
 
     error = None
     success = None
-
     selected_state = ''
     city_list = []
 
@@ -95,53 +94,64 @@ def schedule(application_id):
         selected_state = request.form.get('state', '').strip()
         city_list = state_cities.get(selected_state, [])
 
-        if 'final_submit' in request.form:
-            date_str = request.form.get('date', '')
-            time_str = request.form.get('time', '')
-            phone = request.form.get('phone', '').strip()
-            city = request.form.get('city', '').strip()
-            notes = request.form.get('notes', '')
+        final_submit = request.form.get('final_submit', '')
 
-            malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
+        date_str = request.form.get('date', '')
+        time_str = request.form.get('time', '')
+        phone = request.form.get('phone', '').strip()
+        city = request.form.get('city', '').strip()
+        notes = request.form.get('notes', '')
 
-            if not selected_state or not city:
-                error = "Please select both State and City."
-            elif not malaysia_phone_regex.match(phone):
-                error = "Invalid Malaysian phone number format. Format: +60XXXXXXXXX."
-            else:
-                try:
-                    chosen_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-                    today = datetime.today().date()
-                    meeting_time = datetime.strptime(time_str, '%H:%M').time()
+        malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
 
-                    if chosen_date < today:
-                        error = "Cannot schedule a meeting for a past date."
-                    elif not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
-                        error = "Meetings must be scheduled between 08:00 and 22:00."
-                    else:
-                        meetings[application_id] = {
-                            'date': chosen_date.strftime('%d/%m/%Y'),
-                            'time': time_str,
-                            'phone': phone,
-                            'state': selected_state,
-                            'city': city,
-                            'notes': notes,
-                            'approved': True,
-                            'by': application_id
-                        }
-                        success = "Your meeting has been approved!"
-                except ValueError:
-                    error = "Invalid date or time format."
-    else:
-        selected_state = meetings.get(application_id, {}).get('state', '')
+        if not selected_state or not city:
+            error = "Please select both State and City."
+        elif not malaysia_phone_regex.match(phone):
+            error = "Invalid Malaysian phone number format. Format: +60XXXXXXXXX."
+        else:
+            try:
+                chosen_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+                today = datetime.today().date()
+                meeting_time = datetime.strptime(time_str, '%H:%M').time()
+
+                if chosen_date < today:
+                    error = "Cannot schedule a meeting for a past date."
+                elif not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
+                    error = "Meetings must be scheduled between 08:00 and 22:00."
+                else:
+                    meetings[application_id] = {
+                        'date': date_str, 
+                        'time': time_str,
+                        'phone': phone,
+                        'state': selected_state,
+                        'city': city,
+                        'notes': notes,
+                        'approved': (final_submit == 'finalize'),
+                        'by': application_id
+                    }
+                    success = "Your meeting has been saved!"
+                    if final_submit == 'finalize':
+                        success = "Your meeting has been finalized!"
+            except ValueError:
+                error = "Invalid date or time format."
+
         city_list = state_cities.get(selected_state, [])
+        meeting = meetings.get(application_id)
+
+    else:
+        meeting = meetings.get(application_id)
+        if meeting:
+            selected_state = meeting.get('state', '')
+            city_list = state_cities.get(selected_state, [])
+        else:
+            meeting = None
 
     return render_template(
         'schedule.html',
         application_id=application_id,
         error=error,
         success=success,
-        meeting=meetings.get(application_id),
+        meeting=meeting,
         state_cities=state_cities,
         selected_state=selected_state,
         city_list=city_list
@@ -199,11 +209,13 @@ def track_admin():
 
     return render_template('track_admin.html', applications=all_data, state_cities=state_cities)
 
-@app.route('/delete/<app_id>', methods=['POST'])
-def delete(app_id):
-    if session.get('role') == 'admin':
-        applications.pop(app_id, None)
-        meetings.pop(app_id, None)
+@app.route('/delete-meeting/<app_id>', methods=['GET'])
+def delete_meeting(app_id):
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    if app_id in meetings:
+        del meetings[app_id]
     return redirect(url_for('track_admin'))
 
 @app.route('/submit_review', methods=['POST'])
@@ -234,46 +246,49 @@ def edit_meeting(app_id):
     city_list = state_cities.get(selected_state, [])
 
     if request.method == 'POST':
-        try:
-            date_str = request.form['date']
-            time_str = request.form['time']
-            phone = request.form['phone'].strip()
-            state = request.form['state']
-            city = request.form['city']
-            notes = request.form.get('notes', '')
+        date_str = request.form.get('date', '')
+        time_str = request.form.get('time', '')
+        phone = request.form.get('phone', '').strip()
+        state = request.form.get('state', '')
+        city = request.form.get('city', '')
+        notes = request.form.get('notes', '')
 
-            malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
-            if not malaysia_phone_regex.match(phone):
-                raise ValueError("Invalid phone number format. It must be +60 followed by 8-11 digits.")
+        malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
 
-            meeting_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-            today = datetime.today().date()
-            meeting_time = datetime.strptime(time_str, '%H:%M').time()
+        if not state or not city:
+            error = "Please select both State and City."
+        elif not malaysia_phone_regex.match(phone):
+            error = "Invalid phone number format. It must be +60 followed by 8-11 digits."
+        else:
+            try:
+                meeting_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+                today = datetime.today().date()
+                meeting_time = datetime.strptime(time_str, '%H:%M').time()
 
-            if meeting_date < today:
-                error = "Cannot choose a past date."
-            elif not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
-                error = "Meeting time must be between 08:00 and 22:00."
-            else:
-                meetings[app_id].update({
-                    'date': meeting_date.strftime('%d/%m/%Y'),
-                    'time': time_str,
-                    'phone': phone,
-                    'state': state,
-                    'city': city,
-                    'notes': notes,
-                })
-                meeting = meetings[app_id]
-                selected_state = state
-                city_list = state_cities.get(state, [])
-                success = "Meeting updated successfully!"
-        except Exception as e:
-            error = str(e)
+                if meeting_date < today:
+                    error = "Cannot choose a past date."
+                elif not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
+                    error = "Meeting time must be between 08:00 and 22:00."
+                else:
+                    meetings[app_id].update({
+                        'date': date_str,
+                        'time': time_str,
+                        'phone': phone,
+                        'state': state,
+                        'city': city,
+                        'notes': notes,
+                    })
+                    success = "Meeting updated successfully!"
+                    selected_state = state
+                    city_list = state_cities.get(state, [])
+
+            except ValueError:
+                error = "Invalid date or time format."
 
     return render_template(
         'edit_meeting.html',
         app_id=app_id,
-        meeting=meeting,
+        meeting=meetings.get(app_id),
         error=error,
         success=success,
         state_cities=state_cities,
