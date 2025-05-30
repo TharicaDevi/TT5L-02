@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>Admin Dashboard - Adoption Status</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 <div class="admin-container">
@@ -21,13 +22,18 @@
         <h1>Adoption Status Tracker</h1>
 
         <form method="POST" class="filter-form">
-            <input type="text" name="application_id" placeholder="Enter Application ID" required value="{{ app_id if app_id else '' }}">
-            <button type="submit" class="btn">Check Status</button>
+            <label for="application_id">Application ID:</label>
+            <input type="text" id="application_id" name="application_id" placeholder="Enter Application ID" required value="{{ app_id if app_id else '' }}">
+            <div class="btn-group">
+                <button type="submit" class="btn">Check Status</button>
+                <a href="{{ url_for('dashboard') }}" class="btn secondary-btn">Go Back</a>
+            </div>
         </form>
 
         {% if status %}
-            <div class="message">
-                <h3>Status for Application ID {{ app_id }}: <span style="text-transform: capitalize;">{{ status }}</span></h3>
+            <div class="success-message">
+                ✅ Status for Application ID <strong>{{ app_id }}</strong>: 
+                <span style="text-transform: capitalize;">{{ status }}</span>
             </div>
         {% endif %}
 
@@ -39,7 +45,7 @@
         {% endif %}
 
         {% if error %}
-            <div class="error-message">{{ error }}</div>
+            <div class="error-message">⚠️ {{ error }}</div>
         {% endif %}
     </div>
 
