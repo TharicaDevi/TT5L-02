@@ -23,26 +23,52 @@
         <h1>Edit Meetup for Application ID {{ app_id }}</h1>
 
         {% if error %}
-            <div class="error-message">⚠️ {{ error }}</div>
+            <div class="error">{{ error }}</div>
         {% endif %}
         {% if success %}
-            <div class="success-message">✅ {{ success }}</div>
+            <div class="success">{{ success }}</div>
         {% endif %}
 
         <form method="post" class="edit-meeting-form">
 
             <label for="date">Date:</label>
-            <input type="date" id="date" name="date" required value="{{ meeting.date if meeting else '' }}">
+            <input 
+                type="date" 
+                id="date" 
+                name="date" 
+                required 
+                value="{{ meeting.date if meeting else '' }}"
+            >
 
             <label for="time">Time:</label>
-            <input type="time" id="time" name="time" min="08:00" max="22:00" required value="{{ meeting.time if meeting else '' }}">
+            <input 
+                type="time" 
+                id="time" 
+                name="time" 
+                min="08:00" 
+                max="22:00" 
+                required 
+                value="{{ meeting.time if meeting else '' }}"
+            >
 
             <label for="phone">Phone (e.g. +60123456789):</label>
-            <input type="tel" id="phone" name="phone" pattern="^\+60[1-9][0-9]{7,10}$" required
-                   placeholder="+60123456789" value="{{ meeting.phone if meeting else '' }}">
+            <input 
+                type="tel" 
+                id="phone" 
+                name="phone" 
+                pattern="^\+60[1-9][0-9]{7,10}$" 
+                required
+                placeholder="+60123456789" 
+                value="{{ meeting.phone if meeting else '' }}"
+            >
 
             <label for="state">State:</label>
-            <select id="state" name="state" required onchange="this.form.submit()">
+            <select 
+                id="state" 
+                name="state" 
+                required 
+                onchange="this.form.submit()"
+            >
                 <option value="">-- Select State --</option>
                 {% for state in state_cities.keys() %}
                     <option value="{{ state }}" {% if state == selected_state %}selected{% endif %}>{{ state }}</option>
@@ -50,7 +76,12 @@
             </select>
 
             <label for="city">City:</label>
-            <select id="city" name="city" required>
+            <select 
+                id="city" 
+                name="city" 
+                required
+                {% if not selected_state %}disabled{% endif %}
+            >
                 <option value="">-- Select City --</option>
                 {% for city in city_list %}
                     <option value="{{ city }}" {% if meeting and meeting.city == city %}selected{% endif %}>{{ city }}</option>
@@ -58,15 +89,13 @@
             </select>
 
             <label for="notes">Notes:</label>
-            <textarea id="notes" name="notes" rows="4">{{ meeting.notes if meeting else '' }}</textarea>
+            <textarea id="notes" name="notes" rows="4" placeholder="Add any notes...">{{ meeting.notes if meeting else '' }}</textarea>
 
             <button type="submit" class="btn">Update Meetup</button>
         </form>
 
         <p style="margin-top: 30px;">
-            <a href="{{ url_for('track_admin') }}" class="btn back-btn">
-                Back to Meetup List
-            </a>
+            <a href="{{ url_for('track_admin') }}" class="btn">Back to Meetup List</a>
         </p>
     </div>
 
