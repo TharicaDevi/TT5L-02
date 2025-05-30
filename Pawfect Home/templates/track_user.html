@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>User Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
@@ -12,7 +12,7 @@
             <h2>User</h2>
             <ul>
                 <li><a href="{{ url_for('track_user') }}">Dashboard</a></li>
-                {% if app.finalized and not meetup %}
+                {% if app and app.finalized == False and not meetup and app.status == 'Approved' %}
                     <li><a href="{{ url_for('schedule', application_id=app_id) }}">Schedule Meetup</a></li>
                 {% endif %}
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
@@ -20,19 +20,19 @@
         </div>
 
         <div class="main-content">
-            <h2>Welcome, {{ app_id }}</h2>
+            <h2>Welcome, {{ app_id | e }}</h2>
 
             <div class="section">
-                <p><strong>Pet:</strong> {{ app.pet }}</p>
-                <p><strong>Status:</strong> {{ app.status }}</p>
-                <p><strong>Finalized:</strong> {{ 'Yes' if app.finalized else 'No' }}</p>
+                <p><strong>Pet:</strong> {{ app.pet if app else '-' }}</p>
+                <p><strong>Status:</strong> {{ app.status if app else '-' }}</p>
+                <p><strong>Finalized:</strong> {{ 'Yes' if app and app.finalized else 'No' }}</p>
             </div>
 
-            {% if not app.finalized and app.status == 'Approved' %}
+            {% if app and not app.finalized and app.status == 'Approved' %}
                 <div class="section">
                     <form method="POST" action="{{ url_for('finalize') }}">
-                        <input type="hidden" name="application_id" value="{{ app_id }}">
-                        <button type="submit">Finalize Adoption</button>
+                        <input type="hidden" name="application_id" value="{{ app_id | e }}">
+                        <button type="submit" class="btn">Finalize Adoption</button>
                     </form>
                 </div>
             {% endif %}
@@ -50,7 +50,7 @@
                 </div>
             {% endif %}
 
-            {% if app.review %}
+            {% if app and app.review %}
                 <div class="section">
                     <h3>Your Review</h3>
                     <p>{{ app.review.feedback }}</p>
