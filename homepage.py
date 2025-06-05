@@ -21,8 +21,7 @@ def pet_profile(pet_id):
 @app.route('/filter', methods=['POST'])
 def filter():
     breed = request.form.get("breed")
-    age = request.form.get("age")
-    pets = filter_pets(breed, age)
+    pets = filter_pets(breed)
     return render_template("browse.html", pets=pets)
 
 if __name__ == '__main__':

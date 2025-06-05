@@ -112,7 +112,7 @@ def get_pet_by_id(pet_id):
     conn.close()
     return pet
 
-def filter_pets(breed=None, age=None):
+def filter_pets(breed=None):
     conn = sqlite3.connect("tasks.db")
     c = conn.cursor()
     query = "SELECT * FROM pets WHERE status = 'available'"
@@ -120,9 +120,6 @@ def filter_pets(breed=None, age=None):
     if breed:
         query += " AND LOWER(breed) = ?"
         params.append(breed.lower())
-    if age:
-        query += " AND age = ?"
-        params.append(int(age))
     c.execute(query, params)
     pets = c.fetchall()
     conn.close()
