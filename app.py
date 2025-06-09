@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session, flash
 from werkzeug.utils import secure_filename
-import database, os
+import database, os, smtplib, random
+from email.message import EmailMessage
+from database import EMAIL_ADDRESS, EMAIL_PASSWORD
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'  # needed for session (session = store information about the user across multiple pages)
@@ -22,6 +24,7 @@ def signup():
         # extract form data
         username = request.form['username']
         password = request.form['password']
+        email = request.form['email']
 
         if not (8 <= len(username) <= 20):
             error = "Username must be 8-20 long!"
@@ -30,7 +33,7 @@ def signup():
         elif database.user_exists(username):
             error = "Username already exists!"
         else: 
-            database.add_user(username, password)
+            database.add_user(username, password, email)
             return redirect(url_for('login'))
     return render_template('signup.html', error=error)
 
@@ -62,25 +65,60 @@ def login():
     # show login form on GET request    
     return render_template('login.html')
 
-# reset password route
-@app.route("/reset", methods=['GET', 'POST'])
-def reset():
-    error = None
-    message = None
+# request reset route
+@app.route("/request_reset", methods=["GET", "POST"])
+def request_reset():
+    if request.method == "POST":
+        username = request.form["username"]
+        email = request.form["email"]
 
-    if request.method == 'POST':
-        username = request.form['username']
-        new_password = request.form['new_password']
+        if database.validate_username_email(username, email):
+            otp = str(random.randint(100000, 999999))
+            session["otp"] = otp
+            session["reset_email"] = email
 
-        if not (8 <= len(new_password) <= 20):
-            error = "Password must be 8-20 characters!"
-        elif not database.user_exists(username):
-            error = "Username doesn't exist!"
+            # send OTP to email
+            msg = EmailMessage()
+            msg.set_content(f"Your OTP is: {otp}")
+            msg["Subject"] = "Password Reset OTP"
+            msg["From"] = EMAIL_ADDRESS
+            msg["To"] = email
+
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+                smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+                smtp.send_message(msg)
+
+            return redirect(url_for("verify_otp"))
         else:
-            database.update_password(username, new_password)
-            message = "Password successfully updated! Redirecting to login page..."
+            return render_template("reset_request.html", error="Invalid username or email.")
 
-    return render_template('reset.html', error=error, message=message)
+    return render_template("reset_request.html")
+
+# verify OTP route
+@app.route("/verify_otp", methods=["GET", "POST"])
+def verify_otp():
+    if request.method == "POST":
+        otp_input = request.form["otp_input"]
+        if otp_input == session.get("otp"):
+            return redirect(url_for("reset_password"))
+        else:
+            return render_template("verify_otp.html", error="Incorrect OTP.")
+    return render_template("verify_otp.html")
+
+# reset password route
+@app.route("/reset_password", methods=["GET", "POST"])
+def reset_password():
+    message = ""
+    if request.method == "POST":
+        new_password = request.form["new_password"]
+        email = session.get("reset_email")
+        if 8 <= len(new_password) <= 20:
+            database.update_password_by_email(email, new_password)
+            message = "Password updated successfully. Redirecting to login..."
+            return redirect(url_for("login"))
+        else:
+            message = "Password must be 8-20 characters."
+    return render_template("reset.html", error="", message=message)
 
 # welcome route after login
 @app.route("/welcome", methods=["GET", "POST"])

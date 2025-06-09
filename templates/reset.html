@@ -13,7 +13,7 @@
         <div class="wrapper">
 
             <!-- sends data to 'reset' route -->
-            <form action="{{ url_for('reset') }}" method="POST">
+            <form action="{{ url_for('reset_password') }}" method="POST">
                 <h1>RESET PASSWORD</h1>
 
                 <!-- display error message if reset fails -->
@@ -28,11 +28,6 @@
                         }, 3000); // 3 seconds
                     </script>
                 {% endif %}
-
-                <!-- username input -->
-                <div class="input-box">
-                    <input type="text" placeholder="username" name="username" required>
-                </div>
 
                 <!-- password input -->
                 <div class="input-box">

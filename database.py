@@ -1,18 +1,19 @@
-import sqlite3
+import sqlite3, smtplib
+from email.message import EmailMessage
 
+EMAIL_ADDRESS = "pawfecthome4u@gmail.com"
+EMAIL_PASSWORD = "cioc tkda ykzw chrd"
+
+with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
+    smtp.ehlo()
+    smtp.starttls()
+    smtp.ehlo()
+    smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+    
 # Initialize the database and create tables if they don't exist
 def init_db():
     conn = sqlite3.connect("info.db")
     c = conn.cursor()
-
-    # Create user table
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-        )
-    """)
 
     # Drop and recreate for resetting data during development
     c.execute("DROP TABLE IF EXISTS users")
@@ -45,10 +46,10 @@ def init_db():
     conn.close()
 
 # Add a new user to the users table
-def add_user(username, password):
+def add_user(username, password, email):
     conn = sqlite3.connect("info.db")
     c = conn.cursor()
-    c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+    c.execute("INSERT INTO users (username, password, email) VALUES (?, ?, ?)", (username, password, email))
     conn.commit()
     conn.close()
 
@@ -70,6 +71,15 @@ def user_exists(username):
     conn.close()
     return result is not None
 
+# Check if email already registered
+def email_exists(email):
+    conn = sqlite3.connect("info.db")
+    c = conn.cursor()
+    c.execute("SELECT 1 FROM users WHERE email = ?", (email,))
+    result = c.fetchone()
+    conn.close()
+    return result is not None
+
 def update_password(username, new_password):
     conn = sqlite3.connect("info.db")
     c = conn.cursor()
@@ -77,11 +87,45 @@ def update_password(username, new_password):
     conn.commit()
     conn.close()
 
+def update_password_by_email(email, new_password):
+    conn = sqlite3.connect("info.db")
+    c = conn.cursor()
+    c.execute("UPDATE users SET password = ? WHERE email = ?", (new_password, email))
+    conn.commit()
+    conn.close()
+
+def send_otp_email(recipient_email, otp):
+    msg = EmailMessage()
+    msg['Subject'] = "Your OTP Code"
+    msg['From'] = EMAIL_ADDRESS
+    msg['To'] = recipient_email
+    msg.set_content(f"Your OTP code is: {otp}")
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        smtp.send_message(msg)
+
+def validate_username_email(username, email):
+    conn = sqlite3.connect('info.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM users WHERE username=? AND email=?", (username, email))
+    result = c.fetchone()
+    conn.close()
+    return result is not None
+
 def get_user_by_username(username):
     conn = sqlite3.connect("info.db")
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
     user = cursor.fetchone()
+    conn.close()
+    return user
+
+def get_user_by_email(email):
+    conn = sqlite3.connect("info.db")
+    c = conn.cursor()
+    c.execute("SELECT * FROM users WHERE email = ?", (email,))
+    user = c.fetchone()
     conn.close()
     return user
 

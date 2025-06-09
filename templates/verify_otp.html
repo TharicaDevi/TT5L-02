@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>verify OTP</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='reset.css') }}">
+    </head>
+
+    <body>
+        <div class="wrapper">
+
+            <!-- sends data to 'verify_otp' route -->
+            <form action="{{ url_for('verify_otp') }}" method="POST">
+                <h1>ENTER OTP</h1>
+
+                <!-- show error if OTP is wrong -->
+                {% if error %}
+                    <p class="error-message">{{ error }}</p>
+                {% elif message %}
+                    <p class="success-message">{{ message }}</p>
+                {% endif %}
+
+                <!-- OTP input -->
+                <div class="input-box">
+                    <input type="text" placeholder="Enter OTP" name="otp_input" required>
+                </div>
+
+                <button type="submit" class="btn">VERIFY</button>
+            </form>
+        </div>
+    </body>
+
+</html>
