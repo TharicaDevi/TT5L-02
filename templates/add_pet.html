@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>admin dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+
+    <body>
+        <form action="{{ url_for('add_pet') }}" method="POST" enctype="multipart/form-data">
+            <input type="text" name="name" placeholder="Pet Name" required>
+            <input type="number" name="age" placeholder="Age">
+            <input type="text" name="breed" placeholder="Breed">
+            <input type="text" name="species" placeholder="Species">
+            <input type="text" name="gender" placeholder="Gender">
+            <textarea name="description" placeholder="Description"></textarea>
+            <input type="file" name="image">
+            <button type="submit">Add Pet</button>
+        </form>
+    </body>
+</html>
