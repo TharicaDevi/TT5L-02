@@ -236,3 +236,18 @@ def delete_account(username):
     c.execute("DELETE FROM users WHERE username = ?", (username,))
     conn.commit()
     conn.close()
+
+# admin -> insert pet
+def insert_pet(name, picture, pet_type, color, breed, age, status):
+    try:
+        conn = sqlite3.connect('pets.db')
+        c = conn.cursor()
+        c.execute('''
+            INSERT INTO pets (name, picture, type, color, breed, age, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (name, picture, pet_type, color, breed, age, status))
+        conn.commit()
+    except Exception as e:
+        print("Error inserting pet:", e)
+    finally:
+        conn.close()
