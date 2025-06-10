@@ -45,6 +45,27 @@ def init_db():
     conn.commit()
     conn.close()
 
+def init_db():
+    conn = sqlite3.connect("pets.db")
+    c = conn.cursor()
+
+    # Pets table
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS pets (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            picture TEXT,
+            type TEXT,
+            color TEXT,
+            breed TEXT,
+            age INTEGER,
+            status TEXT
+        )
+    """)
+
+    conn.commit()
+    conn.close()
+
 # Add a new user to the users table
 def add_user(username, password, email):
     conn = sqlite3.connect("info.db")
