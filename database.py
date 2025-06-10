@@ -251,3 +251,11 @@ def insert_pet(name, picture, pet_type, color, breed, age, status):
         print("Error inserting pet:", e)
     finally:
         conn.close()
+
+def get_all_pets():
+    conn = sqlite3.connect("pets.db")
+    c = conn.cursor()
+    c.execute("SELECT * FROM pets WHERE status = 'available'")
+    pets = c.fetchall()
+    conn.close()
+    return pets
