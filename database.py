@@ -11,7 +11,7 @@ with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
     smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
     
 # Initialize the database and create tables if they don't exist
-def init_db():
+def init_info_db():
     conn = sqlite3.connect("info.db")
     c = conn.cursor()
 
@@ -45,7 +45,7 @@ def init_db():
     conn.commit()
     conn.close()
 
-def init_db():
+def init_pets_db():
     conn = sqlite3.connect("pets.db")
     c = conn.cursor()
 
