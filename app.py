@@ -168,7 +168,6 @@ def add_pet():
 @app.route("/view_pets")
 def view_pets():
     pets = database.get_all_pets()
-    print(pets)
     return render_template("view_pets.html", pets=pets)
 
 # update pet details route
