@@ -310,5 +310,6 @@ def delete_account():
     return redirect(url_for('login'))
 
 if __name__ == "__main__":
-    database.init_db()
+    database.init_info_db()
+    database.init_pets_db()
     app.run(debug=True)
