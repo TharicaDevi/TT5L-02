@@ -254,6 +254,7 @@ def insert_pet(name, picture, pet_type, color, breed, age, status):
 
 def get_all_pets():
     conn = sqlite3.connect("pets.db")
+    conn.row_factory = sqlite3.Row
     c = conn.cursor()
     c.execute("SELECT * FROM pets WHERE status = 'available'")
     pets = c.fetchall()
