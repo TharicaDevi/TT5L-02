@@ -44,15 +44,16 @@ def login():
         # extract form data
         username = request.form['username']
         password = request.form['password']
-        # check if user exists
-        user = database.get_user(username, password)
 
         # check if admin
         if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
             session["username"] = username
             session["role"] = "admin"
             return redirect(url_for('admin_dashboard'))
-        
+
+        # check if user exists
+        user = database.get_user(username, password)
+
         # user login
         if user:
             # store username in session (successful login)
