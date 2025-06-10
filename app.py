@@ -136,11 +136,30 @@ def admin_dashboard():
     return render_template("admin_dashboard.html")
 
 # add pet route
-@app.route("/admin/add_pet")
+@app.route("/admin/add_pet", methods=["GET", "POST"])
 def add_pet():
     if session.get("role") != "admin":
         return redirect(url_for("login"))
-    return "Add new pet (admin only) - coming soon!"
+    
+    if request.method == "POST":
+        name = request.form["name"]
+        age = request.form["age"]
+        breed = request.form["breed"]
+        species = request.form["species"]
+        gender = request.form["gender"]
+        description = request.form["description"]
+        image_file = request.files["image"]
+
+        image_filename = ""
+        if image_file:
+            image_filename = secure_filename(image_file.filename)
+            image_path = os.path.join(app.config["UPLOAD_FOLDER"], image_filename)
+            image_file.save(image_path)
+
+        database.insert_pet(name, age, breed, species, gender, description, image_filename)
+        return redirect(url_for("admin_dashboard"))  # Or wherever you show the pet list
+
+    return render_template("add_pet.html")
 
 # update pet details route
 @app.route("/admin/update_pet")
