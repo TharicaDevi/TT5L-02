@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
 
     <body>
+        <h2>Add a New Pet</h2>
         <form action="{{ url_for('add_pet') }}" method="POST" enctype="multipart/form-data">
             <input type="text" name="name" placeholder="Pet Name" required>
             <input type="number" name="age" placeholder="Age">
