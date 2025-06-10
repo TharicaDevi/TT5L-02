@@ -143,12 +143,12 @@ def add_pet():
     
     if request.method == "POST":
         name = request.form["name"]
-        age = request.form["age"]
+        age = int(request.form["age"])
         breed = request.form["breed"]
-        species = request.form["species"]
-        gender = request.form["gender"]
-        description = request.form["description"]
-        image_file = request.files["image"]
+        pet_type = request.form["type"]
+        color = request.form["color"]
+        status = request.form["status"]
+        image_file = request.files["picture"]
 
         image_filename = ""
         if image_file:
@@ -156,8 +156,9 @@ def add_pet():
             image_path = os.path.join(app.config["UPLOAD_FOLDER"], image_filename)
             image_file.save(image_path)
 
-        database.insert_pet(name, age, breed, species, gender, description, image_filename)
-        return redirect(url_for("admin_dashboard"))  # Or wherever you show the pet list
+        database.insert_pet(name, image_filename, pet_type, color, breed, age, status)
+
+        return redirect(url_for("admin_dashboard"))
 
     return render_template("add_pet.html")
 
