@@ -77,7 +77,7 @@
         <div class="pet-container">
             {% for pet in pets %}
                 <div class="pet-card">
-                    <img src="{{ url_for('static', filename='uploads/' + pet['picture']) }}" alt="{{ pet['name'] }}">
+                    <img src="{{ url_for('static', filename='uploads/default.jpg') }}" alt="sample">
                     <h3>{{ pet['name'] }}</h3>
                     <p><strong>Type:</strong> {{ pet['type'] }}</p>
                     <p><strong>Breed:</strong> {{ pet['breed'] }}</p>
