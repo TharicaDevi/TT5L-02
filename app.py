@@ -158,8 +158,9 @@ def add_pet():
             image_file.save(image_path)
 
         database.insert_pet(name, image_filename, pet_type, color, breed, age, status)
-
-        return redirect(url_for("admin_dashboard"))
+        
+        flash("The pet has been successfully added! Here's how it will appear to users.")
+        return redirect(url_for("view_pets"))
 
     return render_template("add_pet.html")
 
