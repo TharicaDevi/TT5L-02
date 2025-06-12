@@ -12,7 +12,6 @@
     <div class="sidebar">
         <h2>Admin Panel</h2>
         <ul>
-            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
             <li><a href="{{ url_for('track_admin') }}">Applications</a></li>
             <li><a href="{{ url_for('logout') }}">Logout</a></li>
         </ul>
@@ -26,7 +25,7 @@
             <input type="text" id="application_id" name="application_id" placeholder="Enter Application ID" required value="{{ app_id if app_id else '' }}">
             <div class="btn-group">
                 <button type="submit" class="btn">Check Status</button>
-                <a href="{{ url_for('dashboard') }}" class="btn secondary-btn">Go Back</a>
+                <a href="{{ url_for('track_admin') }}" class="btn secondary-btn">Go Back</a>
             </div>
         </form>
 
