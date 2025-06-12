@@ -14,12 +14,6 @@ body {
     align-items: flex-end;
 }
 
-.add-bg {
-    background: url('https://i.pinimg.com/1200x/e9/8b/1e/e98b1eab203c3fcac19cdb6e1c2844bc.jpg') no-repeat;
-    background-size: cover;
-    background-position: center;
-}
-
 .upd-bg {
     background: url('https://i.pinimg.com/1200x/e9/8b/1e/e98b1eab203c3fcac19cdb6e1c2844bc.jpg') no-repeat;
     background-size: cover;
