@@ -89,6 +89,7 @@ def schedule(application_id):
     success = None
     selected_state = ''
     city_list = []
+    meeting = meetings.get(application_id, {})
 
     if request.method == 'POST':
         selected_state = request.form.get('state', '').strip()
@@ -102,6 +103,32 @@ def schedule(application_id):
         city = request.form.get('city', '').strip()
         notes = request.form.get('notes', '')
 
+        # Store current form state regardless of full submission or just state update
+        meeting = {
+            'date': date_str,
+            'time': time_str,
+            'phone': phone,
+            'state': selected_state,
+            'city': city,
+            'notes': notes,
+            'approved': meetings.get(application_id, {}).get('approved', False),
+            'by': application_id
+        }
+
+        if final_submit == 'update_state':
+            # Only updating state and city list; skip validation
+            return render_template(
+                'schedule.html',
+                application_id=application_id,
+                error=None,
+                success=None,
+                meeting=meeting,
+                state_cities=state_cities,
+                selected_state=selected_state,
+                city_list=city_list
+            )
+
+        # Proceed with full validation
         malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
 
         if not selected_state or not city:
@@ -119,27 +146,13 @@ def schedule(application_id):
                 elif not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
                     error = "Meetings must be scheduled between 08:00 and 22:00."
                 else:
-                    meetings[application_id] = {
-                        'date': date_str, 
-                        'time': time_str,
-                        'phone': phone,
-                        'state': selected_state,
-                        'city': city,
-                        'notes': notes,
-                        'approved': (final_submit == 'finalize'),
-                        'by': application_id
-                    }
-                    success = "Your meeting has been saved!"
-                    if final_submit == 'finalize':
-                        success = "Your meeting has been finalized!"
+                    meeting['approved'] = (final_submit == 'finalize')
+                    meetings[application_id] = meeting
+                    success = "Your meeting has been finalized!" if final_submit == 'finalize' else "Your meeting has been saved!"
             except ValueError:
                 error = "Invalid date or time format."
 
-        city_list = state_cities.get(selected_state, [])
-        meeting = meetings.get(application_id)
-
     else:
-        meeting = meetings.get(application_id)
         if meeting:
             selected_state = meeting.get('state', '')
             city_list = state_cities.get(selected_state, [])
@@ -156,6 +169,7 @@ def schedule(application_id):
         selected_state=selected_state,
         city_list=city_list
     )
+
 
 @app.route('/track_user')
 def track_user():
@@ -214,9 +228,16 @@ def delete_meeting(app_id):
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
 
+    # Delete meeting if exists
     if app_id in meetings:
         del meetings[app_id]
+
+    # Delete application if exists
+    if app_id in applications:
+        del applications[app_id]
+
     return redirect(url_for('track_admin'))
+
 
 @app.route('/submit_review', methods=['POST'])
 def submit_review():
