@@ -1,0 +1,191 @@
+*,*:after,*:before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: arial;
+    font-size: 16px;
+    margin:0;
+    background: #fff;
+    color: #000;
+}
+
+header {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 25px 7%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all .50s ease;
+    background-color: #000;
+}
+
+.nav {
+    display: flex;
+    list-style: none;
+    text-decoration: none;
+    color: #fff;
+    font-family: 'Gill Sans', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: 1px;
+}
+
+.nav a {
+    display: inline-block;
+    margin: 0 35px;
+    color: var(--text-color);
+    font-size: 600;
+    margin-right: var(--p-font);
+    transition: color .6s ease;
+}
+
+.nav a:hover {
+    display: inline-block;
+    margin: 0 35px;
+    color: #602262;
+    font-size: 600;
+    margin-right: var(--p-font);
+    transition: color .6s ease;
+}
+
+.right-content {
+    display: flex;
+    align-items: center;
+}
+
+.nav-btn {
+    display: inline-block;
+    padding: 10px 30px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 15px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: #af992c;
+    outline: 2px solid #af992c;
+    transition: all 1000ms;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-btn:hover {
+    color: #fff;
+    transform: scale(1.1);
+    outline: 2px solid #af992c;
+    box-shadow: 4px 5px 17px -4px #918f26;
+}
+
+.nav-btn::before {
+  content: "";
+  position: absolute;
+  left: -50px;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background-color: #afa82c;
+  transform: skewX(45deg);
+  z-index: -1;
+  transition: width 1000ms;
+}
+
+.nav-btn:hover::before {
+  width: 250%;
+}
+
+#menu-icon {
+    font-size: 42px;
+    z-index: 10001;
+    cursor: pointer;
+    margin-left: 25px;
+    display: none;
+}
+
+.wrapper_outer {
+    height: 100vh;
+    overflow: hidden;
+}
+.wrapper {
+    height: 100%;
+    overflow-x: hidden;
+    perspective: 1px;
+}
+
+.parallax_section {
+    min-height: 100vh;
+    padding: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+}
+
+.parallax_bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center center;
+    z-index: -1;
+    min-height: 100%;
+    will-change: transform;
+    transform: translate3d(0,0,-0.5) scale(1.5);
+}
+
+.parallax_section h2 {
+    color: #fff;
+    margin: 0;
+    font-size: 120px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    text-align: center;
+    text-transform: uppercase;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.gradient_top,
+.gradient_bottom {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 150px; /* adjust as needed */
+    z-index: 1;
+    pointer-events: none; /* lets clicks pass through */
+}
+
+.gradient_top {
+    top: 0;
+    background: linear-gradient(to bottom, #000 0%, rgba(255,255,255,0) 100%);
+}
+
+.gradient_bottom {
+    bottom: 0;
+    background: linear-gradient(to top, #000 0%, rgba(255,255,255,0) 100%);
+}

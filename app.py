@@ -16,6 +16,11 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ADMIN_USERNAME = "TEFadmin"
 ADMIN_PASSWORD = "admin@123"
 
+# home route
+@app.route("/home", methods=['GET', 'POST'])
+def home():
+    return render_template('home.html')
+
 # signup route
 @app.route("/signup", methods=['GET', 'POST']) # post = submit
 def signup():
