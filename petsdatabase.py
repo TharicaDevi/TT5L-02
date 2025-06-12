@@ -91,8 +91,13 @@ def get_user_by_credentials(username, password):
 def add_pet(picture, type_, color, breed, age, status="available"):
     conn = sqlite3.connect("tasks.db")
     c = conn.cursor()
-    c.execute("INSERT INTO pets (picture, type, color, breed, age, status) VALUES (?, ?, ?, ?, ?, ?)",
-              (picture, type_, color, breed, age, status))
+
+    c.execute("SELECT * FROM pets WHERE picture=? AND type=? AND color=? AND breed=? AND age=?",
+              (picture, type_, color, breed, age))
+    if c.fetchone() is None:
+        c.execute("INSERT INTO pets (picture, type, color, breed, age, status) VALUES (?, ?, ?, ?, ?, ?)",
+                  (picture, type_, color, breed, age, status))
+    
     conn.commit()
     conn.close()
 
@@ -116,15 +121,14 @@ def filter_pets(breed):
     conn = sqlite3.connect('tasks.db')
     c = conn.cursor()
 
-    breed = breed.lower() 
+    breed = breed.lower()  
 
     query = '''
         SELECT * FROM pets
-        WHERE LOWER(breed) = ?
-           OR LOWER(breed) LIKE ?
+        WHERE LOWER(breed) LIKE ?
            OR LOWER(breed) LIKE ?
     '''
-    c.execute(query, (breed, f"{breed}%", f"%{breed}%"))
+    c.execute(query, (f"{breed}%", f"%{breed}%"))
 
     pets = c.fetchall()
     conn.close()
