@@ -118,18 +118,15 @@ def get_pet_by_id(pet_id):
     return pet
 
 def filter_pets(breed):
-    conn = sqlite3.connect('tasks.db')
+    conn = sqlite3.connect('tasks.db') 
     c = conn.cursor()
 
-    breed = breed.lower()  
-
+    breed = breed.lower()
     query = '''
         SELECT * FROM pets
         WHERE LOWER(breed) LIKE ?
-           OR LOWER(breed) LIKE ?
     '''
-    c.execute(query, (f"{breed}%", f"%{breed}%"))
-
+    c.execute(query, (f"%{breed}%",))
     pets = c.fetchall()
     conn.close()
     return pets
