@@ -103,7 +103,6 @@ def schedule(application_id):
         city = request.form.get('city', '').strip()
         notes = request.form.get('notes', '')
 
-        # Store current form state regardless of full submission or just state update
         meeting = {
             'date': date_str,
             'time': time_str,
@@ -116,7 +115,6 @@ def schedule(application_id):
         }
 
         if final_submit == 'update_state':
-            # Only updating state and city list; skip validation
             return render_template(
                 'schedule.html',
                 application_id=application_id,
@@ -128,7 +126,6 @@ def schedule(application_id):
                 city_list=city_list
             )
 
-        # Proceed with full validation
         malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
 
         if not selected_state or not city:
@@ -228,11 +225,9 @@ def delete_meeting(app_id):
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
 
-    # Delete meeting if exists
     if app_id in meetings:
         del meetings[app_id]
 
-    # Delete application if exists
     if app_id in applications:
         del applications[app_id]
 
