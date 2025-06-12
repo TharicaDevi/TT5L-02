@@ -159,7 +159,7 @@ def add_pet():
 
         database.insert_pet(name, image_filename, pet_type, color, breed, age, status)
         
-        flash("The pet has been successfully added! Here's how it will appear to users.")
+        flash("The pet has been successfully added!")
         return redirect(url_for("view_pets"))
 
     return render_template("add_pet.html")
