@@ -66,6 +66,37 @@ def init_pets_db():
     conn.commit()
     conn.close()
 
+def init_adoptions_db():
+    conn = sqlite3.connect("adoptions.db")
+    c = conn.cursor()
+
+    # Adoptions table
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS adoptions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            pet_id INTEGER,
+            status TEXT,
+            FOREIGN KEY (user_id) REFERENCES users(id),
+            FOREIGN KEY (pet_id) REFERENCES pets(id)
+        )
+    """)
+
+    # Meetings table
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS meetings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            date TEXT,
+            time TEXT,
+            notes TEXT,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    """)
+
+    conn.commit()
+    conn.close()
+
 # Add a new user to the users table
 def add_user(username, password, email):
     conn = sqlite3.connect("info.db")
