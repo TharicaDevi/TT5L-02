@@ -14,7 +14,7 @@ body {
   background-position: center;
   padding-top: 80px;
   height: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .main-wrapper {
