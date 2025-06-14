@@ -35,19 +35,9 @@
             <textarea id="shipping-address" name="shipping-address" placeholder="Enter billing or shipping address if different" readonly>{{ user[13] if user else '' }}</textarea>
           </div>
       
-          <div class="input-box">
-            <label>My Social Media</label>
-            <div class="social-btn">
-              <a href="https://www.instagram.com" target="_blank"><button type="button">Instagram</button></a>
-              <a href="https://x.com" target="_blank"><button type="button">X</button></a>
-              <a href="https://www.facebook.com" target="_blank"><button type="button">Facebook</button></a>
-            </div>
-          </div>
-
           <div class ="main-button">
             <button type="submit" class="btn">SAVE CHANGES</button>
           </div>
-      
         </form>
 
         {% if message %}
