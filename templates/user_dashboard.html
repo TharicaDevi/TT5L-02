@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="initial-scale=1.0,  maximum-scale=1.0, user-scalable=1">
+        <title>Pawfect Home</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='user.css') }}">
+    </head>
+    <body>
+        <div class="nav">
+            <ul>
+                <li><a href="{{ url_for('user_dashboard') }}">HOME</a></li>
+                <li><a href="{{ url_for('user_dashboard') }}">ABOUT</a></li>
+                <li><a href="{{ url_for('track_user') }}">STATUS</a></li>
+                <li><a href="{{ url_for('account') }}">SETTINGS</a></li>
+            </ul>
+        </div>
+    </body>
+</html>

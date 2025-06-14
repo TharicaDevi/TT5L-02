@@ -53,11 +53,6 @@ state_cities = {
     "Labuan": ["Labuan"]
 }
 
-# home route
-@app.route("/home", methods=['GET', 'POST'])
-def home():
-    return render_template('home.html')
-
 # signup route
 @app.route("/signup", methods=['GET', 'POST']) # post = submit
 def signup():
@@ -339,6 +334,131 @@ def delete_meeting(app_id):
         del applications[app_id]
 
     return redirect(url_for('track_admin'))
+
+# user dashboard route
+@app.route("/user", methods=['GET', 'POST'])
+def user_dashboard():
+    if session.get("role") != "user":
+        return redirect(url_for("login"))
+    return render_template("user_dashboard.html")
+
+# adoption application route -> TEHA'S
+@app.route('/track_user')
+def track_user():
+    username = session.get('username')
+    if not username:
+        return redirect(url_for('login'))
+
+    user = database.get_user_by_username(username)
+    if not user:
+        return redirect(url_for('login'))
+
+    app_id = session.get('application_id')
+    app = applications.get(app_id)
+    meetup = meetings.get(app_id)
+
+    return render_template('track_user.html', username=user[1], app_id=app_id, app=app, meetup=meetup)
+
+# schedule meeting route -> TEHA'S
+@app.route('/schedule/<application_id>', methods=['GET', 'POST'])
+def schedule(application_id):
+    if session.get('role') != 'user' or session.get('application_id') != application_id:
+        return redirect(url_for('login'))
+
+    error = None
+    success = None
+    selected_state = ''
+    city_list = []
+    meeting = meetings.get(application_id, {})
+
+    if request.method == 'POST':
+        selected_state = request.form.get('state', '').strip()
+        city_list = state_cities.get(selected_state, [])
+
+        final_submit = request.form.get('final_submit', '')
+
+        date_str = request.form.get('date', '')
+        time_str = request.form.get('time', '')
+        phone = request.form.get('phone', '').strip()
+        city = request.form.get('city', '').strip()
+        notes = request.form.get('notes', '')
+
+        meeting = {
+            'date': date_str,
+            'time': time_str,
+            'phone': phone,
+            'state': selected_state,
+            'city': city,
+            'notes': notes,
+            'approved': meetings.get(application_id, {}).get('approved', False),
+            'by': application_id
+        }
+
+        if final_submit == 'update_state':
+            return render_template('schedule.html',
+                application_id=application_id,
+                error=None,
+                success=None,
+                meeting=meeting,
+                state_cities=state_cities,
+                selected_state=selected_state,
+                city_list=city_list
+            )
+
+        malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
+
+        if not selected_state or not city:
+            error = "Please select both State and City."
+        elif not malaysia_phone_regex.match(phone):
+            error = "Invalid Malaysian phone number format. Format: +60XXXXXXXXX."
+        else:
+            try:
+                chosen_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+                today = datetime.today().date()
+                meeting_time = datetime.strptime(time_str, '%H:%M').time()
+
+                if chosen_date < today:
+                    error = "Cannot schedule a meeting for a past date."
+                elif not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
+                    error = "Meetings must be scheduled between 08:00 and 22:00."
+                else:
+                    meeting['approved'] = (final_submit == 'finalize')
+                    meetings[application_id] = meeting
+                    success = "Your meeting has been finalized!" if final_submit == 'finalize' else "Your meeting has been saved!"
+            except ValueError:
+                error = "Invalid date or time format."
+
+    else:
+        if meeting:
+            selected_state = meeting.get('state', '')
+            city_list = state_cities.get(selected_state, [])
+        else:
+            meeting = None
+
+    return render_template('schedule.html',
+        application_id=application_id,
+        error=error,
+        success=success,
+        meeting=meeting,
+        state_cities=state_cities,
+        selected_state=selected_state,
+        city_list=city_list
+    )
+
+#
+@app.route('/finalize', methods=['POST'])
+def finalize():
+    app_id = request.form.get('application_id', '').strip().upper()
+    app_data = applications.get(app_id)
+    if not app_data:
+        return "Application ID not found.", 404
+    if app_data["status"] != "Approved":
+        return "Application not approved. Cannot finalize.", 403
+    if app_data['finalized']:
+        return f"Adoption already finalized for {app_data['pet']}."
+    app_data['finalized'] = True
+    session['application_id'] = app_id
+    return redirect(url_for('schedule', application_id=app_id))
 
 
 # account info route

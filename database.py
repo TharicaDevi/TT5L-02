@@ -268,6 +268,23 @@ def delete_account(username):
     conn.commit()
     conn.close()
 
+# schedule meeting
+def schedule_meeting(user_id, date, time, notes):
+    conn = sqlite3.connect("adoptions.db")
+    c = conn.cursor()
+    c.execute("INSERT INTO meetings (user_id, date, time, notes) VALUES (?, ?, ?, ?)",
+              (user_id, date, time, notes))
+    conn.commit()
+    conn.close()
+
+def get_meetings_by_user(user_id):
+    conn = sqlite3.connect("adoptions.db")
+    c = conn.cursor()
+    c.execute("SELECT * FROM meetings WHERE user_id = ?", (user_id,))
+    meetings = c.fetchall()
+    conn.close()
+    return meetings
+
 # admin -> insert pet
 def insert_pet(name, picture, pet_type, color, breed, age, status):
     try:
