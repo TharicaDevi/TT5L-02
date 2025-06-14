@@ -58,16 +58,19 @@ function toggleContactEdit() {
 
 // Toggle edit for privacy form
 function togglePrivacyEdit() {
-  const form = document.getElementById('privacy-form');
-  const selects = form.querySelectorAll('select');
+    const form = document.getElementById('privacy-form');
+    const isReadonly = form.classList.contains('readonly');
+    const selects = form.querySelectorAll('select');
+    const saveBtn = form.querySelector('.btn');
 
-  if (form.classList.contains('readonly')) {
-    form.classList.remove('readonly');
-    selects.forEach(select => select.disabled = false);
-  } else {
-    form.classList.add('readonly');
-    selects.forEach(select => select.disabled = true);
-  }
+    selects.forEach(el => {
+        (el.tagName === 'SELECT') {
+            el.disabled = isReadonly ? false : true;
+        }
+    });
+
+    saveBtn.style.display = isReadonly ? 'inline-block' : 'none';
+    form.classList.toggle('readonly');
 }
 
 // Delete account confirmation
@@ -81,11 +84,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (accountMessage) {
         const form = document.getElementById("account-form");
         const inputs = form.querySelectorAll("input");
+
         inputs.forEach(input => {
             input.readOnly = true;
             input.style.backgroundColor = 'transparent';
             input.style.border = 'none';
         });
+
         form.classList.add("readonly");
         const saveBtn = form.querySelector('.btn');
         saveBtn.style.display = 'none';
@@ -96,16 +101,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const personalForm = document.getElementById("personal-form");
     if (personalMessage && personalForm && !personalForm.classList.contains("readonly")) {
         const inputs = personalForm.querySelectorAll("input, textarea, select");
+        
         inputs.forEach(el => {
-            if (el.id !== 'profile-pic') {
-                el.readOnly = true;
-            }
-            if (el.tagName === 'SELECT' || el.id === 'profile-pic') {
-                el.disabled = true;
-            }
             el.style.backgroundColor = 'transparent';
             el.style.border = 'none';
         });
+
         const saveBtn = personalForm.querySelector('.btn');
         saveBtn.style.display = 'none';
         personalForm.classList.add("readonly");
@@ -116,27 +117,31 @@ document.addEventListener("DOMContentLoaded", () => {
     const contactForm = document.getElementById("contact-form");
     if (contactMessage && contactForm && !contactForm.classList.contains("readonly")) {
         const inputs = contactForm.querySelectorAll("textarea");
+        
         inputs.forEach(textarea => {
             textarea.readOnly = true;
             textarea.style.backgroundColor = 'transparent';
             textarea.style.border = 'none';
         });
+
         const saveBtn = contactForm.querySelector('.btn');
         saveBtn.style.display = 'none';
         contactForm.classList.add("readonly");
     }
 
     // For privacy form
+    const privacyMessage = document.querySelector("privacy-form");
     const privacyForm = document.getElementById("privacy-form");
-    const selects = privacyForm.querySelectorAll("select");
-    const privacySaveBtn = privacyForm.querySelector(".btn");
+    if (privacyMessage && privacyForm && !privacyForm.classList.contains("readonly")) {
+        const selects = privacyForm.querySelectorAll("select");
+        
+        selects.forEach(el => {
+            el.style.backgroundColor = 'transparent';
+            el.style.border = 'none';
+        });
 
-    selects.forEach(select => {
-        select.disabled = true;
-        select.style.backgroundColor = 'transparent';
-        select.style.border = 'none';
-    });
-
-    privacySaveBtn.style.display = 'none';
-    privacyForm.classList.add("readonly");
+        const saveBtn = personalForm.querySelector('.btn');
+        saveBtn.style.display = 'none';
+        personalForm.classList.add("readonly");
+    }
 });

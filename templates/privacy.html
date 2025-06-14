@@ -35,7 +35,7 @@
 
           <div class="input-box">
             <label for="activity-status">Show Activity Status</label>
-            <select id="activity-status" name="activity-status"  aria-label="Show or Hide Activity Status" disabled>
+            <select id="activity-status" name="activity-status" disabled>
               <option value="show" {% if privacy and privacy[1] == 'show' %}selected{% endif %}>Show</option>
               <option value="hide" {% if privacy and privacy[1] == 'hide' %}selected{% endif %}>Hide</option>
             </select>
