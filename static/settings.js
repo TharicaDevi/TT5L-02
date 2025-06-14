@@ -26,16 +26,13 @@ function togglePersonalEdit() {
     const saveBtn = form.querySelector('.btn');
 
     inputs.forEach(el => {
-        if (el.id !== 'profile-pic') {
-            el.readOnly = isReadonly ? false : true;
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+            el.readOnly = !isReadonly;
         }
 
-        if (el.tagName === 'SELECT' || el.id === 'profile-pic') {
-            el.disabled = !el.disabled;
+        if (el.tagName === 'SELECT') {
+            el.disabled = isReadonly ? false : true;
         }
-
-        el.style.backgroundColor = isReadonly ? 'white' : 'transparent';
-        el.style.border = isReadonly ? '1px solid #ccc' : 'none';
     });
 
     saveBtn.style.display = isReadonly ? 'inline-block' : 'none';
@@ -80,7 +77,7 @@ function confirmDelete() {
 
 document.addEventListener("DOMContentLoaded", () => {
     // For account form
-    const accountMessage = document.querySelector("#account-form + p"); // or a more specific selector
+    const accountMessage = document.querySelector("#account-form + p");
     if (accountMessage) {
         const form = document.getElementById("account-form");
         const inputs = form.querySelectorAll("input");
@@ -95,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // For personal form
-    const personalMessage = document.querySelector("#personal-form + p"); // adjust if needed
+    const personalMessage = document.querySelector("#personal-form + p");
     const personalForm = document.getElementById("personal-form");
     if (personalMessage && personalForm && !personalForm.classList.contains("readonly")) {
         const inputs = personalForm.querySelectorAll("input, textarea, select");
@@ -132,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // For privacy form
     const privacyForm = document.getElementById("privacy-form");
     const selects = privacyForm.querySelectorAll("select");
-    const saveBtn = privacyForm.querySelector(".btn");
+    const privacySaveBtn = privacyForm.querySelector(".btn");
 
     selects.forEach(select => {
         select.disabled = true;
@@ -140,7 +137,6 @@ document.addEventListener("DOMContentLoaded", () => {
         select.style.border = 'none';
     });
 
-    saveBtn.style.display = 'none';
+    privacySaveBtn.style.display = 'none';
     privacyForm.classList.add("readonly");
-
 });

@@ -140,10 +140,10 @@ body {
 .wrapper input[type="text"],
 .wrapper input[type="email"],
 .wrapper input[type="password"],
+.wrapper input[type="date"],
 select {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 14px;
 }
@@ -320,6 +320,6 @@ select {
 }
 
 select:disabled {
-  color: #555;
-  background-color: #eee;
+  color: #fff;
+  background-color: transparent;
 }
