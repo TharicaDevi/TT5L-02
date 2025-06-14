@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Schedule Meetup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .center-box {
+            width: 400px;
+            margin: 80px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        input[type="date"],
+        input[type="time"],
+        textarea {
+            width: 80%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-top: 20px;
+        }
+
+        .message p {
+            margin: 5px 0;
+        }
+
+        .message h3 {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="center-box">
+        <h2>Schedule Meetup</h2>
+        <form method="POST">
+            <label for="date">Date:</label><br>
+            <input type="date" name="date" required><br>
+
+            <label for="time">Time:</label><br>
+            <input type="time" name="time" required><br>
+
+            <label for="notes">Notes (Optional):</label><br>
+            <textarea name="notes" rows="4" placeholder="Add notes about the meetup..."></textarea><br>
+
+            <button type="submit">Schedule</button>
+        </form>
+
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+
+        {% if success %}
+        <div class="message" style="border: 1px solid #4CAF50; background-color: #e8f5e9; padding: 15px; margin-top: 20px;">
+            <h3>{{ success }}</h3>
+            <p><strong>Approved By:</strong> {{ meeting_info.by }}</p>
+            <p><strong>Date:</strong> {{ meeting_info.date }}</p>
+            <p><strong>Time:</strong> {{ meeting_info.time }}</p>
+            <p><strong>Notes:</strong> {{ meeting_info.notes }}</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
