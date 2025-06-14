@@ -473,10 +473,9 @@ def account():
         # extract submitted form data
         email = request.form['email']
         phone = request.form['phone']
-        password = request.form['password']
 
         if user:
-            database.update_account_info(username, email, phone, password)
+            database.update_account_info(username, email, phone) 
             message = "Changes saved!"
             user = database.get_user_by_username(username)
         else:

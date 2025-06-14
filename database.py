@@ -180,7 +180,7 @@ def get_user_by_email(email):
     return user
 
 # save account information
-def update_account_info(username, email, phone, password):
+def update_account_info(username, email, phone):
     conn = sqlite3.connect("info.db")
     cursor = conn.cursor()
 
@@ -188,8 +188,6 @@ def update_account_info(username, email, phone, password):
         cursor.execute("UPDATE users SET email = ? WHERE username = ?", (email, username))
     if phone:
         cursor.execute("UPDATE users SET phone = ? WHERE username = ?", (phone, username))
-    if password:
-        cursor.execute("UPDATE users SET password = ? WHERE username = ?", (password, username))
     conn.commit()
     conn.close()
 
