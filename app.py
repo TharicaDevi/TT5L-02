@@ -561,22 +561,6 @@ def privacy():
     privacy_settings = database.get_privacy_settings(username)
     return render_template("privacy.html", privacy=privacy_settings)
 
-# security settings route
-@app.route("/security", methods=["GET", "POST"])
-def security():
-    username = session.get("username")
-    if request.method == "POST":
-        question = request.form.get("security-question")
-        answer = request.form.get("security-answer")
-
-        if username and question and answer:
-            database.update_security_settings(username, question, answer)
-            user = database.get_user_by_username(username)  # get fresh user data after update
-            return render_template("security.html", message="Security settings updated!", user=user)
-    
-    user = database.get_user_by_username(username) if username else None
-    return render_template("security.html", user=user)
-
 # delete account route
 @app.route("/delete_account", methods=["POST"])
 def delete_account():

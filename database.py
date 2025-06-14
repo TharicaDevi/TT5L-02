@@ -36,9 +36,7 @@ def init_info_db():
             primary_address TEXT,
             shipping_address TEXT,
             visibility TEXT DEFAULT 'public',
-            activity_status TEXT DEFAULT 'show',
-            security_question TEXT,
-            security_answer TEXT
+            activity_status TEXT DEFAULT 'show'
         )
     """)
 
@@ -247,18 +245,6 @@ def get_privacy_settings(username):
     result = c.fetchone()
     conn.close()
     return result
-
-# save security question & answer
-def update_security_settings(username, question, answer):
-    conn = sqlite3.connect("info.db")
-    c = conn.cursor()
-    c.execute("""
-        UPDATE users SET
-            security_question = ?, security_answer = ?
-        WHERE username = ?
-    """, (question, answer, username))
-    conn.commit()
-    conn.close()
 
 # delete account
 def delete_account(username):
