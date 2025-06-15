@@ -64,7 +64,7 @@ function togglePrivacyEdit() {
     const saveBtn = form.querySelector('.btn');
 
     selects.forEach(el => {
-        (el.tagName === 'SELECT') {
+        if (el.tagName === 'SELECT') {
             el.disabled = isReadonly ? false : true;
         }
     });
