@@ -15,5 +15,30 @@
                 <li><a href="{{ url_for('account') }}">SETTINGS</a></li>
             </ul>
         </div>
+
+        <h1>BROWSE PETS</h1>
+        <form method="post" action="/filter">
+            <label for="breed">Breed:</label>
+            <input type="text" name="breed" id="breed">
+            <button type="submit">Filter</button>
+        </form>
+    
+        <div class="pets-container">
+            {% if pets %}
+                {% for pet in pets %}
+                    <div class="pet-card">
+                        <img src="{{ url_for('static', filename='images/' + pet['picture']) }}" alt="Pet Image">
+                        <p><strong>Name:</strong> {{ pet['name'] }}</p>
+                        <p><strong>Type:</strong> {{ pet['type'] }}</p>
+                        <p><strong>Color:</strong> {{ pet['color'] }}</p>
+                        <p><strong>Breed:</strong> {{ pet['breed'] }}</p>
+                        <p><strong>Age:</strong> {{ pet['age'] }}</p>
+                        <a href="{{ url_for('pet_profile', pet_id=pet['id']) }}">View Profile</a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No pets found.</p>
+            {% endif %}
+        </div>
     </body>
-</html>
+</html>    

@@ -291,3 +291,26 @@ def get_all_pets():
     pets = c.fetchall()
     conn.close()
     return pets
+
+def get_pet_by_id(pet_id):
+    conn = sqlite3.connect("pets.db")
+    conn.row_factory = sqlite3.Row  
+    c = conn.cursor()
+    c.execute("SELECT * FROM pets WHERE id = ?", (pet_id,))
+    pet = c.fetchone()
+    conn.close()
+    return pet
+
+def filter_pets(breed):
+    conn = sqlite3.connect('pets.db') 
+    c = conn.cursor()
+
+    breed = breed.lower()
+    query = '''
+        SELECT * FROM pets
+        WHERE LOWER(breed) LIKE ?
+    '''
+    c.execute(query, (f"%{breed}%",))
+    pets = c.fetchall()
+    conn.close()
+    return pets

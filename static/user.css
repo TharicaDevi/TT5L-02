@@ -1,10 +1,3 @@
-*,*:after,*:before {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
 html {
     scroll-behavior: smooth;
     overflow-x: hidden;
@@ -14,7 +7,7 @@ body {
     font-family: arial;
     font-size: 16px;
     margin:0;
-    background: #fff;
+    background: linear-gradient(to right, #f8f9fa, #e0f7fa);
     color: #000;
 }
 
@@ -68,79 +61,68 @@ body {
   transform:scaleX(1);
 }
 
-
-.wrapper_outer {
-    height: 100vh;
-    overflow: hidden;
-}
-.wrapper {
-    height: 100%;
-    overflow-x: hidden;
-    perspective: 1px;
-}
-
-.parallax_section {
-    min-height: 100vh;
-    padding: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100vw;
-    position: relative;
-    overflow: hidden;
-    transform-style: preserve-3d;
-}
-
-.parallax_bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-size: cover;
-    background-position: center center;
-    z-index: -1;
-    min-height: 100%;
-    will-change: transform;
-    transform: translate3d(0,0,-0.5) scale(1.5);
-}
-
-.parallax_section h2 {
-    color: #fff;
-    margin: 0;
-    font-size: 120px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+h1 {
+    font-family: century gothic, sans-serif;
     text-align: center;
-    text-transform: uppercase;
+    color: #2e3c40;
+    padding-top: 50px;
 }
 
-@keyframes fadeInUp {
-    0% {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+form {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
 }
-
-.gradient_top,
-.gradient_bottom {
-    position: absolute;
-    left: 0;
+    
+input, button {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+    
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+    
+button:hover {
+    background-color: #0056b3;
+}
+    
+.pet-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 0 auto 20px;
+    width: 300px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+    
+.pet-card img {
     width: 100%;
-    height: 150px; /* adjust as needed */
-    z-index: 1;
-    pointer-events: none; /* lets clicks pass through */
+    border-radius: 8px;
 }
-
-.gradient_top {
-    top: 0;
-    background: linear-gradient(to bottom, #000 0%, rgba(255,255,255,0) 100%);
+    
+.pet-card p {
+    margin: 8px 0;
 }
-
-.gradient_bottom {
-    bottom: 0;
-    background: linear-gradient(to top, #000 0%, rgba(255,255,255,0) 100%);
+    
+.pet-card a {
+    color: #6f42c1;
+    text-decoration: none;
+}
+    
+.pet-card a:hover {
+    text-decoration: underline;
+}
+    
+.pets-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
 }

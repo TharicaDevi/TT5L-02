@@ -340,7 +340,23 @@ def delete_meeting(app_id):
 def user_dashboard():
     if session.get("role") != "user":
         return redirect(url_for("login"))
-    return render_template("user_dashboard.html")
+    pets = database.get_all_pets()
+    return render_template("user_dashboard.html", pets=pets)
+
+# pet profile route -> THAR'S
+@app.route('/pet/<int:pet_id>')
+def pet_profile(pet_id):
+    pet = database.get_pet_by_id(pet_id)
+    if pet is None:
+        return "Pet not found", 404
+    return render_template("pet_profile.html", pet=dict(pet))
+
+# pets filtering route -> THAR'S
+@app.route('/filter', methods=['POST'])
+def filter():
+    breed = request.form.get("breed")
+    pets = database.filter_pets(breed)
+    return render_template("user_dashboard.html", pets=pets)
 
 # adoption application route -> TEHA'S
 @app.route('/track_user')
