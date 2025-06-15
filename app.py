@@ -497,17 +497,8 @@ def personal():
         language = request.form["language"]
         bio = request.form["bio"]
 
-        # handle profile picture
-        profile_pic_file = request.files.get("profile-pic")
-        profile_pic_path = user[11] if user and len(user) > 11 else None  # default to existing path
-
-        if profile_pic_file and profile_pic_file.filename != "":
-            filename = secure_filename(profile_pic_file.filename)
-            profile_pic_path = os.path.join("uploads", filename)
-            profile_pic_file.save(os.path.join("static", profile_pic_path))
-
         # update database
-        database.update_personal_info(username, fullname, dob, gender, nationality, language, bio, profile_pic_path)
+        database.update_personal_info(username, fullname, dob, gender, nationality, language, bio)
 
         # fetch updated user info
         user = database.get_user_by_username(username)

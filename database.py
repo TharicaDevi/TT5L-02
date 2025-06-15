@@ -32,7 +32,6 @@ def init_info_db():
             nationality TEXT,
             language TEXT,
             bio TEXT,
-            profile_pic TEXT,
             primary_address TEXT,
             shipping_address TEXT,
             visibility TEXT DEFAULT 'public',
@@ -192,15 +191,15 @@ def update_account_info(username, email, phone):
     conn.close()
 
 # save personal information    
-def update_personal_info(username, fullname, dob, gender, nationality, language, bio, profile_pic):
+def update_personal_info(username, fullname, dob, gender, nationality, language, bio):
     conn = sqlite3.connect("info.db")
     c = conn.cursor()
     c.execute("""
         UPDATE users SET 
             fullname = ?, dob = ?, gender = ?, nationality = ?, 
-            language = ?, bio = ?, profile_pic = ?
+            language = ?, bio = ?
         WHERE username = ?
-    """, (fullname, dob, gender, nationality, language, bio, profile_pic, username))
+    """, (fullname, dob, gender, nationality, language, bio, username))
     conn.commit()
     conn.close()
 
