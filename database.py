@@ -1,5 +1,6 @@
 import sqlite3, smtplib
 from email.message import EmailMessage
+from datetime import datetime
 
 EMAIL_ADDRESS = "pawfecthome4u@gmail.com"
 EMAIL_PASSWORD = "cioc tkda ykzw chrd"
@@ -73,6 +74,8 @@ def init_adoptions_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER,
             pet_id INTEGER,
+            request_date TEXT,
+            message TEXT,
             status TEXT,
             FOREIGN KEY (user_id) REFERENCES users(id),
             FOREIGN KEY (pet_id) REFERENCES pets(id)
@@ -316,3 +319,18 @@ def filter_pets(breed):
     pets = c.fetchall()
     conn.close()
     return pets
+
+def add_adoption_request(user_id, pet_id, message=""):
+    conn = sqlite3.connect('adoptions.db')
+    c = conn.cursor()
+    
+    request_date = datetime.now().strftime("%Y-%m-%d")
+    status = "pending"
+
+    c.execute('''
+        INSERT INTO adoptions (user_id, pet_id, request_date, message, status)
+        VALUES (?, ?, ?, ?, ?)
+    ''', (user_id, pet_id, request_date, message, status))
+    
+    conn.commit()
+    conn.close()

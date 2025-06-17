@@ -22,7 +22,9 @@
       {% endif %}
     {% endwith %}
 
-    <form method="POST" action="/submit-request">
+    <form method="POST" action="{{ url_for('submit_request') }}">
+      <input type="hidden" name="pet_id" value="{{ pet_id }}">
+
       <!-- Full Name -->
       <div class="form-group">
         <label for="fullname">Full Name</label>
@@ -45,19 +47,6 @@
       <div class="form-group">
         <label for="address">Home Address</label>
         <textarea id="address" name="address" placeholder="Enter your full address" required></textarea>
-      </div>
-
-      <!-- Type of Pet -->
-      <div class="form-group">
-        <label for="pet-type">Type of Pet You Wish to Adopt</label>
-        <select id="pet-type" name="pet-type" required>
-          <option value="">-- Select --</option>
-          <option value="dog">Dog</option>
-          <option value="cat">Cat</option>
-          <option value="rabbit">Rabbit</option>
-          <option value="bird">Bird</option>
-          <option value="other">Other</option>
-        </select>
       </div>
 
       <!-- Reason -->

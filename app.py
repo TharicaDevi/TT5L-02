@@ -355,6 +355,37 @@ def filter():
     pets = database.filter_pets(breed)
     return render_template("user_dashboard.html", pets=pets)
 
+# request adoption route
+@app.route('/request-form/<int:pet_id>', methods=["GET"])
+def req_form(pet_id):
+    return render_template('request.html', pet_id=pet_id)
+
+# submit adoption request route
+@app.route('/submit-request', methods=['POST'])
+def submit_request():
+    user_id = session.get("user_id")
+    pet_id = int(request.form.get("pet_id"))
+
+    # Extract form data
+    fullname = request.form.get('fullname')
+    email = request.form.get('email')
+    phone = request.form.get('phone')
+    address = request.form.get('address')
+    reason = request.form.get('reason')
+    living = request.form.get('living')
+    agree = request.form.get('agree')
+
+    if not all([fullname, email, phone, address, reason, living, agree]):
+        flash("Please fill out all required fields.")
+        return redirect(url_for('req_form', pet_id=pet_id))
+
+    message = f"Full Name: {fullname}\nEmail: {email}\nPhone: {phone}\nAddress: {address}\n" \
+              f"Reason: {reason}\nLiving Situation: {living}"
+
+    database.add_adoption_request(user_id=user_id, pet_id=pet_id, message=message)
+    flash("Your adoption request has been submitted successfully!")
+    return render_template('submitted.html', fullname=fullname, email=email, phone=phone, address=address, reason=reason, living=living, pet_id=pet_id)
+
 # adoption application route -> TEHA'S
 @app.route('/track_user')
 def track_user():

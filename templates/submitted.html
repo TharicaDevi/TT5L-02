@@ -16,13 +16,12 @@
         <p><strong>Email:</strong><br> {{ email }}</p>
         <p><strong>Phone:</strong><br> {{ phone }}</p>
         <p><strong>Address:</strong><br> {{ address }}</p>
-        <p><strong>Pet Type:</strong><br> {{ pet_type }}</p>
         <p><strong>Reason for Adoption:</strong><br> {{ reason }}</p>
         <p><strong>Living Situation:</strong><br> {{ living }}</p>
       </div>
 
       <div class="form-actions">
-        <a href="{{ url_for('req_form') }}">
+        <a href="{{ url_for('req_form', pet_id=pet_id) }}">
           <button type="button">Submit Another Request</button>
         </a>
       </div>

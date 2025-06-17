@@ -37,6 +37,8 @@
         <p><strong>Age:</strong> {{ pet['age'] }}</p>
         <br>
         <a href="{{ url_for('user_dashboard') }}">← Back to Browse</a>
+        <br><br>
+        <a href="{{ url_for('req_form', pet_id=pet['id']) }}">Adopt {{ pet['name'] }} →</a>
     </div>
 </body>
 </html>
