@@ -16,7 +16,9 @@
             
             <div class="profile-pic">
                 <label for="profile-picture-input">
-                    <img id="profile-picture-preview" src="{{ url_for('static', filename='profile_pics/default.jpg') }}" alt="Profile Picture">
+                    <img id="profile-picture-preview"
+                    src="{{ url_for('static', filename='profile_pics/default.jpg') }}"
+                    alt="Profile Picture">
                 </label>
                 <input type="file" id="profile-picture-input" name="picture" accept="image/*" style="display: none;">
             </div>               

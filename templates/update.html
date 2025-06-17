@@ -10,7 +10,7 @@
     <body>
         <div class="form-container">
             <h2>UPDATE PET DETAILS</h2>
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" action="{{ url_for('update_pet_route', pet_id=pet['id']) }}">
 
                 <div class="profile-picture">
                     {% if pet['picture'] %}
