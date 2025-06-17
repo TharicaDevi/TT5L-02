@@ -320,6 +320,17 @@ def filter_pets(breed):
     conn.close()
     return pets
 
+def update_pet(pet_id, name, picture, pet_type, color, breed, age, status):
+    conn = sqlite3.connect("pets.db")
+    c = conn.cursor()
+    c.execute("""
+        UPDATE pets
+        SET name = ?, picture = ?, type = ?, color = ?, breed = ?, age = ?, status = ?
+        WHERE id = ?
+    """, (name, picture, pet_type, color, breed, age, status, pet_id))
+    conn.commit()
+    conn.close()
+
 def add_adoption_request(user_id, pet_id, message=""):
     conn = sqlite3.connect('adoptions.db')
     c = conn.cursor()

@@ -167,11 +167,13 @@ def welcome():
     return render_template('welcome.html', username=username, success=success)
 
 # admin dashboard route
-@app.route("/admin")
+@app.route("/admin/dashboard")
 def admin_dashboard():
     if session.get("role") != "admin":
         return redirect(url_for("login"))
-    return render_template("admin_dashboard.html")
+
+    pets = database.get_all_pets()
+    return render_template("admin_dashboard.html", pets=pets)
 
 # add pet route
 @app.route("/admin/add_pet", methods=["GET", "POST"])
@@ -203,13 +205,44 @@ def add_pet():
 
     return render_template("add_pet.html")
 
-
-# update pet details route
-@app.route("/admin/update_pet")
-def update_pet():
+# update pets list route
+@app.route("/admin/update_pets_list")
+def update_pets_list():
     if session.get("role") != "admin":
         return redirect(url_for("login"))
-    return "Update pet info (admin only) - coming soon!"
+
+    pets = database.get_all_pets()
+    return render_template("update_petlist.html", pets=pets)
+
+# update pet details route
+@app.route("/admin/update_pet/<int:pet_id>", methods=["GET", "POST"])
+def update_pet_route(pet_id):
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+
+    pet = database.get_pet_by_id(pet_id)
+    if not pet:
+        return "Pet not found", 404
+
+    if request.method == "POST":
+        name = request.form["name"]
+        age = int(request.form["age"])
+        breed = request.form["breed"]
+        pet_type = request.form["type"]
+        color = request.form["color"]
+        status = request.form["status"]
+        image_file = request.files["picture"]
+
+        image_filename = pet["picture"]
+        if image_file and image_file.filename != "":
+            image_filename = secure_filename(image_file.filename)
+            image_path = os.path.join(app.config["UPLOAD_FOLDER"], image_filename)
+            image_file.save(image_path)
+
+        database.update_pet(pet_id, name, image_filename, pet_type, color, breed, age, status)
+        return redirect(url_for("pet_profile", pet_id=pet_id))
+
+    return render_template("update.html", pet=pet)
 
 # review adoption requests route -> TEHA'S
 @app.route("/admin/review_adoptions")
@@ -358,6 +391,8 @@ def filter():
 # request adoption route
 @app.route('/request-form/<int:pet_id>', methods=["GET"])
 def req_form(pet_id):
+    if session.get("role") != "user":
+        return redirect(url_for("login"))
     return render_template('request.html', pet_id=pet_id)
 
 # submit adoption request route
