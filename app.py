@@ -194,18 +194,15 @@ def add_pet():
             image_path = os.path.join(app.config["UPLOAD_FOLDER"], image_filename)
             image_file.save(image_path)
 
-        database.insert_pet(name, image_filename, pet_type, color, breed, age, status)
-        
-        flash("The pet has been successfully added!")
-        return redirect(url_for("view_pets"))
+        pet_id = database.insert_pet(name, image_filename, pet_type, color, breed, age, status)
+
+        if pet_id:
+            return redirect(url_for("pet_profile", pet_id=pet_id))
+        else:
+            return redirect(url_for("add_pet"))
 
     return render_template("add_pet.html")
 
-# view pets route
-@app.route("/view_pets")
-def view_pets():
-    pets = database.get_all_pets()
-    return render_template("view_pets.html", pets=pets)
 
 # update pet details route
 @app.route("/admin/update_pet")

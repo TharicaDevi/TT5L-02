@@ -278,8 +278,10 @@ def insert_pet(name, picture, pet_type, color, breed, age, status):
             VALUES (?, ?, ?, ?, ?, ?, ?)
         ''', (name, picture, pet_type, color, breed, age, status))
         conn.commit()
+        return c.lastrowid
     except Exception as e:
         print("Error inserting pet:", e)
+        return None
     finally:
         conn.close()
 
