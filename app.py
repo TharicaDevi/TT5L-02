@@ -286,6 +286,21 @@ def track_admin():
 
     return render_template('track_admin.html', applications=all_data, state_cities=state_cities)
 
+# update application status route
+@app.route('/admin/update_status/<app_id>', methods=['POST'])
+def update_status(app_id):
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+
+    new_status = request.form.get("status")
+    if app_id in applications and new_status in ['Approved', 'Rejected']:
+        applications[app_id]['status'] = new_status
+        flash(f"Application {app_id} updated to {new_status}.")
+    else:
+        flash("Invalid application or status.")
+    
+    return redirect(url_for('track_admin'))
+
 # edit meeting route -> TEHA'S
 @app.route('/edit_meeting/<app_id>', methods=['GET', 'POST'])
 def edit_meeting(app_id):
@@ -351,6 +366,20 @@ def edit_meeting(app_id):
         city_list=city_list,
     )
 
+# submit review route -> TEHA'S
+@app.route('/submit_review', methods=['POST'])
+def submit_review():
+    app_id = request.form.get('application_id')
+    feedback = request.form.get('feedback', '')
+
+    if app_id in applications and applications[app_id]['finalized']:
+        applications[app_id]['review'] = {
+            'by': app_id,
+            'feedback': feedback
+        }
+
+    return redirect(url_for('track_admin' if session.get('role') == 'admin' else 'track_user'))
+
 # delete meeting route -> TEHA'S
 @app.route('/delete-meeting/<app_id>', methods=['GET'])
 def delete_meeting(app_id):
@@ -399,6 +428,7 @@ def req_form(pet_id):
 @app.route('/submit-request', methods=['POST'])
 def submit_request():
     user_id = session.get("user_id")
+    username = session.get("username")
     pet_id = int(request.form.get("pet_id"))
 
     # Extract form data
@@ -413,6 +443,26 @@ def submit_request():
     if not all([fullname, email, phone, address, reason, living, agree]):
         flash("Please fill out all required fields.")
         return redirect(url_for('req_form', pet_id=pet_id))
+
+    # create application ID
+    app_id = f"APP{random.randint(1000, 9999)}"
+    while app_id in applications:
+        app_id = f"APP{random.randint(1000, 9999)}"
+
+    applications[app_id] = {
+        'status': 'Pending',
+        'pet': database.get_pet_by_id(pet_id)["name"],
+        'finalized': False,
+        'review': None,
+        'name': fullname,
+        'email': email,
+        'phone': phone,
+        'address': address,
+        'reason': reason,
+        'living': living,
+        'user': username
+    }
+    session["application_id"] = app_id
 
     message = f"Full Name: {fullname}\nEmail: {email}\nPhone: {phone}\nAddress: {address}\n" \
               f"Reason: {reason}\nLiving Situation: {living}"
@@ -432,17 +482,28 @@ def track_user():
     if not user:
         return redirect(url_for('login'))
 
-    app_id = session.get('application_id')
-    app = applications.get(app_id)
-    meetup = meetings.get(app_id)
+    app_id = None
+    app = None
+    for aid, data in applications.items():
+        if data.get('user') == username:
+            app_id = aid
+            app = data
+            break
 
+    meetup = meetings.get(app_id)
     return render_template('track_user.html', username=user[1], app_id=app_id, app=app, meetup=meetup)
 
 # schedule meeting route -> TEHA'S
 @app.route('/schedule/<application_id>', methods=['GET', 'POST'])
 def schedule(application_id):
-    if session.get('role') != 'user' or session.get('application_id') != application_id:
+    if session.get('role') != 'user':
         return redirect(url_for('login'))
+
+    username = session.get("username")
+    app_data = applications.get(application_id)
+
+    if not app_data or app_data.get("user") != username:
+        return "Unauthorized access to this application.", 403
 
     error = None
     success = None
@@ -524,7 +585,7 @@ def schedule(application_id):
         city_list=city_list
     )
 
-#
+# finalize adoption route -> TEHA'S
 @app.route('/finalize', methods=['POST'])
 def finalize():
     app_id = request.form.get('application_id', '').strip().upper()

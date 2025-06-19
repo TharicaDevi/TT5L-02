@@ -11,7 +11,7 @@
         <div class="sidebar">
             <h2>User</h2>
             <ul>
-                {% if app and app.finalized == False and not meetup and app.status == 'Approved' %}
+                {% if app and app.status == 'Approved' and app.finalized %}
                     <li><a href="{{ url_for('schedule', application_id=app_id) }}">Schedule Meetup</a></li>
                 {% endif %}
                 <li><a href="{{ url_for('login') }}">Logout</a></li>

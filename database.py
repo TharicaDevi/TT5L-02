@@ -345,3 +345,19 @@ def add_adoption_request(user_id, pet_id, message=""):
     
     conn.commit()
     conn.close()
+
+def add_adoption(user_id, pet_id, status="pending"):
+    conn = sqlite3.connect("adoptions.db")
+    c = conn.cursor()
+    c.execute("INSERT INTO adoptions (user_id, pet_id, status) VALUES (?, ?, ?)",
+              (user_id, pet_id, status))
+    conn.commit()
+    conn.close()
+
+def get_adoption_status(user_id):
+    conn = sqlite3.connect("adoptions.db")
+    c = conn.cursor()
+    c.execute("SELECT * FROM adoptions WHERE user_id = ?", (user_id,))
+    adoptions = c.fetchall()
+    conn.close()
+    return adoptions
