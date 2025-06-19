@@ -79,10 +79,8 @@
     <body>
         <h1>Browse Pets</h1>
     
-        <form method="post" action="/filter">
-            <label for="breed">Breed:</label>
-            <input type="text" name="breed" id="breed">
-        
+        <form action="{{ url_for('filter') }}" method="post">
+            <input type="text" name="breed" placeholder="Enter breed">
             <button type="submit">Filter</button>
         </form>
     
@@ -90,11 +88,13 @@
             {% if pets %}
                 {% for pet in pets %}
                     <div class="pet-card">
-                        <img src="{{ url_for('static', filename='images/' + pet[1]) }}" alt="Pet Image">
-                        <p><strong>Type:</strong> {{ pet[2] }}</p>
-                        <p><strong>Color:</strong> {{ pet[3] }}</p>
-                        <p><strong>Breed:</strong> {{ pet[4] }}</p>
-                        <p><strong>Age:</strong> {{ pet[5] }}</p>
+                        <img src="{{ url_for('static', filename='images/' ~ pet.picture) }}" alt="Pet Image">
+                        <h2>{{ pet.name }}</h2>
+                        <p><strong>Type:</strong> {{  pet[3] }}</p>
+                        <p><strong>Color:</strong> {{  pet[4] }}</p>
+                        <p><strong>Breed:</strong> {{ pet[5] }}</p>
+                        <p><strong>Age:</strong> {{ pet[6]}}</p>
+                        <p><strong>Status:</strong> {{  pet[7] }}</p>
                         <a href="{{ url_for('pet_profile', pet_id=pet[0]) }}">View Profile</a>
                     </div>
                 {% endfor %}

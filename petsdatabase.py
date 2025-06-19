@@ -88,21 +88,22 @@ def get_user_by_credentials(username, password):
     conn.close()
     return user
 
-def add_pet(picture, type_, color, breed, age, status="available"):
-    conn = sqlite3.connect("tasks.db")
+def add_pet(name, picture, type, color, breed, age, status="available"):
+    conn = sqlite3.connect("pets.db")
     c = conn.cursor()
 
     c.execute("SELECT * FROM pets WHERE picture=? AND type=? AND color=? AND breed=? AND age=?",
-              (picture, type_, color, breed, age))
+              (name, picture, type, color, breed, age, status))
     if c.fetchone() is None:
-        c.execute("INSERT INTO pets (picture, type, color, breed, age, status) VALUES (?, ?, ?, ?, ?, ?)",
-                  (picture, type_, color, breed, age, status))
+        c.execute("INSERT INTO pets (name, picture, type, color, breed, age, status) VALUES (?, ?, ?, ?, ?, ?)",
+                  (name, picture, type, color, breed, age, status))
     
     conn.commit()
     conn.close()
 
 def get_all_pets():
-    conn = sqlite3.connect("tasks.db")
+    conn = sqlite3.connect("pets.db")
+    conn.row_factory = sqlite3.Row  
     c = conn.cursor()
     c.execute("SELECT * FROM pets WHERE status = 'available'")
     pets = c.fetchall()
@@ -110,7 +111,8 @@ def get_all_pets():
     return pets
 
 def get_pet_by_id(pet_id):
-    conn = sqlite3.connect("tasks.db")
+    conn = sqlite3.connect("pets.db")
+    conn.row_factory = sqlite3.Row  
     c = conn.cursor()
     c.execute("SELECT * FROM pets WHERE id = ?", (pet_id,))
     pet = c.fetchone()
@@ -118,7 +120,8 @@ def get_pet_by_id(pet_id):
     return pet
 
 def filter_pets(breed):
-    conn = sqlite3.connect('tasks.db') 
+    conn = sqlite3.connect('pets.db')
+    conn.row_factory = sqlite3.Row 
     c = conn.cursor()
 
     breed = breed.lower()
