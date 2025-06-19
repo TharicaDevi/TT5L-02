@@ -29,7 +29,7 @@
 </head>
 <body>
     <div class="profile-card">
-        <img src="{{ pet.image_url }}" alt="{{ pet.name }}">
+        <img src="{{ url_for('static', filename='images/' + pet[1]) }}" alt="Pet Image">
         <h2>{{ pet.name }}</h2>
         <p><strong>Type:</strong> {{  pet[2] }}</p>
         <p><strong>Color:</strong> {{  pet[3] }}</p>
