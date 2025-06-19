@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>adoption request</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='adoption.css') }}">
+</head>
+
+<body>
+  <div class="container">
+    <h2>ADOPTION REQUEST FORM</h2>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flashes">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('submit_request') }}">
+      <input type="hidden" name="pet_id" value="{{ pet_id }}">
+
+      <!-- Full Name -->
+      <div class="form-group">
+        <label for="fullname">Full Name</label>
+        <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required />
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required />
+      </div>
+
+      <!-- Phone -->
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="text" id="phone" name="phone" placeholder="Enter your phone number" required />
+      </div>
+
+      <!-- Address -->
+      <div class="form-group">
+        <label for="address">Home Address</label>
+        <textarea id="address" name="address" placeholder="Enter your full address" required></textarea>
+      </div>
+
+      <!-- Reason -->
+      <div class="form-group">
+        <label for="reason">Why Do You Want to Adopt?</label>
+        <textarea id="reason" name="reason" placeholder="Explain your reason for adoption" required></textarea>
+      </div>
+
+      <!-- Living Situation -->
+      <div class="form-group">
+        <label for="living">Describe Your Living Situation</label>
+        <textarea id="living" name="living" placeholder="Do you live in a house, apartment, with family, etc.?" required></textarea>
+      </div>
+
+      <!-- Agreement -->
+      <div class="form-group">
+        <label>
+          <input type="checkbox" name="agree" required />
+          I confirm that I am ready to take responsibility for the adopted pet.
+        </label>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-actions">
+        <button type="submit">Submit Request</button>
+      </div>
+    </form>
+  </div>
+</body>
+
+</html>

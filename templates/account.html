@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>account information</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='settings.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="top-nav">
+      <ul>
+        <li><a href="{{ url_for('account') }}">ACCOUNT</a></li>
+        <li><a href="{{ url_for('personal') }}">PERSONAL</a></li>
+        <li><a href="{{ url_for('contact') }}">CONTACT</a></li>
+        <li><a href="{{ url_for('privacy') }}">PRIVACY</a></li>
+      </ul>
+    </div>
+
+    <main class="main-wrapper">    
+      <div class="wrapper">
+        <h2>ACCOUNT INFORMATION</h2>
+        <button class="edit-btn" onclick="toggleAccountEdit()">✏️</button>
+
+        <form id="account-form" class="form-scroll readonly" method="POST">
+
+          <div class="input-box">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="{{ user[1] if user else '' }}" readonly/>
+          </div>
+
+          <div class="input-box">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" value="{{ user[3] if user else '' }}" readonly/>
+          </div>
+
+          <div class="input-box">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" pattern="[0-9]{10,15}" title="Enter a valid phone number (10–15 digits)" value="{{ user[4] if user else '' }}" readonly/>
+          </div>
+
+          <div class ="main-button">
+            <button type="submit" class="btn">SAVE CHANGES</button>
+          </div>
+    
+        </form>
+
+        {% if message %}
+          <p>{{ message }}</p>
+        {% endif %}
+        
+      </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='settings.js') }}"></script>
+
+  </body>
+</html>

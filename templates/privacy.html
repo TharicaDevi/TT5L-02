@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>privacy settings</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='settings.css') }}">
+  </head>
+
+  <body>
+    <div class="top-nav">
+      <ul>
+        <li><a href="{{ url_for('account') }}">ACCOUNT</a></li>
+        <li><a href="{{ url_for('personal') }}">PERSONAL</a></li>
+        <li><a href="{{ url_for('contact') }}">CONTACT</a></li>
+        <li><a href="{{ url_for('privacy') }}">PRIVACY</a></li>
+      </ul>
+    </div>
+
+    <main class="main-wrapper">    
+      <div class="wrapper">
+        <h2>PRIVACY SETTINGS</h2>
+        <button class="edit-btn" onclick="togglePrivacyEdit()">✏️</button>
+
+        <form id="privacy-form" class="form-scroll readonly" method="POST" action="{{ url_for('privacy') }}">
+
+          <div class="input-box">
+            <label for="visibility">Profile Visibility</label>
+            <select id="visibility" name="visibility" disabled>
+              <option value="public" {% if privacy and privacy[0] == 'public' %}selected{% endif %}>Public</option>
+              <option value="private" {% if privacy and privacy[0] == 'private' %}selected{% endif %}>Private</option>
+            </select>          
+          </div>
+
+          <div class="input-box">
+            <label for="activity-status">Show Activity Status</label>
+            <select id="activity-status" name="activity-status" disabled>
+              <option value="show" {% if privacy and privacy[1] == 'show' %}selected{% endif %}>Show</option>
+              <option value="hide" {% if privacy and privacy[1] == 'hide' %}selected{% endif %}>Hide</option>
+            </select>
+          </div>
+
+          <div class="input-box">
+            <label>Account Deletion</label>
+            <button type="submit" name="delete" class="delete-btn" title="This will permanently delete your account." onclick="return confirmDelete()">DELETE ACCOUNT</button>
+          </div>
+
+          <div class ="main-button">
+            <button type="submit" class="btn">SAVE CHANGES</button>
+          </div>
+
+        </form>
+
+        {% if message %}
+          <p>{{ message }}</p>
+        {% endif %}
+
+      </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='settings.js') }}"></script>
+
+  </body>
+</html>

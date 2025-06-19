@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2&display=swap');
+
+body {
+    font-family: 'Baloo 2', cursive;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.success-bg {
+    background: url('https://i.pinimg.com/1200x/63/12/ae/6312ae360b7eda1c2420cc8170503b0a.jpg') no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.failed-bg {
+    background: url('https://i.pinimg.com/1200x/e9/8b/1e/e98b1eab203c3fcac19cdb6e1c2844bc.jpg') no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.container {
+    display: inline-block;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 80%;
+    margin: auto;
+    text-align: center;
+}
+
+.success {
+    width: 420px;
+    background: rgba(255, 223, 187, 0.247);
+    border: 2px solid #000000;
+    backdrop-filter: blur(10px);
+    color: #fff;
+    border-radius: 10px;
+    padding: 30px 40px;
+    text-align: center;
+}
+
+.failed {
+    width: 420px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    border-radius: 10px;
+    padding: 30px 40px;
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 10px;
+    font-size: 30px;
+}
+
+P {
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+
+a {
+    display: inline-block;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    background-color: #00056a;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: background-color 0.3s ease;
+}
+
+a:hover {
+    color: #00056a;
+    background-color: #cfe2fffc;
+}

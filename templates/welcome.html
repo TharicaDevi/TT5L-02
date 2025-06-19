@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Welcome</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='welcome.css') }}">
+        {% if success %}
+            <meta http-equiv="refresh" content="3;url={{ url_for('user_dashboard') }}">
+        {% endif %}    
+    </head>
+    
+    <body>
+        <!-- apply different bg for successful & failed login -->
+        <body class="{% if success %}success-bg{% else %}failed-bg{% endif %}">        
+            
+            <!-- login sucessful -->
+            {% if success %}
+            <div class="container success">
+                <h2>HI, {{ username }}!</h2>
+                <p>Please wait while we redirecting...</p>
+            </div>
+
+            <!-- login failed -->
+            {% else %}
+            <div class="container failed">
+                <h2>Oops, {{ username }}! </h2>
+                <P>Wrong username or password ≽^•˕• ྀི≼ </P>
+                <!-- retry login -->
+                <a href="{{ url_for('login') }}">TRY AGAIN?</a>
+            </div>
+
+            {% endif %}
+        
+        </body>
+    </body>
+</html>

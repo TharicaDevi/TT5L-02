@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>forgot password</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='reset.css') }}">
+    </head>
+
+    <body>
+        <div class="wrapper">
+
+            <!-- sends data to 'reset' route -->
+            <form action="{{ url_for('reset_password') }}" method="POST">
+                <h1>RESET PASSWORD</h1>
+
+                <!-- display error message if reset fails -->
+                {% if error %}
+                    <p class="error-message">{{ error }}</p>
+                <!-- display success message & redirect to login page -->    
+                {% elif message %}
+                    <p class="success-message">{{ message }}</p>
+                    <script>
+                        setTimeout(function () {
+                            window.location.href = "{{ url_for('login') }}";
+                        }, 3000); // 3 seconds
+                    </script>
+                {% endif %}
+
+                <!-- password input -->
+                <div class="input-box">
+                    <input type="password" placeholder="new password" name="new_password" required minlength="8" maxlength="20" autocomplete="new-password">
+                </div>
+
+                <button type="submit" class="btn">RESET</button>
+
+            </form>
+        </div>
+    </body>
+</html>

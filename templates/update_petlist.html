@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Update Pets List</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='update.css') }}">
+    </head>
+    <body>
+        <div class="form-container">
+            <h2>MY PETS</h2>
+            <ul>
+                {% for pet in pets %}
+                    <li>
+                        {{ pet.name }} ({{ pet.type }}, {{ pet.age }} yrs)
+                        <a href="{{ url_for('update_pet_route', pet_id=pet.id) }}">UPDATE</a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <div class="form-actions">
+                <a href="{{ url_for('admin_dashboard') }}">← BACK TO DASHBOARD</a>
+            </div>
+        </div>
+    </body>
+</html>

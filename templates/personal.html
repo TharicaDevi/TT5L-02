@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>personal information</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='settings.css') }}">
+  </head>
+
+  <body>
+    <div class="top-nav">
+      <ul>
+        <li><a href="{{ url_for('account') }}">ACCOUNT</a></li>
+        <li><a href="{{ url_for('personal') }}">PERSONAL</a></li>
+        <li><a href="{{ url_for('contact') }}">CONTACT</a></li>
+        <li><a href="{{ url_for('privacy') }}">PRIVACY</a></li>
+      </ul>
+    </div>
+
+    <main class="main-wrapper">    
+      <div class="wrapper">
+        <h2>PERSONAL INFORMATION</h2>
+        <button class="edit-btn" onclick="togglePersonalEdit()">✏️</button>
+        <form id="personal-form" class="form-scroll readonly" method="POST" action="/personal" enctype="multipart/form-data">
+      
+          <div class="input-box">
+            <label for="fullname">Full Name</label>
+            <input type="text" id="fullname" name="fullname" value="{{ user[5] if user else '' }}" readonly>
+          </div>
+
+          <div class="input-box">
+            <label for="dob">Date of Birth</label>
+            <input type="date" id="dob" name="dob" value="{{ user[6] if user else '' }}" readonly>
+          </div>
+
+          <div class="input-box">
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender" disabled>
+              <option value="female" {% if user[7] == 'female' %}selected{% endif %}>Female</option>
+              <option value="male" {% if user[7] == 'male' %}selected{% endif %}>Male</option>
+            </select>
+          </div>
+
+          <div class="input-box">
+            <label for="nationality">Nationality</label>
+            <input type="text" id="nationality" name="nationality" value="{{ user[8] if user else '' }}" readonly/>
+          </div>
+
+          <div class="input-box">
+            <label for="language">Preferred Language</label>
+            <select id="language" name="language" disabled>
+              <option value="en" {% if user[9] == 'en' %}selected{% endif %}>English</option>
+              <option value="my" {% if user[9] == 'my' %}selected{% endif %}>Malay</option>
+            </select>
+          </div>
+        
+          <div class="input-box">
+            <label for="bio">About Me</label>
+            <textarea id="bio" name="bio" placeholder="Tell us something about yourself..." readonly>{{ user[10] if user else '' }}</textarea>
+          </div>
+
+          <div class ="main-button">
+            <button type="submit" class="btn">SAVE CHANGES</button>
+          </div>
+        </form>
+
+        {% if message %}
+          <p>{{ message }}</p>
+        {% endif %}
+
+      </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='settings.js') }}"></script>
+
+  </body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>contact information</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='settings.css') }}">
+  </head>
+
+  <body>
+    <div class="top-nav">
+    <ul>
+      <li><a href="{{ url_for('account') }}">ACCOUNT</a></li>
+      <li><a href="{{ url_for('personal') }}">PERSONAL</a></li>
+      <li><a href="{{ url_for('contact') }}">CONTACT</a></li>
+      <li><a href="{{ url_for('privacy') }}">PRIVACY</a></li>
+    </ul>
+  </div>
+
+    <main class="main-wrapper">    
+      <div class="wrapper">
+        <h2>CONTACT INFORMATION</h2>
+        <button class="edit-btn" onclick="toggleContactEdit()">✏️</button>
+
+        <form id="contact-form" class="form-scroll readonly" method="POST" action="{{ url_for('contact') }}">
+
+          <div class="input-box">
+            <label for="primary-address">Primary Address</label>
+            <textarea id="primary-address" name="primary-address" placeholder="Enter your primary address" readonly>{{ user[11] if user else '' }}</textarea>
+          </div>
+
+          <div class="input-box">
+            <label for="billing-address">Shipping Address (if relevant)</label>
+            <textarea id="shipping-address" name="shipping-address" placeholder="Enter billing or shipping address if different" readonly>{{ user[12] if user else '' }}</textarea>
+          </div>
+      
+          <div class ="main-button">
+            <button type="submit" class="btn">SAVE CHANGES</button>
+          </div>
+        </form>
+
+        {% if message %}
+          <p>{{ message }}</p>
+        {% endif %}
+        
+      </div>      
+    </main>
+
+    <script src="{{ url_for('static', filename='settings.js') }}"></script>
+
+  </body>
+</html>

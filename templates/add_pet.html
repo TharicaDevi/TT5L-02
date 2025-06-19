@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Add New Pet</title>
+        <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='add.css') }}">
+    </head>
+    
+    <body>
+        <div class="container">
+            <h2>ADD NEW PET</h2>
+            <form action="{{ url_for('add_pet') }}" method="POST" enctype="multipart/form-data">
+            
+            <div class="profile-pic">
+                <label for="profile-picture-input">
+                    <img id="profile-picture-preview"
+                    src="{{ url_for('static', filename='profile_pics/default.jpg') }}"
+                    alt="Profile Picture">
+                </label>
+                <input type="file" id="profile-picture-input" name="picture" accept="image/*" style="display: none;">
+            </div>               
+            <div class="form-group">
+                <input type="text" name="name" placeholder="Pet Name" required><br>
+            </div>
+            <div class="form-group">
+                <input type="number" name="age" placeholder="Age" required><br>
+            </div>
+            <div class="form-group">
+                <input type="text" name="breed" placeholder="Breed" required><br>
+            </div>
+            <div class="form-group">
+                <input type="text" name="type" placeholder="Type (e.g., Dog, Cat)" required><br>
+            </div>
+            <div class="form-group">
+                <input type="text" name="color" placeholder="Color" required><br>
+            </div>
+            <div class="form-group">
+                <input type="text" name="status" placeholder="Status (e.g., Available, Adopted)" required><br>
+            </div>
+            <div class="form-group">
+                <textarea name="description" placeholder="Description" required></textarea><br>
+            </div>
+            <div class="form-actions">
+                <button type="submit">ADD PET</button>
+            </div>
+        </form>
+
+        <script src="{{ url_for('static', filename='picpreview.js') }}"></script>
+    
+    </body>
+</html>

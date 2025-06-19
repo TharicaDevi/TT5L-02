@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Update Pet</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='update.css') }}">
+    </head>
+    
+    <body>
+        <div class="form-container">
+            <h2>UPDATE PET DETAILS</h2>
+            <form method="POST" enctype="multipart/form-data" action="{{ url_for('update_pet_route', pet_id=pet['id']) }}">
+
+                <div class="profile-picture">
+                    {% if pet['picture'] %}
+                        <label for="profile-picture-input">
+                            <img id="profile-picture-preview" src="{{ url_for('static', filename='profile_pics/' + pet['picture']) }}" alt="Profile Picture">
+                        </label>
+                    {% endif %}
+                    <input type="file" id="profile-picture-input" name="picture" accept="image/*" style="display: none;">
+                </div>
+
+                <div class="form-group">
+                    <label for="name">PET NAME:</label>
+                    <input type="text" name="name" id="name" value="{{ pet['name'] }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="age">AGE:</label>
+                    <input type="number" name="age" id="age" value="{{ pet['age'] }}" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="breed">BREED:</label>
+                    <input type="text" name="breed" id="breed" value="{{ pet['breed'] }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="type">TYPE:</label>
+                    <input type="text" name="type" id="type" value="{{ pet['type'] }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="color">COLOR:</label>
+                    <input type="text" name="color" id="color" value="{{ pet['color'] }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="status">STATUS:</label>
+                    <input type="text" name="status" id="status" value="{{ pet['status'] }}" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">UPDATE PET</button>
+                </div>
+            </form>
+
+            <script src="{{ url_for('static', filename='picpreview.js') }}"></script>
+
+        </div>
+    </body>
+</html>
