@@ -18,14 +18,14 @@
         <div class="success" role="alert">{{ success | e }}</div>
     {% endif %}
 
-    <form method="POST" action="{{ url_for('schedule', application_id=application_id) }}" class="schedule-form" novalidate>
+    <form method="POST" action="{{ url_for('schedule_meeting', application_id=application_id) }}" class="schedule-form" novalidate>
         <div class="form-group">
             <label for="date">Date:</label>
             <input
                 type="date"
                 id="date"
                 name="date"
-                value="{{ meeting.date if meeting else '' }}"
+                value="{{ meeting.get('date', '') }}"
                 required
                 aria-required="true"
             >
@@ -39,7 +39,7 @@
                 name="time"
                 min="08:00"
                 max="22:00"
-                value="{{ meeting.time if meeting else '' }}"
+                value="{{ meeting.get('time', '') }}"
                 required
                 aria-required="true"
             >
@@ -54,7 +54,7 @@
                 placeholder="+60123456789"
                 pattern="^\+60[1-9][0-9]{7,10}$"
                 title="Please enter a Malaysian phone number starting with +60 followed by 8 to 11 digits"
-                value="{{ meeting.phone if meeting else '' }}"
+                value="{{ meeting.get('phone', '') }}"
                 inputmode="tel"
                 autocomplete="off"
                 required
@@ -69,7 +69,7 @@
                 name="state"
                 required
                 aria-required="true"
-                onchange="this.form.submit()"
+                onchange="document.getElementById('final_submit').value='update_state'; this.form.submit();"
             >
                 <option value="">-- Select State --</option>
                 {% for state in state_cities.keys() %}
@@ -89,7 +89,7 @@
             >
                 <option value="">-- Select City --</option>
                 {% for city in city_list %}
-                    <option value="{{ city }}" {% if meeting and meeting.city == city %}selected{% endif %}>{{ city }}</option>
+                    <option value="{{ city }}" {% if meeting.get('city', '') == city %}selected{% endif %}>{{ city }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -101,7 +101,7 @@
                 name="notes"
                 placeholder="Add notes about the meetup..."
                 rows="4"
-            >{{ meeting.notes if meeting else '' }}</textarea>
+            >{{ meeting.get('notes', '') }}</textarea>
         </div>
 
         <input type="hidden" name="final_submit" id="final_submit" value="">
