@@ -54,31 +54,37 @@ state_cities = {
 }
 
 # signup route
-@app.route("/signup", methods=['GET', 'POST']) # post = submit
+@app.route("/signup", methods=['GET', 'POST'])
 def signup():
+
     error = None
+
     if request.method == 'POST':
-        # extract form data
+        # extract data from submitted form
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
 
+        # validate username & password length
         if not (8 <= len(username) <= 20):
             error = "Username must be 8-20 long!"
         elif not (8 <= len(password) <= 20):
             error = "Password must be 8-20 long!"
-        elif database.user_exists(username):
+        elif database.user_exists(username): # check if username is already taken
             error = "Username already exists!"
-        else: 
+        else:
+            # add new user to database
             database.add_user(username, password, email)
+            
             return redirect(url_for('login'))
     return render_template('signup.html', error=error)
 
 # login route
 @app.route("/", methods=['GET', 'POST']) 
 def login():
+
     if request.method == 'POST':
-        # extract form data
+        # extract login credentials
         username = request.form['username']
         password = request.form['password']
 
@@ -88,29 +94,33 @@ def login():
             session["role"] = "admin"
             return redirect(url_for('admin_dashboard'))
 
-        # check if user exists
+        # check if user
         user = database.get_user(username, password)
 
         # user login
         if user:
-            # store username in session (successful login)
             session["username"] = username 
             session["role"] = "user"
+            # successful login
             return redirect(url_for('welcome', username=username, success=1))
         else:
+            # failure login
             return redirect(url_for('welcome', username=username, success=0))
-        
-    # show login form on GET request    
+    
     return render_template('login.html')
 
 # request reset route
 @app.route("/request_reset", methods=["GET", "POST"])
 def request_reset():
+
     if request.method == "POST":
+        # extract form username & email
         username = request.form["username"]
         email = request.form["email"]
 
+        # verify match user's username & email
         if database.validate_username_email(username, email):
+            # generate OTP
             otp = str(random.randint(100000, 999999))
             session["otp"] = otp
             session["reset_email"] = email
@@ -122,66 +132,84 @@ def request_reset():
             msg["From"] = EMAIL_ADDRESS
             msg["To"] = email
 
+            # send email using SMTP
             with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
                 smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
                 smtp.send_message(msg)
-
             return redirect(url_for("verify_otp"))
+        
         else:
             return render_template("reset_request.html", error="Invalid username or email.")
-
     return render_template("reset_request.html")
 
 # verify OTP route
 @app.route("/verify_otp", methods=["GET", "POST"])
 def verify_otp():
+
     if request.method == "POST":
+        # get user entered OTP
         otp_input = request.form["otp_input"]
+
+        # check if OTP matches the one in session
         if otp_input == session.get("otp"):
             return redirect(url_for("reset_password"))
         else:
+            # OTP mismatch
             return render_template("verify_otp.html", error="Incorrect OTP.")
+        
     return render_template("verify_otp.html")
 
 # reset password route
 @app.route("/reset_password", methods=["GET", "POST"])
 def reset_password():
+
     message = ""
+
     if request.method == "POST":
+        # get new password 
         new_password = request.form["new_password"]
         email = session.get("reset_email")
+
+        # validate password length & update in database
         if 8 <= len(new_password) <= 20:
             database.update_password_by_email(email, new_password)
             message = "Password updated successfully. Redirecting to login..."
             return redirect(url_for("login"))
         else:
             message = "Password must be 8-20 characters."
+
     return render_template("reset.html", error="", message=message)
 
 # welcome route after login
 @app.route("/welcome", methods=["GET", "POST"])
 def welcome():
     username = request.args.get("username")
-    success = request.args.get("success") == "1" # check if login successful
-    # welcome page with success/failure message
+    success = request.args.get("success") == "1" # convert to boolean
     return render_template('welcome.html', username=username, success=success)
 
 # admin dashboard route
 @app.route("/admin/dashboard")
 def admin_dashboard():
+
+    # check if admin
     if session.get("role") != "admin":
         return redirect(url_for("login"))
 
+    # fetch all pets from database
     pets = database.get_all_pets()
     return render_template("admin_dashboard.html", pets=pets)
 
 # add pet route
 @app.route("/admin/add_pet", methods=["GET", "POST"])
 def add_pet():
+
+    # check if admin
     if session.get("role") != "admin":
         return redirect(url_for("login"))
     
+    # handle form submission
     if request.method == "POST":
+        # extract form data
         name = request.form["name"]
         age = int(request.form["age"])
         breed = request.form["breed"]
@@ -190,14 +218,17 @@ def add_pet():
         status = request.form["status"]
         image_file = request.files["picture"]
 
+        # handle image upload
         image_filename = ""
         if image_file:
             image_filename = secure_filename(image_file.filename)
             image_path = os.path.join(app.config["UPLOAD_FOLDER"], image_filename)
             image_file.save(image_path)
 
+        # insert pet into database
         pet_id = database.insert_pet(name, image_filename, pet_type, color, breed, age, status)
 
+        # redirect to pet profile or add another pet
         if pet_id:
             return redirect(url_for("pet_profile", pet_id=pet_id))
         else:
@@ -208,23 +239,32 @@ def add_pet():
 # update pets list route
 @app.route("/admin/update_pets_list")
 def update_pets_list():
+
+    # check if admin
     if session.get("role") != "admin":
         return redirect(url_for("login"))
 
+    # fetch all pets from database
     pets = database.get_all_pets()
     return render_template("update_petlist.html", pets=pets)
 
 # update pet details route
 @app.route("/admin/update_pet/<int:pet_id>", methods=["GET", "POST"])
 def update_pet_route(pet_id):
+
+    # check if admin
     if session.get("role") != "admin":
         return redirect(url_for("login"))
 
+    # fetch pet details by ID
     pet = database.get_pet_by_id(pet_id)
     if not pet:
+        # if pet not found, show error
         return "Pet not found", 404
 
+    # handle form submission
     if request.method == "POST":
+        # extract form data
         name = request.form["name"]
         age = int(request.form["age"])
         breed = request.form["breed"]
@@ -233,15 +273,17 @@ def update_pet_route(pet_id):
         status = request.form["status"]
         image_file = request.files["picture"]
 
+        # use existing image unless new image is uploaded
         image_filename = pet["picture"]
         if image_file and image_file.filename != "":
             image_filename = secure_filename(image_file.filename)
             image_path = os.path.join(app.config["UPLOAD_FOLDER"], image_filename)
             image_file.save(image_path)
 
+        # update pet details in database
         database.update_pet(pet_id, name, image_filename, pet_type, color, breed, age, status)
-        return redirect(url_for("pet_profile", pet_id=pet_id))
 
+        return redirect(url_for("pet_profile", pet_id=pet_id))
     return render_template("update.html", pet=pet)
 
 # review adoption requests route -> TEHA'S
@@ -289,11 +331,17 @@ def track_admin():
 # update application status route
 @app.route('/admin/update_status/<app_id>', methods=['POST'])
 def update_status(app_id):
+
+    # check if admin
     if session.get("role") != "admin":
         return redirect(url_for("login"))
 
+    # get new status from submitted form
     new_status = request.form.get("status")
+
+    #  check if apllication ID exists & status is valid
     if app_id in applications and new_status in ['Approved', 'Rejected']:
+        # update application status
         applications[app_id]['status'] = new_status
         flash(f"Application {app_id} updated to {new_status}.")
     else:
@@ -397,8 +445,12 @@ def delete_meeting(app_id):
 # user dashboard route
 @app.route("/user", methods=['GET', 'POST'])
 def user_dashboard():
+
+    # check if user
     if session.get("role") != "user":
         return redirect(url_for("login"))
+    
+    # fetch all pets from database
     pets = database.get_all_pets()
     return render_template("user_dashboard.html", pets=pets)
 
@@ -420,6 +472,8 @@ def filter():
 # request adoption route
 @app.route('/request-form/<int:pet_id>', methods=["GET"])
 def req_form(pet_id):
+
+    # check if user
     if session.get("role") != "user":
         return redirect(url_for("login"))
     return render_template('request.html', pet_id=pet_id)
@@ -427,11 +481,15 @@ def req_form(pet_id):
 # submit adoption request route
 @app.route('/submit-request', methods=['POST'])
 def submit_request():
+
+    # get user info from session
     user_id = session.get("user_id")
     username = session.get("username")
+
+    # get selected pet ID from form
     pet_id = int(request.form.get("pet_id"))
 
-    # Extract form data
+    # extract form data
     fullname = request.form.get('fullname')
     email = request.form.get('email')
     phone = request.form.get('phone')
@@ -440,6 +498,7 @@ def submit_request():
     living = request.form.get('living')
     agree = request.form.get('agree')
 
+    # validate the required fields are filled
     if not all([fullname, email, phone, address, reason, living, agree]):
         flash("Please fill out all required fields.")
         return redirect(url_for('req_form', pet_id=pet_id))
@@ -447,7 +506,7 @@ def submit_request():
     # create application ID
     app_id = f"APP{random.randint(1000, 9999)}"
     while app_id in applications:
-        app_id = f"APP{random.randint(1000, 9999)}"
+        app_id = f"APP{random.randint(1000, 9999)}" # ensure unique ID
 
     applications[app_id] = {
         'status': 'Pending',
@@ -462,12 +521,17 @@ def submit_request():
         'living': living,
         'user': username
     }
+
+    # save application ID in session
     session["application_id"] = app_id
 
+    # create summary message to store in database
     message = f"Full Name: {fullname}\nEmail: {email}\nPhone: {phone}\nAddress: {address}\n" \
               f"Reason: {reason}\nLiving Situation: {living}"
 
+    # add adoption request into database
     database.add_adoption_request(user_id=user_id, pet_id=pet_id, message=message)
+
     flash("Your adoption request has been submitted successfully!")
     return render_template('submitted.html', fullname=fullname, email=email, phone=phone, address=address, reason=reason, living=living, pet_id=pet_id)
 
@@ -606,7 +670,7 @@ def finalize():
 def account():
 
     username = session.get('username')
-    user = database.get_user_by_username(username)  # always define user early
+    user = database.get_user_by_username(username) # fetch current user info
     message = ""
 
     if request.method == 'POST':
@@ -615,9 +679,13 @@ def account():
         phone = request.form['phone']
 
         if user:
+            # update user's email & phone in database
             database.update_account_info(username, email, phone) 
             message = "Changes saved!"
+
+            # reload with updated data
             user = database.get_user_by_username(username)
+
         else:
             message = "User not found. Changes not saved."
     return render_template('account.html', user=user, message=message)
@@ -625,11 +693,13 @@ def account():
 # personal info route
 @app.route("/personal", methods=["GET", "POST"])
 def personal():
+
     username = session.get("username")
-    user = database.get_user_by_username(username)
+    user = database.get_user_by_username(username) # fetch current user info
     message = ""
 
     if request.method == "POST":
+        # extract submitted form data
         fullname = request.form["fullname"]
         dob = request.form["dob"]
         gender = request.form["gender"]
@@ -637,10 +707,10 @@ def personal():
         language = request.form["language"]
         bio = request.form["bio"]
 
-        # update database
+        # update personal info in database
         database.update_personal_info(username, fullname, dob, gender, nationality, language, bio)
 
-        # fetch updated user info
+        # reload with updated data
         user = database.get_user_by_username(username)
         message = "Changes saved!"
 
@@ -649,27 +719,34 @@ def personal():
 # contact info route
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
+
     username = session.get('username')
     message = ""
 
     if request.method == 'POST':
+        # extract submitted form data
         primary = request.form['primary-address']
         shipping = request.form['shipping-address']
+
+        # update contact info in database
         database.update_contact_info(username, primary, shipping)
         message = "Changes saved!"
-        # Don't redirect — just reload with the message
+
+        # reload with updated data
         user = database.get_user_by_username(username)
         return render_template("contact.html", user=user, message=message)
 
+    # show current contact info
     user = database.get_user_by_username(username)
     return render_template("contact.html", user=user)
 
 # privacy settings route
 @app.route("/privacy", methods=["GET", "POST"])
 def privacy():
+
     username = session.get("username")
     if not username:
-        return redirect(url_for("login"))  # Or your landing page
+        return redirect(url_for("login"))
 
     if request.method == "POST":
         if "delete" in request.form:
@@ -677,6 +754,7 @@ def privacy():
             database.delete_account(username)
             session.pop("username", None)
             return redirect(url_for("login"))
+        
         # update privacy settings
         visibility = request.form.get("visibility")
         activity_status = request.form.get("activity-status")
@@ -687,7 +765,7 @@ def privacy():
             privacy_settings = database.get_privacy_settings(username)
             return render_template("privacy.html", privacy=privacy_settings, message=message)
 
-    # GET request
+    # show current privacy settings
     privacy_settings = database.get_privacy_settings(username)
     return render_template("privacy.html", privacy=privacy_settings)
 
@@ -695,7 +773,11 @@ def privacy():
 @app.route("/delete_account", methods=["POST"])
 def delete_account():
     username = session.get('username')
+
+    # delete account from database
     database.delete_account(username)
+
+    # clear session data & notify user
     session.pop('username', None)
     flash("Your account has been deleted.")
     return redirect(url_for('login'))
