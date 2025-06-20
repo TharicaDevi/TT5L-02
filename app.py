@@ -53,6 +53,12 @@ state_cities = {
     "Labuan": ["Labuan"]
 }
 
+
+# home route
+@app.route("/")
+def home():
+    return render_template("home.html")
+
 # signup route
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
@@ -80,7 +86,7 @@ def signup():
     return render_template('signup.html', error=error)
 
 # login route
-@app.route("/", methods=['GET', 'POST']) 
+@app.route("/login", methods=['GET', 'POST']) 
 def login():
 
     if request.method == 'POST':
