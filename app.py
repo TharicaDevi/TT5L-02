@@ -25,7 +25,17 @@ applications = {
     'APP124': {'status': 'Pending', 'pet': 'Milo', 'finalized': False, 'review': None,
                'name': 'Bob', 'email': 'bob@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
     'APP125': {'status': 'Rejected', 'pet': 'Luna', 'finalized': False, 'review': None,
-               'name': 'Carol', 'email': 'carol@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''}
+               'name': 'Carol', 'email': 'carol@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP126': {'status': 'Approved', 'pet': 'Charlie', 'finalized': False, 'review': None,
+               'name': 'David', 'email': 'david@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP127': {'status': 'Pending', 'pet': 'Bella', 'finalized': False, 'review': None,
+               'name': 'Eva', 'email': 'eva@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP128': {'status': 'Approved', 'pet': 'Max', 'finalized': False, 'review': None,
+               'name': 'Frank', 'email': 'frank@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP129': {'status': 'Rejected', 'pet': 'Daisy', 'finalized': False, 'review': None,
+               'name': 'Grace', 'email': 'grace@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP130': {'status': 'Pending', 'pet': 'Rocky', 'finalized': False, 'review': None,
+               'name': 'Henry', 'email': 'henry@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''}
 }
 
 meetings = {}
