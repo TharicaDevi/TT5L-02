@@ -12,7 +12,7 @@
             <h2>User</h2>
             <ul>
                 {% if app and app.finalized == False and not meetup and app.status == 'Approved' %}
-                    <li><a href="{{ url_for('schedule', application_id=app_id) }}">Schedule Meetup</a></li>
+                    <li><a href="{{ url_for('schedule_meeting', application_id=app_id) }}">Schedule Meetup</a></li>
                 {% endif %}
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
             </ul>
