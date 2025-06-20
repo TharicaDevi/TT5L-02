@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session
 from datetime import datetime
 import re
 
@@ -11,7 +11,17 @@ applications = {
     'APP124': {'status': 'Pending', 'pet': 'Milo', 'finalized': False, 'review': None,
                'name': 'Bob', 'email': 'bob@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
     'APP125': {'status': 'Rejected', 'pet': 'Luna', 'finalized': False, 'review': None,
-               'name': 'Carol', 'email': 'carol@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''}
+               'name': 'Carol', 'email': 'carol@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP126': {'status': 'Approved', 'pet': 'Charlie', 'finalized': False, 'review': None,
+               'name': 'David', 'email': 'david@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP127': {'status': 'Pending', 'pet': 'Bella', 'finalized': False, 'review': None,
+               'name': 'Eva', 'email': 'eva@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP128': {'status': 'Approved', 'pet': 'Max', 'finalized': False, 'review': None,
+               'name': 'Frank', 'email': 'frank@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP129': {'status': 'Rejected', 'pet': 'Daisy', 'finalized': False, 'review': None,
+               'name': 'Grace', 'email': 'grace@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP130': {'status': 'Pending', 'pet': 'Rocky', 'finalized': False, 'review': None,
+               'name': 'Henry', 'email': 'henry@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''}
 }
 
 meetings = {}
@@ -68,40 +78,49 @@ def logout():
 
 @app.route('/finalize', methods=['POST'])
 def finalize():
-    app_id = request.form.get('application_id', '').strip().upper()
-    app_data = applications.get(app_id)
-    if not app_data:
-        return "Application ID not found.", 404
-    if app_data["status"] != "Approved":
+    app_id = session.get('application_id')
+
+    if not app_id or app_id not in applications:
+        return redirect(url_for('login'))
+
+    app_data = applications[app_id]
+
+    if app_data['status'] != 'Approved':
         return "Application not approved. Cannot finalize.", 403
+
     if app_data['finalized']:
         return f"Adoption already finalized for {app_data['pet']}."
-    app_data['finalized'] = True
-    session['application_id'] = app_id
-    return redirect(url_for('schedule', application_id=app_id))
 
-@app.route('/schedule/<application_id>', methods=['GET', 'POST'])
+    if app_id not in meetings:
+        return "Please schedule a meeting before finalizing your application.", 400
+
+    app_data['finalized'] = True
+    return redirect(url_for('track_user'))
+
+@app.route('/schedule/<application_id>', methods=['GET', 'POST'], endpoint='schedule_meeting')
 def schedule(application_id):
-    if session.get('role') != 'user' or session.get('application_id') != application_id:
+    role = session.get('role')
+    user_app_id = session.get('application_id')
+
+    if not ((role == 'user' and user_app_id == application_id) or role == 'admin'):
         return redirect(url_for('login'))
 
     error = None
     success = None
-    selected_state = ''
-    city_list = []
     meeting = meetings.get(application_id, {})
+    selected_state = meeting.get('state', '')
+    city_list = state_cities.get(selected_state, [])
 
     if request.method == 'POST':
         selected_state = request.form.get('state', '').strip()
         city_list = state_cities.get(selected_state, [])
-
         final_submit = request.form.get('final_submit', '')
 
-        date_str = request.form.get('date', '')
-        time_str = request.form.get('time', '')
+        date_str = request.form.get('date', '').strip()
+        time_str = request.form.get('time', '').strip()
         phone = request.form.get('phone', '').strip()
         city = request.form.get('city', '').strip()
-        notes = request.form.get('notes', '')
+        notes = request.form.get('notes', '').strip()
 
         meeting = {
             'date': date_str,
@@ -110,7 +129,7 @@ def schedule(application_id):
             'state': selected_state,
             'city': city,
             'notes': notes,
-            'approved': meetings.get(application_id, {}).get('approved', False),
+            'approved': meeting.get('approved', False),
             'by': application_id
         }
 
@@ -135,8 +154,8 @@ def schedule(application_id):
         else:
             try:
                 chosen_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-                today = datetime.today().date()
                 meeting_time = datetime.strptime(time_str, '%H:%M').time()
+                today = datetime.today().date()
 
                 if chosen_date < today:
                     error = "Cannot schedule a meeting for a past date."
@@ -145,16 +164,17 @@ def schedule(application_id):
                 else:
                     meeting['approved'] = (final_submit == 'finalize')
                     meetings[application_id] = meeting
-                    success = "Your meeting has been finalized!" if final_submit == 'finalize' else "Your meeting has been saved!"
+                    success = (
+                        "Your meeting has been finalized!"
+                        if final_submit == 'finalize'
+                        else "Your meeting has been saved!"
+                    )
             except ValueError:
                 error = "Invalid date or time format."
 
-    else:
-        if meeting:
-            selected_state = meeting.get('state', '')
-            city_list = state_cities.get(selected_state, [])
-        else:
-            meeting = None
+    if request.method == 'GET' or error:
+        selected_state = meeting.get('state', '')
+        city_list = state_cities.get(selected_state, [])
 
     return render_template(
         'schedule.html',
@@ -166,7 +186,6 @@ def schedule(application_id):
         selected_state=selected_state,
         city_list=city_list
     )
-
 
 @app.route('/track_user')
 def track_user():
@@ -186,7 +205,6 @@ def track_admin():
 
     search_name = request.args.get('search_name', '').strip().lower()
     search_email = request.args.get('search_email', '').strip().lower()
-    filter_state = request.args.get('filter_state', '').strip()
 
     filtered_apps = {}
     for app_id, data in applications.items():
@@ -194,12 +212,11 @@ def track_admin():
             continue
         if search_email and search_email not in data.get('email', '').lower():
             continue
-        if filter_state and filter_state != data.get('state', ''):
-            continue
         filtered_apps[app_id] = data
 
-    all_data = [
-        {
+    all_data = []
+    for app_id, data in filtered_apps.items():
+        app_info = {
             'app_id': app_id,
             'name': data.get('name', ''),
             'email': data.get('email', ''),
@@ -209,14 +226,13 @@ def track_admin():
             'city': data.get('city', ''),
             'phone': data.get('phone', ''),
             'notes': data.get('notes', ''),
-            'pet': data['pet'],
-            'status': data['status'],
-            'finalized': data['finalized'],
+            'pet': data.get('pet'),
+            'status': data.get('status'),
+            'finalized': data.get('finalized', False),
             'review': data.get('review'),
             'meetup': meetings.get(app_id)
         }
-        for app_id, data in filtered_apps.items()
-    ]
+        all_data.append(app_info)
 
     return render_template('track_admin.html', applications=all_data, state_cities=state_cities)
 
@@ -271,35 +287,34 @@ def edit_meeting(app_id):
 
         malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
 
-        if not state or not city:
-            error = "Please select both State and City."
-        elif not malaysia_phone_regex.match(phone):
-            error = "Invalid phone number format. It must be +60 followed by 8-11 digits."
-        else:
-            try:
-                meeting_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-                today = datetime.today().date()
-                meeting_time = datetime.strptime(time_str, '%H:%M').time()
+        try:
+            meeting_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            meeting_time = datetime.strptime(time_str, '%H:%M').time()
+            today = datetime.today().date()
 
-                if meeting_date < today:
-                    error = "Cannot choose a past date."
-                elif not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
-                    error = "Meeting time must be between 08:00 and 22:00."
-                else:
-                    meetings[app_id].update({
-                        'date': date_str,
-                        'time': time_str,
-                        'phone': phone,
-                        'state': state,
-                        'city': city,
-                        'notes': notes,
-                    })
-                    success = "Meeting updated successfully!"
-                    selected_state = state
-                    city_list = state_cities.get(state, [])
+            if not state or not city:
+                error = "Please select both State and City."
+            elif not malaysia_phone_regex.match(phone):
+                error = "Invalid phone number format. It must be +60 followed by 8-11 digits."
+            elif meeting_date < today:
+                error = "Cannot choose a past date."
+            elif not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
+                error = "Meeting time must be between 08:00 and 22:00."
+            else:
+                meetings[app_id].update({
+                    'date': date_str,
+                    'time': time_str,
+                    'phone': phone,
+                    'state': state,
+                    'city': city,
+                    'notes': notes,
+                })
+                success = "Meeting updated successfully!"
+                selected_state = state
+                city_list = state_cities.get(state, [])
 
-            except ValueError:
-                error = "Invalid date or time format."
+        except ValueError:
+            error = "Invalid date or time format."
 
     return render_template(
         'edit_meeting.html',
@@ -311,12 +326,6 @@ def edit_meeting(app_id):
         selected_state=selected_state,
         city_list=city_list,
     )
-
-@app.route('/dashboard')
-def dashboard():
-    if session.get('role') != 'admin':
-        return redirect(url_for('login'))
-    return render_template('dashboard.html')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
