@@ -308,6 +308,7 @@ def get_pet_by_id(pet_id):
 
 def filter_pets(breed):
     conn = sqlite3.connect('pets.db') 
+    conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
     breed = breed.lower()
