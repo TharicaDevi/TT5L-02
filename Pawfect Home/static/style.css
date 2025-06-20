@@ -47,7 +47,7 @@ body {
   margin: 0 auto;
   padding: 0 1rem;
   display: flex;
-  flex-direction: column; /* Stack heading + nav links vertically */
+  flex-direction: column;
   align-items: center;
   text-align: center;
 }
@@ -57,7 +57,7 @@ body {
   margin: 0 0 0.5rem 0;
   font-size: 1.6rem;
   font-weight: 700;
-  color: #ff6f91; /* Cute pink */
+  color: #ff6f91;
 }
 
 /* Nav links */
