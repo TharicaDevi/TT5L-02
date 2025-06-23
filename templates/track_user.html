@@ -11,26 +11,26 @@
         <div class="sidebar">
             <h2>User</h2>
             <ul>
-                {% if app and app.status == 'Approved' and app.finalized %}
+                {% if app and not meetup and app.get('status') == 'Approved' %}
                     <li><a href="{{ url_for('schedule', application_id=app_id) }}">Schedule Meetup</a></li>
                 {% endif %}
-                <li><a href="{{ url_for('login') }}">Logout</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
             </ul>
         </div>
 
         <div class="main-content">
-            <h2>Welcome, {{ username | e }}</h2>
+            <h2>Welcome, {{ username }}</h2>
 
             <div class="section">
-                <p><strong>Pet:</strong> {{ app.pet if app else '-' }}</p>
-                <p><strong>Status:</strong> {{ app.status if app else '-' }}</p>
-                <p><strong>Finalized:</strong> {{ 'Yes' if app and app.finalized else 'No' }}</p>
+                <p><strong>Pet:</strong> {{ app.get('pet_name', '-') if app else '-' }}</p>
+                <p><strong>Status:</strong> {{ app.get('status', '-') if app else '-' }}</p>
+                <p><strong>Finalized:</strong> {{ 'Yes' if app and app.get('finalized') else 'No' }}</p>
             </div>
 
-            {% if app and not app.finalized and app.status == 'Approved' %}
+            {% if app and not app.get('finalized') and app.get('status') == 'Approved' %}
                 <div class="section">
-                    <form method="POST" action="{{ url_for('finalize') }}">
-                        <input type="hidden" name="application_id" value="{{ app_id | e }}">
+                    <form method="POST" action="{{ url_for('finalized') }}">
+                        <input type="hidden" name="application_id" value="{{ app_id }}">
                         <button type="submit" class="btn">Finalize Adoption</button>
                     </form>
                 </div>
@@ -39,20 +39,26 @@
             {% if meetup %}
                 <div class="section">
                     <h3>Meeting Details</h3>
-                    <p><strong>Date:</strong> {{ meetup.date }}</p>
-                    <p><strong>Time:</strong> {{ meetup.time }}</p>
-                    <p><strong>Location:</strong> {{ meetup.city }}, {{ meetup.state }}</p>
-                    <p><strong>Phone:</strong> {{ meetup.phone }}</p>
-                    {% if meetup.notes %}
-                        <p><strong>Notes:</strong> {{ meetup.notes }}</p>
+                    <p><strong>Date:</strong> {{ meetup.get('date', '-') }}</p>
+                    <p><strong>Time:</strong> {{ meetup.get('time', '-') }}</p>
+                    <p><strong>Location:</strong> {{ meetup.get('city', '-') }}, {{ meetup.get('state', '-') }}</p>
+                    <p><strong>Phone:</strong> {{ meetup.get('phone', '-') }}</p>
+                    {% if meetup.get('notes') %}
+                        <p><strong>Notes:</strong> {{ meetup.get('notes') }}</p>
                     {% endif %}
                 </div>
             {% endif %}
 
-            {% if app and app.review %}
+            {% if app and app.get('review') %}
                 <div class="section">
                     <h3>Your Review</h3>
-                    <p>{{ app.review.feedback }}</p>
+                    <p>
+                        {% if app.get('review') is mapping and app.review.get('feedback') %}
+                            {{ app.get('review').get('feedback') }}
+                        {% else %}
+                            {{ app.get('review') }}
+                        {% endif %}
+                    </p>
                 </div>
             {% endif %}
         </div>

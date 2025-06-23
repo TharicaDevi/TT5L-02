@@ -3,7 +3,7 @@ from werkzeug.utils import secure_filename
 from email.message import EmailMessage
 from database import EMAIL_ADDRESS, EMAIL_PASSWORD
 from datetime import datetime
-import database, os, smtplib, random, re
+import database, os, smtplib, random, re, sqlite3
 
 
 app = Flask(__name__)
@@ -19,30 +19,27 @@ ADMIN_USERNAME = "TEFadmin"
 ADMIN_PASSWORD = "admin@123"
 
 # -> TEHA'S
-applications = {
-    'APP123': {'status': 'Approved', 'pet': 'Buddy', 'finalized': False, 'review': None,
-               'name': 'Alice', 'email': 'alice@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
-    'APP124': {'status': 'Pending', 'pet': 'Milo', 'finalized': False, 'review': None,
-               'name': 'Bob', 'email': 'bob@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
-    'APP125': {'status': 'Rejected', 'pet': 'Luna', 'finalized': False, 'review': None,
-               'name': 'Carol', 'email': 'carol@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
-    'APP126': {'status': 'Approved', 'pet': 'Charlie', 'finalized': False, 'review': None,
-               'name': 'David', 'email': 'david@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
-    'APP127': {'status': 'Pending', 'pet': 'Bella', 'finalized': False, 'review': None,
-               'name': 'Eva', 'email': 'eva@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
-    'APP128': {'status': 'Approved', 'pet': 'Max', 'finalized': False, 'review': None,
-               'name': 'Frank', 'email': 'frank@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
-    'APP129': {'status': 'Rejected', 'pet': 'Daisy', 'finalized': False, 'review': None,
-               'name': 'Grace', 'email': 'grace@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
-    'APP130': {'status': 'Pending', 'pet': 'Rocky', 'finalized': False, 'review': None,
-               'name': 'Henry', 'email': 'henry@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''}
-}
+applications = {}
+# applications = {
+#     'APP123': {'status': 'Approved', 'pet': 'Buddy', 'finalized': False, 'review': None,
+#                'name': 'Alice', 'email': 'alice@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+#     'APP124': {'status': 'Pending', 'pet': 'Milo', 'finalized': False, 'review': None,
+#                'name': 'Bob', 'email': 'bob@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+#     'APP125': {'status': 'Rejected', 'pet': 'Luna', 'finalized': False, 'review': None,
+#                'name': 'Carol', 'email': 'carol@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+#     'APP126': {'status': 'Approved', 'pet': 'Charlie', 'finalized': False, 'review': None,
+#                'name': 'David', 'email': 'david@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+#     'APP127': {'status': 'Pending', 'pet': 'Bella', 'finalized': False, 'review': None,
+#                'name': 'Eva', 'email': 'eva@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+#     'APP128': {'status': 'Approved', 'pet': 'Max', 'finalized': False, 'review': None,
+#                'name': 'Frank', 'email': 'frank@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+#     'APP129': {'status': 'Rejected', 'pet': 'Daisy', 'finalized': False, 'review': None,
+#                'name': 'Grace', 'email': 'grace@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+#     'APP130': {'status': 'Pending', 'pet': 'Rocky', 'finalized': True, 'review': None,
+#                'name': 'Henry', 'email': 'henry@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''}
+# }
 
 meetings = {}
-
-users = {
-    'admin': {'password': 'admin123', 'role': 'admin'}
-}
 
 state_cities = {
     "Johor": ["Batu Pahat", "Johor Bahru", "Kluang", "Mersing", "Muar", "Pontian", "Segamat", "Kulai", "Tangkak"],
@@ -68,6 +65,12 @@ state_cities = {
 @app.route("/")
 def home():
     return render_template("home.html")
+
+#logout route
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 # signup route
 @app.route("/signup", methods=['GET', 'POST'])
@@ -112,11 +115,13 @@ def login():
 
         # check if user
         user = database.get_user(username, password)
+        print("user", user)
 
         # user login
         if user:
             session["username"] = username 
             session["role"] = "user"
+            session["user_id"] = user[0]
             # successful login
             return redirect(url_for('welcome', username=username, success=1))
         else:
@@ -312,6 +317,10 @@ def track_admin():
     search_email = request.args.get('search_email', '').strip().lower()
     filter_state = request.args.get('filter_state', '').strip()
 
+    print("applications", len(applications))
+    print(applications)
+    print("meetings", meetings)
+
     filtered_apps = {}
     for app_id, data in applications.items():
         if search_name and search_name not in data.get('name', '').lower():
@@ -321,6 +330,7 @@ def track_admin():
         if filter_state and filter_state != data.get('state', ''):
             continue
         filtered_apps[app_id] = data
+    print("filtered_apps", filtered_apps)
 
     all_data = [
         {
@@ -341,6 +351,7 @@ def track_admin():
         }
         for app_id, data in filtered_apps.items()
     ]
+    print("all_data", all_data)
 
     return render_template('track_admin.html', applications=all_data, state_cities=state_cities)
 
@@ -370,6 +381,8 @@ def update_status(app_id):
 def edit_meeting(app_id):
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
+    
+    print("meetings", meetings)
 
     meeting = meetings.get(app_id)
     if not meeting:
@@ -381,6 +394,11 @@ def edit_meeting(app_id):
     city_list = state_cities.get(selected_state, [])
 
     if request.method == 'POST':
+        selected_state = request.form.get('state', '').strip()
+        city_list = state_cities.get(selected_state, [])
+
+
+        final_submit = request.form.get('final_submit', '')
         date_str = request.form.get('date', '')
         time_str = request.form.get('time', '')
         phone = request.form.get('phone', '').strip()
@@ -389,6 +407,20 @@ def edit_meeting(app_id):
         notes = request.form.get('notes', '')
 
         malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
+
+        if final_submit == 'update_state':
+            print("final_submit", final_submit)
+            print("selected_state", selected_state)
+            return render_template('edit_meeting.html',
+                                   app_id=app_id,
+                                   meeting=meetings.get(app_id),
+                                   error=error,
+                                   success=success,
+                                   state_cities=state_cities,
+                                   selected_state=selected_state,
+                                   city_list=city_list,
+                                   )
+
 
         if not state or not city:
             error = "Please select both State and City."
@@ -500,6 +532,8 @@ def submit_request():
 
     # get user info from session
     user_id = session.get("user_id")
+    print("session", session)
+    print("user_id", user_id)
     username = session.get("username")
 
     # get selected pet ID from form
@@ -524,10 +558,12 @@ def submit_request():
     while app_id in applications:
         app_id = f"APP{random.randint(1000, 9999)}" # ensure unique ID
 
+    status = "Approved"
+
     applications[app_id] = {
-        'status': 'Pending',
+        'status': status,
         'pet': database.get_pet_by_id(pet_id)["name"],
-        'finalized': False,
+        'finalized': True,
         'review': None,
         'name': fullname,
         'email': email,
@@ -538,15 +574,19 @@ def submit_request():
         'user': username
     }
 
+    print("applications", len(applications))
+    print(applications)
+
     # save application ID in session
     session["application_id"] = app_id
+    print("session_application_id", session["application_id"])
 
     # create summary message to store in database
     message = f"Full Name: {fullname}\nEmail: {email}\nPhone: {phone}\nAddress: {address}\n" \
               f"Reason: {reason}\nLiving Situation: {living}"
 
     # add adoption request into database
-    database.add_adoption_request(user_id=user_id, pet_id=pet_id, message=message)
+    database.add_adoption_request(user_id=user_id, pet_id=pet_id, message=message, status=status)
 
     flash("Your adoption request has been submitted successfully!")
     return render_template('submitted.html', fullname=fullname, email=email, phone=phone, address=address, reason=reason, living=living, pet_id=pet_id)
@@ -560,18 +600,64 @@ def track_user():
 
     user = database.get_user_by_username(username)
     if not user:
+        session.clear()
         return redirect(url_for('login'))
 
+    user_id = user[0]
+    adoption_info = None
     app_id = None
-    app = None
-    for aid, data in applications.items():
-        if data.get('user') == username:
-            app_id = aid
-            app = data
-            break
 
-    meetup = meetings.get(app_id)
-    return render_template('track_user.html', username=user[1], app_id=app_id, app=app, meetup=meetup)
+    adoptions = database.get_adoption_status(user_id)
+    print("adoptions", adoptions)
+    if adoptions:
+        adoption = adoptions[-1]
+
+        app_id = adoption[0]
+        pet_id = adoption[2]
+        status = adoption[5]
+        finalized_raw = adoption[6] if len(adoption) > 6 else 0
+        is_finalized = bool(finalized_raw) if finalized_raw is not None else False
+
+        pet = database.get_pet_by_id(pet_id)
+        pet_name = pet['name'] if pet else '-'
+
+        adoption_info = {
+            'pet_name': pet_name,
+            'status': status,
+            'finalized': is_finalized,
+            'review': None
+        }
+
+        if app_id in applications:
+            applications[app_id]['status'] = is_finalized
+
+    meetup = None
+    if app_id:
+        meetup_records = database.get_meetings_by_adoption_id(app_id)
+        print("meetup_records", meetup_records)
+        if meetup_records:
+            first_meetup = meetup_records[0]
+            meetup = {
+                'date': first_meetup[3],
+                'time': first_meetup[4],
+                'city': first_meetup[5],
+                'state': first_meetup[6],
+                'phone': first_meetup[7],
+                'notes': first_meetup[8]
+            }
+
+    print(user)
+    print(app_id)
+    print(adoption_info)
+    print(meetup)
+
+    return render_template(
+        'track_user.html',
+        username=user[1],
+        app_id=app_id,
+        app=adoption_info,
+        meetup=meetup
+    )
 
 # schedule meeting route -> TEHA'S
 @app.route('/schedule/<application_id>', methods=['GET', 'POST'])
@@ -580,50 +666,56 @@ def schedule(application_id):
         return redirect(url_for('login'))
 
     username = session.get("username")
-    app_data = applications.get(application_id)
+    user = database.get_user_by_username(username)
+    if not user:
+        return "User not found.", 404
+    user_id = user[0]
 
-    if not app_data or app_data.get("user") != username:
+    adoptions = database.get_adoption_status(user_id)
+    application = next((a for a in adoptions if str(a[0]) == application_id), None)
+
+    if not application:
         return "Unauthorized access to this application.", 403
 
     error = None
     success = None
     selected_state = ''
     city_list = []
-    meeting = meetings.get(application_id, {})
+
+    meetings_from_db = database.get_meetings_by_user(user_id)
+    print("meetings", meetings_from_db)
+    meeting = {}
+    for m in meetings_from_db:
+        if str(m[2]) == application_id:
+            meeting = {
+                'date': m[3],
+                'time': m[4],
+                'notes': m[5]
+            }
+            break
 
     if request.method == 'POST':
         selected_state = request.form.get('state', '').strip()
         city_list = state_cities.get(selected_state, [])
 
         final_submit = request.form.get('final_submit', '')
-
         date_str = request.form.get('date', '')
         time_str = request.form.get('time', '')
         phone = request.form.get('phone', '').strip()
         city = request.form.get('city', '').strip()
+        state = request.form.get('state', '').strip()
         notes = request.form.get('notes', '')
-
-        meeting = {
-            'date': date_str,
-            'time': time_str,
-            'phone': phone,
-            'state': selected_state,
-            'city': city,
-            'notes': notes,
-            'approved': meetings.get(application_id, {}).get('approved', False),
-            'by': application_id
-        }
 
         if final_submit == 'update_state':
             return render_template('schedule.html',
-                application_id=application_id,
-                error=None,
-                success=None,
-                meeting=meeting,
-                state_cities=state_cities,
-                selected_state=selected_state,
-                city_list=city_list
-            )
+                                   application_id=application_id,
+                                   error=None,
+                                   success=None,
+                                   meeting=meeting,
+                                   state_cities=state_cities,
+                                   selected_state=selected_state,
+                                   city_list=city_list
+                                   )
 
         malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
 
@@ -642,44 +734,73 @@ def schedule(application_id):
                 elif not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
                     error = "Meetings must be scheduled between 08:00 and 22:00."
                 else:
-                    meeting['approved'] = (final_submit == 'finalize')
-                    meetings[application_id] = meeting
-                    success = "Your meeting has been finalized!" if final_submit == 'finalize' else "Your meeting has been saved!"
+                    database.schedule_meeting(user_id, application_id, date_str, time_str, city, state, phone, notes)
+                    success = "Your meeting has been finalized!" if final_submit == 'finalized' else "Your meeting has been saved!"
+                    meeting = {
+                        'date': date_str,
+                        'time': time_str,
+                        'phone': phone,
+                        'state': selected_state,
+                        'city': city,
+                        'notes': notes
+                    }
+                    print("meetings_before", meetings)
+                    print("session_application_id", session["application_id"])
+                    meetings[session["application_id"]] = meeting
+                    print("meetings_after", meetings)
             except ValueError:
                 error = "Invalid date or time format."
 
-    else:
-        if meeting:
-            selected_state = meeting.get('state', '')
-            city_list = state_cities.get(selected_state, [])
-        else:
-            meeting = None
-
     return render_template('schedule.html',
-        application_id=application_id,
-        error=error,
-        success=success,
-        meeting=meeting,
-        state_cities=state_cities,
-        selected_state=selected_state,
-        city_list=city_list
-    )
+                           application_id=application_id,
+                           error=error,
+                           success=success,
+                           meeting=meeting,
+                           state_cities=state_cities,
+                           selected_state=selected_state,
+                           city_list=city_list
+                           )
 
-# finalize adoption route -> TEHA'S
-@app.route('/finalize', methods=['POST'])
-def finalize():
-    app_id = request.form.get('application_id', '').strip().upper()
-    app_data = applications.get(app_id)
-    if not app_data:
-        return "Application ID not found.", 404
-    if app_data["status"] != "Approved":
+# finalized adoption route -> TEHA'S
+@app.route('/finalized', methods=['POST'])
+def finalized():
+    app_id = request.form.get('application_id')
+    if not app_id:
+        return "Application ID required.", 400
+    
+    print("app_id", app_id)
+
+
+    username = session.get('username')
+    if not username:
+        return redirect(url_for('login'))
+
+    user = database.get_user_by_username(username)
+    if not user:
+        return "User not found.", 404
+
+    user_id = user[0]
+    adoptions = database.get_adoption_status(user_id)
+    adoption = next((a for a in adoptions if str(a[0]) == app_id), None)
+
+    if not adoption:
+        return "Application not found or unauthorized access.", 403
+
+    if adoption[5] != "Approved":
         return "Application not approved. Cannot finalize.", 403
-    if app_data['finalized']:
-        return f"Adoption already finalized for {app_data['pet']}."
-    app_data['finalized'] = True
-    session['application_id'] = app_id
-    return redirect(url_for('schedule', application_id=app_id))
 
+    if adoption[6] == 1:
+        return f"Adoption already finalized for pet ID {adoption[2]}."
+
+    conn = sqlite3.connect("adoptions.db")
+    c = conn.cursor()
+    c.execute("UPDATE adoptions SET finalized = 1 WHERE id = ?", (app_id,))
+    conn.commit()
+    conn.close()
+
+    # session['application_id'] = app_id
+
+    return redirect(url_for('track_user', application_id=app_id))
 
 # account info route
 @app.route("/account", methods=['GET', 'POST'])

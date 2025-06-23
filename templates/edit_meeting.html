@@ -66,7 +66,7 @@
                 id="state" 
                 name="state" 
                 required 
-                onchange="this.form.submit()"
+                onchange="document.getElementById('final_submit').value='update_state'; this.form.submit();"
             >
                 <option value="">-- Select State --</option>
                 {% for state in state_cities.keys() %}
@@ -89,6 +89,9 @@
 
             <label for="notes">Notes:</label>
             <textarea id="notes" name="notes" rows="4" placeholder="Add any notes...">{{ meeting.notes if meeting else '' }}</textarea>
+
+            <input type="hidden" name="final_submit" id="final_submit" value="">
+
 
             <button type="submit" class="btn">Update Meetup</button>
         </form>

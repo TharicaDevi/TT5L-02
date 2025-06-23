@@ -17,7 +17,7 @@ def init_info_db():
     c = conn.cursor()
 
     # Drop and recreate for resetting data during development
-    c.execute("DROP TABLE IF EXISTS users")
+    # c.execute("DROP TABLE IF EXISTS users")
 
     # Create updated info table
     c.execute("""
@@ -68,7 +68,11 @@ def init_adoptions_db():
     conn = sqlite3.connect("adoptions.db")
     c = conn.cursor()
 
-    # Adoptions table
+    # c.execute("DROP TABLE IF EXISTS adoptions")
+    # c.execute("DROP TABLE IF EXISTS meetings")
+
+
+    # adoptions table
     c.execute("""
         CREATE TABLE IF NOT EXISTS adoptions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -77,23 +81,47 @@ def init_adoptions_db():
             request_date TEXT,
             message TEXT,
             status TEXT,
-            FOREIGN KEY (user_id) REFERENCES users(id),
-            FOREIGN KEY (pet_id) REFERENCES pets(id)
+            finalized INTEGER DEFAULT 0
         )
     """)
+    
+    # meetings table 
+    c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='meetings'")
+    if not c.fetchone():
+        c.execute("""
+            CREATE TABLE meetings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                adoption_id INTEGER,
+                date TEXT,
+                time TEXT,
+                city TEXT,
+                state TEXT,
+                phone TEXT,
+                notes TEXT,
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                FOREIGN KEY (adoption_id) REFERENCES adoptions(id)
+            )
+        """)
+    else:
+        c.execute("PRAGMA table_info(meetings)")
+        columns = [col[1] for col in c.fetchall()]
+        if 'user_id' not in columns:
+            c.execute("ALTER TABLE meetings ADD COLUMN user_id INTEGER")
+        if 'adoption_id' not in columns:
+            c.execute("ALTER TABLE meetings ADD COLUMN adoption_id INTEGER")
 
-    # Meetings table
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS meetings (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            date TEXT,
-            time TEXT,
-            notes TEXT,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        )
-    """)
+    conn.commit()
+    conn.close()
 
+# finalize table
+def finalize_adoption():
+    conn = sqlite3.connect("adoptions.db")
+    c = conn.cursor()
+    c.execute("PRAGMA table_info(adoptions)")
+    columns = [row[1] for row in c.fetchall()]
+    if 'finalized' not in columns:
+        c.execute("ALTER TABLE adoptions ADD COLUMN finalized INTEGER DEFAULT 0") 
     conn.commit()
     conn.close()
 
@@ -255,11 +283,12 @@ def delete_account(username):
     conn.close()
 
 # schedule meeting
-def schedule_meeting(user_id, date, time, notes):
+def schedule_meeting(user_id, adoption_id, date, time, city, state, phone, notes):
     conn = sqlite3.connect("adoptions.db")
     c = conn.cursor()
-    c.execute("INSERT INTO meetings (user_id, date, time, notes) VALUES (?, ?, ?, ?)",
-              (user_id, date, time, notes))
+    c.execute("""
+        INSERT INTO meetings (user_id, adoption_id, date, time, city, state, phone, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """, (user_id, adoption_id, date, time, city, state, phone, notes))
     conn.commit()
     conn.close()
 
@@ -267,6 +296,14 @@ def get_meetings_by_user(user_id):
     conn = sqlite3.connect("adoptions.db")
     c = conn.cursor()
     c.execute("SELECT * FROM meetings WHERE user_id = ?", (user_id,))
+    records = c.fetchall()
+    conn.close()
+    return records
+
+def get_meetings_by_adoption_id(adoption_id):
+    conn = sqlite3.connect("adoptions.db")
+    c = conn.cursor()
+    c.execute("SELECT * FROM meetings WHERE adoption_id = ?", (adoption_id,))
     meetings = c.fetchall()
     conn.close()
     return meetings
@@ -332,12 +369,11 @@ def update_pet(pet_id, name, picture, pet_type, color, breed, age, status):
     conn.commit()
     conn.close()
 
-def add_adoption_request(user_id, pet_id, message=""):
+def  add_adoption_request(user_id, pet_id, message="", status="Approved"):
     conn = sqlite3.connect('adoptions.db')
     c = conn.cursor()
     
     request_date = datetime.now().strftime("%Y-%m-%d")
-    status = "pending"
 
     c.execute('''
         INSERT INTO adoptions (user_id, pet_id, request_date, message, status)
