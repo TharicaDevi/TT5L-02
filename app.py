@@ -1,0 +1,873 @@
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session, flash
+from werkzeug.utils import secure_filename
+from email.message import EmailMessage
+from database import EMAIL_ADDRESS, EMAIL_PASSWORD
+from datetime import datetime
+import database, os, smtplib, random, re, sqlite3
+
+
+app = Flask(__name__)
+app.secret_key = 'supersecretkey'  # needed for session (session = store information about the user across multiple pages)
+
+# folder for uploaded profile pictures
+UPLOAD_FOLDER = 'static/profile_pics'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# admin credentials
+ADMIN_USERNAME = "TEFadmin"
+ADMIN_PASSWORD = "admin@123"
+
+# -> TEHA'S
+applications = {
+    'APP123': {'status': 'Approved', 'pet': 'Buddy', 'finalized': False, 'review': None,
+               'name': 'Alice', 'email': 'alice@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP124': {'status': 'Pending', 'pet': 'Milo', 'finalized': False, 'review': None,
+               'name': 'Bob', 'email': 'bob@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP125': {'status': 'Rejected', 'pet': 'Luna', 'finalized': False, 'review': None,
+               'name': 'Carol', 'email': 'carol@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP126': {'status': 'Approved', 'pet': 'Charlie', 'finalized': False, 'review': None,
+               'name': 'David', 'email': 'david@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP127': {'status': 'Pending', 'pet': 'Bella', 'finalized': False, 'review': None,
+               'name': 'Eva', 'email': 'eva@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP128': {'status': 'Approved', 'pet': 'Max', 'finalized': False, 'review': None,
+               'name': 'Frank', 'email': 'frank@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP129': {'status': 'Rejected', 'pet': 'Daisy', 'finalized': False, 'review': None,
+               'name': 'Grace', 'email': 'grace@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''},
+    'APP130': {'status': 'Pending', 'pet': 'Rocky', 'finalized': False, 'review': None,
+               'name': 'Henry', 'email': 'henry@example.com', 'date': '', 'time': '', 'state': '', 'city': '', 'phone': '', 'notes': ''}
+}
+
+meetings = {}
+
+users = {
+    'admin': {'password': 'admin123', 'role': 'admin'}
+}
+
+state_cities = {
+    "Johor": ["Batu Pahat", "Johor Bahru", "Kluang", "Mersing", "Muar", "Pontian", "Segamat", "Kulai", "Tangkak"],
+    "Kedah": ["Baling", "Bandar Baharu", "Kota Setar", "Kubang Pasu", "Kuala Muda", "Langkawi", "Padang Terap", "Pendang", "Pokok Sena", "Sik", "Yan"],
+    "Kelantan": ["Bachok", "Gua Musang", "Jeli", "Kota Bharu", "Machang", "Pasir Mas", "Pasir Puteh", "Tanah Merah", "Tumpat"],
+    "Melaka": ["Alor Gajah", "Jasin", "Melaka Tengah"],
+    "Negeri Sembilan": ["Jempol", "Kuala Pilah", "Port Dickson", "Rembau", "Seremban", "Tampin"],
+    "Pahang": ["Bentong", "Cameron Highlands", "Jerantut", "Kuantan", "Lipis", "Maran", "Pekan", "Raub", "Rompin", "Temerloh", "Bera"],
+    "Perak": ["Bagan Datuk", "Batang Padang", "Hilir Perak", "Kampar", "Kerian", "Kinta", "Kuala Kangsar", "Larut, Matang dan Selama", "Manjung", "Muallim", "Perak Tengah"],
+    "Perlis": ["Kangar", "Arau", "Padang Besar"],
+    "Pulau Pinang": ["Timur Laut", "Barat Daya", "Seberang Perai Utara", "Seberang Perai Tengah", "Seberang Perai Selatan"],
+    "Sabah": ["Beaufort", "Beluran", "Keningau", "Kota Belud", "Kota Kinabalu", "Kota Marudu", "Kuala Penyu", "Kudat", "Kunak", "Lahad Datu", "Nabawan", "Papar", "Penampang", "Pitas", "Putatan", "Ranau", "Sandakan", "Semporna", "Sipitang", "Tambunan", "Tawau", "Tenom", "Tongod", "Tuaran"],
+    "Sarawak": ["Betong", "Bintulu", "Kapit", "Kuching", "Limbang", "Miri", "Mukah", "Samarahan", "Sarikei", "Serian", "Sibu", "Sri Aman"],
+    "Selangor": ["Gombak", "Hulu Langat", "Hulu Selangor", "Klang", "Kuala Langat", "Kuala Selangor", "Petaling", "Sabak Bernam", "Sepang"],
+    "Terengganu": ["Besut", "Dungun", "Hulu Terengganu", "Kemaman", "Kuala Terengganu", "Marang", "Setiu"],
+    "Kuala Lumpur": ["Bukit Bintang", "Cheras", "Kepong", "Lembah Pantai", "Sentul", "Setapak", "Titiwangsa", "Wangsa Maju"],
+    "Putrajaya": ["Putrajaya"],
+    "Labuan": ["Labuan"]
+}
+
+
+# home route
+@app.route("/")
+def home():
+    return render_template("home.html")
+
+#logout route
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+# signup route
+@app.route("/signup", methods=['GET', 'POST'])
+def signup():
+
+    error = None
+
+    if request.method == 'POST':
+        # extract data from submitted form
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+
+        # validate username & password length
+        if not (8 <= len(username) <= 20):
+            error = "Username must be 8-20 long!"
+        elif not (8 <= len(password) <= 20):
+            error = "Password must be 8-20 long!"
+        elif database.user_exists(username): # check if username is already taken
+            error = "Username already exists!"
+        else:
+            # add new user to database
+            database.add_user(username, password, email)
+            
+            return redirect(url_for('login'))
+    return render_template('signup.html', error=error)
+
+# login route
+@app.route("/login", methods=['GET', 'POST']) 
+def login():
+
+    if request.method == 'POST':
+        # extract login credentials
+        username = request.form['username']
+        password = request.form['password']
+
+        # check if admin
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session["username"] = username
+            session["role"] = "admin"
+            return redirect(url_for('admin_dashboard'))
+
+        # check if user
+        user = database.get_user(username, password)
+
+        # user login
+        if user:
+            session["username"] = username 
+            session["role"] = "user"
+            # successful login
+            return redirect(url_for('welcome', username=username, success=1))
+        else:
+            # failure login
+            return redirect(url_for('welcome', username=username, success=0))
+    
+    return render_template('login.html')
+
+# request reset route
+@app.route("/request_reset", methods=["GET", "POST"])
+def request_reset():
+
+    if request.method == "POST":
+        # extract form username & email
+        username = request.form["username"]
+        email = request.form["email"]
+
+        # verify match user's username & email
+        if database.validate_username_email(username, email):
+            # generate OTP
+            otp = str(random.randint(100000, 999999))
+            session["otp"] = otp
+            session["reset_email"] = email
+
+            # send OTP to email
+            msg = EmailMessage()
+            msg.set_content(f"Your OTP is: {otp}")
+            msg["Subject"] = "Password Reset OTP"
+            msg["From"] = EMAIL_ADDRESS
+            msg["To"] = email
+
+            # send email using SMTP
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+                smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+                smtp.send_message(msg)
+            return redirect(url_for("verify_otp"))
+        
+        else:
+            return render_template("reset_request.html", error="Invalid username or email.")
+    return render_template("reset_request.html")
+
+# verify OTP route
+@app.route("/verify_otp", methods=["GET", "POST"])
+def verify_otp():
+
+    if request.method == "POST":
+        # get user entered OTP
+        otp_input = request.form["otp_input"]
+
+        # check if OTP matches the one in session
+        if otp_input == session.get("otp"):
+            return redirect(url_for("reset_password"))
+        else:
+            # OTP mismatch
+            return render_template("verify_otp.html", error="Incorrect OTP.")
+        
+    return render_template("verify_otp.html")
+
+# reset password route
+@app.route("/reset_password", methods=["GET", "POST"])
+def reset_password():
+
+    message = ""
+
+    if request.method == "POST":
+        # get new password 
+        new_password = request.form["new_password"]
+        email = session.get("reset_email")
+
+        # validate password length & update in database
+        if 8 <= len(new_password) <= 20:
+            database.update_password_by_email(email, new_password)
+            message = "Password updated successfully. Redirecting to login..."
+            return redirect(url_for("login"))
+        else:
+            message = "Password must be 8-20 characters."
+
+    return render_template("reset.html", error="", message=message)
+
+# welcome route after login
+@app.route("/welcome", methods=["GET", "POST"])
+def welcome():
+    username = request.args.get("username")
+    success = request.args.get("success") == "1" # convert to boolean
+    return render_template('welcome.html', username=username, success=success)
+
+# admin dashboard route
+@app.route("/admin/dashboard")
+def admin_dashboard():
+
+    # check if admin
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+
+    # fetch all pets from database
+    pets = database.get_all_pets()
+    return render_template("admin_dashboard.html", pets=pets)
+
+# add pet route
+@app.route("/admin/add_pet", methods=["GET", "POST"])
+def add_pet():
+
+    # check if admin
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+    
+    # handle form submission
+    if request.method == "POST":
+        # extract form data
+        name = request.form["name"]
+        age = int(request.form["age"])
+        breed = request.form["breed"]
+        pet_type = request.form["type"]
+        color = request.form["color"]
+        status = request.form["status"]
+        image_file = request.files["picture"]
+
+        # handle image upload
+        image_filename = ""
+        if image_file:
+            image_filename = secure_filename(image_file.filename)
+            image_path = os.path.join(app.config["UPLOAD_FOLDER"], image_filename)
+            image_file.save(image_path)
+
+        # insert pet into database
+        pet_id = database.insert_pet(name, image_filename, pet_type, color, breed, age, status)
+
+        # redirect to pet profile or add another pet
+        if pet_id:
+            return redirect(url_for("pet_profile", pet_id=pet_id))
+        else:
+            return redirect(url_for("add_pet"))
+
+    return render_template("add_pet.html")
+
+# update pets list route
+@app.route("/admin/update_pets_list")
+def update_pets_list():
+
+    # check if admin
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+
+    # fetch all pets from database
+    pets = database.get_all_pets()
+    return render_template("update_petlist.html", pets=pets)
+
+# update pet details route
+@app.route("/admin/update_pet/<int:pet_id>", methods=["GET", "POST"])
+def update_pet_route(pet_id):
+
+    # check if admin
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+
+    # fetch pet details by ID
+    pet = database.get_pet_by_id(pet_id)
+    if not pet:
+        # if pet not found, show error
+        return "Pet not found", 404
+
+    # handle form submission
+    if request.method == "POST":
+        # extract form data
+        name = request.form["name"]
+        age = int(request.form["age"])
+        breed = request.form["breed"]
+        pet_type = request.form["type"]
+        color = request.form["color"]
+        status = request.form["status"]
+        image_file = request.files["picture"]
+
+        # use existing image unless new image is uploaded
+        image_filename = pet["picture"]
+        if image_file and image_file.filename != "":
+            image_filename = secure_filename(image_file.filename)
+            image_path = os.path.join(app.config["UPLOAD_FOLDER"], image_filename)
+            image_file.save(image_path)
+
+        # update pet details in database
+        database.update_pet(pet_id, name, image_filename, pet_type, color, breed, age, status)
+
+        return redirect(url_for("pet_profile", pet_id=pet_id))
+    return render_template("update.html", pet=pet)
+
+# review adoption requests route -> TEHA'S
+@app.route("/admin/review_adoptions")
+def track_admin():
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+
+    search_name = request.args.get('search_name', '').strip().lower()
+    search_email = request.args.get('search_email', '').strip().lower()
+    filter_state = request.args.get('filter_state', '').strip()
+
+    filtered_apps = {}
+    for app_id, data in applications.items():
+        if search_name and search_name not in data.get('name', '').lower():
+            continue
+        if search_email and search_email not in data.get('email', '').lower():
+            continue
+        if filter_state and filter_state != data.get('state', ''):
+            continue
+        filtered_apps[app_id] = data
+
+    all_data = [
+        {
+            'app_id': app_id,
+            'name': data.get('name', ''),
+            'email': data.get('email', ''),
+            'date': data.get('date', ''),
+            'time': data.get('time', ''),
+            'state': data.get('state', ''),
+            'city': data.get('city', ''),
+            'phone': data.get('phone', ''),
+            'notes': data.get('notes', ''),
+            'pet': data['pet'],
+            'status': data['status'],
+            'finalized': data['finalized'],
+            'review': data.get('review'),
+            'meetup': meetings.get(app_id)
+        }
+        for app_id, data in filtered_apps.items()
+    ]
+
+    return render_template('track_admin.html', applications=all_data, state_cities=state_cities)
+
+# update application status route
+@app.route('/admin/update_status/<app_id>', methods=['POST'])
+def update_status(app_id):
+
+    # check if admin
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
+
+    # get new status from submitted form
+    new_status = request.form.get("status")
+
+    #  check if apllication ID exists & status is valid
+    if app_id in applications and new_status in ['Approved', 'Rejected']:
+        # update application status
+        applications[app_id]['status'] = new_status
+        flash(f"Application {app_id} updated to {new_status}.")
+    else:
+        flash("Invalid application or status.")
+    
+    return redirect(url_for('track_admin'))
+
+# edit meeting route -> TEHA'S
+@app.route('/edit_meeting/<app_id>', methods=['GET', 'POST'])
+def edit_meeting(app_id):
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    meeting = meetings.get(app_id)
+    if not meeting:
+        return "No meeting found to edit.", 404
+
+    error = None
+    success = None
+    selected_state = meeting.get('state', '')
+    city_list = state_cities.get(selected_state, [])
+
+    if request.method == 'POST':
+        date_str = request.form.get('date', '')
+        time_str = request.form.get('time', '')
+        phone = request.form.get('phone', '').strip()
+        state = request.form.get('state', '')
+        city = request.form.get('city', '')
+        notes = request.form.get('notes', '')
+
+        malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
+
+        if not state or not city:
+            error = "Please select both State and City."
+        elif not malaysia_phone_regex.match(phone):
+            error = "Invalid phone number format. It must be +60 followed by 8-11 digits."
+        else:
+            try:
+                meeting_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+                today = datetime.today().date()
+                meeting_time = datetime.strptime(time_str, '%H:%M').time()
+
+                if meeting_date < today:
+                    error = "Cannot choose a past date."
+                elif not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
+                    error = "Meeting time must be between 08:00 and 22:00."
+                else:
+                    meetings[app_id].update({
+                        'date': date_str,
+                        'time': time_str,
+                        'phone': phone,
+                        'state': state,
+                        'city': city,
+                        'notes': notes,
+                    })
+                    success = "Meeting updated successfully!"
+                    selected_state = state
+                    city_list = state_cities.get(state, [])
+
+            except ValueError:
+                error = "Invalid date or time format."
+
+    return render_template('edit_meeting.html',
+        app_id=app_id,
+        meeting=meetings.get(app_id),
+        error=error,
+        success=success,
+        state_cities=state_cities,
+        selected_state=selected_state,
+        city_list=city_list,
+    )
+
+# submit review route -> TEHA'S
+@app.route('/submit_review', methods=['POST'])
+def submit_review():
+    app_id = request.form.get('application_id')
+    feedback = request.form.get('feedback', '')
+
+    if app_id in applications and applications[app_id]['finalized']:
+        applications[app_id]['review'] = {
+            'by': app_id,
+            'feedback': feedback
+        }
+
+    return redirect(url_for('track_admin' if session.get('role') == 'admin' else 'track_user'))
+
+# delete meeting route -> TEHA'S
+@app.route('/delete-meeting/<app_id>', methods=['GET'])
+def delete_meeting(app_id):
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    if app_id in meetings:
+        del meetings[app_id]
+
+    if app_id in applications:
+        del applications[app_id]
+
+    return redirect(url_for('track_admin'))
+
+# user dashboard route
+@app.route("/user", methods=['GET', 'POST'])
+def user_dashboard():
+
+    # check if user
+    if session.get("role") != "user":
+        return redirect(url_for("login"))
+    
+    # fetch all pets from database
+    pets = database.get_all_pets()
+    return render_template("user_dashboard.html", pets=pets)
+
+# pet profile route -> THAR'S
+@app.route('/pet/<int:pet_id>')
+def pet_profile(pet_id):
+    pet = database.get_pet_by_id(pet_id)
+    if pet is None:
+        return "Pet not found", 404
+    return render_template("pet_profile.html", pet=dict(pet))
+
+# pets filtering route -> THAR'S
+@app.route('/filter', methods=['POST'])
+def filter():
+    breed = request.form.get("breed")
+    pets = database.filter_pets(breed)
+    return render_template("user_dashboard.html", pets=pets)
+
+# request adoption route
+@app.route('/request-form/<int:pet_id>', methods=["GET"])
+def req_form(pet_id):
+
+    # check if user
+    if session.get("role") != "user":
+        return redirect(url_for("login"))
+    return render_template('request.html', pet_id=pet_id)
+
+# submit adoption request route
+@app.route('/submit-request', methods=['POST'])
+def submit_request():
+
+    # get user info from session
+    user_id = session.get("user_id")
+    username = session.get("username")
+
+    # get selected pet ID from form
+    pet_id = int(request.form.get("pet_id"))
+
+    # extract form data
+    fullname = request.form.get('fullname')
+    email = request.form.get('email')
+    phone = request.form.get('phone')
+    address = request.form.get('address')
+    reason = request.form.get('reason')
+    living = request.form.get('living')
+    agree = request.form.get('agree')
+
+    # validate the required fields are filled
+    if not all([fullname, email, phone, address, reason, living, agree]):
+        flash("Please fill out all required fields.")
+        return redirect(url_for('req_form', pet_id=pet_id))
+
+    # create application ID
+    app_id = f"APP{random.randint(1000, 9999)}"
+    while app_id in applications:
+        app_id = f"APP{random.randint(1000, 9999)}" # ensure unique ID
+
+    applications[app_id] = {
+        'status': 'Pending',
+        'pet': database.get_pet_by_id(pet_id)["name"],
+        'finalized': False,
+        'review': None,
+        'name': fullname,
+        'email': email,
+        'phone': phone,
+        'address': address,
+        'reason': reason,
+        'living': living,
+        'user': username
+    }
+
+    # save application ID in session
+    session["application_id"] = app_id
+
+    # create summary message to store in database
+    message = f"Full Name: {fullname}\nEmail: {email}\nPhone: {phone}\nAddress: {address}\n" \
+              f"Reason: {reason}\nLiving Situation: {living}"
+
+    # add adoption request into database
+    database.add_adoption_request(user_id=user_id, pet_id=pet_id, message=message)
+
+    flash("Your adoption request has been submitted successfully!")
+    return render_template('submitted.html', fullname=fullname, email=email, phone=phone, address=address, reason=reason, living=living, pet_id=pet_id)
+
+# adoption application route -> TEHA'S
+@app.route('/track_user')
+def track_user():
+    username = session.get('username')
+    if not username:
+        return redirect(url_for('login'))
+
+    user = database.get_user_by_username(username)
+    if not user:
+        session.clear()
+        return redirect(url_for('login'))
+
+    user_id = user[0]
+    adoption_info = None
+    app_id = None
+
+    adoptions = database.get_adoption_status(user_id)
+    if adoptions:
+        adoption = adoptions[-1]
+
+        app_id = adoption[0]
+        pet_id = adoption[2]
+        status = adoption[5]
+        finalized_raw = adoption[6] if len(adoption) > 6 else 0
+        is_finalized = bool(finalized_raw) if finalized_raw is not None else False
+
+        pet = database.get_pet_by_id(pet_id)
+        pet_name = pet['name'] if pet else '-'
+
+        adoption_info = {
+            'pet_name': pet_name,
+            'status': status,
+            'finalized': is_finalized,
+            'review': None
+        }
+
+    meetup = None
+    if app_id:
+        meetup_records = database.get_meetings_by_adoption_id(app_id)
+        if meetup_records:
+            first_meetup = meetup_records[0]
+            meetup = {
+                'date': first_meetup[3],
+                'time': first_meetup[4],
+                'notes': first_meetup[5] if len(first_meetup) > 5 else '',
+                'city': first_meetup[6] if len(first_meetup) > 6 else '',
+                'state': first_meetup[7] if len(first_meetup) > 7 else '',
+                'phone': first_meetup[8] if len(first_meetup) > 8 else ''
+            }
+
+    return render_template(
+        'track_user.html',
+        username=user[1],
+        app_id=app_id,
+        app=adoption_info,
+        meetup=meetup
+    )
+
+# schedule meeting route -> TEHA'S
+@app.route('/schedule/<application_id>', methods=['GET', 'POST'])
+def schedule(application_id):
+    if session.get('role') != 'user':
+        return redirect(url_for('login'))
+
+    username = session.get("username")
+    user = database.get_user_by_username(username)
+    if not user:
+        return "User not found.", 404
+    user_id = user[0]
+
+    adoptions = database.get_adoption_status(user_id)
+    application = next((a for a in adoptions if str(a[0]) == application_id), None)
+
+    if not application:
+        return "Unauthorized access to this application.", 403
+
+    error = None
+    success = None
+    selected_state = ''
+    city_list = []
+
+    meetings = database.get_meetings_by_user(user_id)
+
+    meeting = None
+    for m in meetings:
+        if str(m[2]) == application_id:
+            meeting = {
+                'date': m[3],
+                'time': m[4],
+                'notes': m[5]
+            }
+            break
+
+    if request.method == 'POST':
+        selected_state = request.form.get('state', '').strip()
+        city_list = state_cities.get(selected_state, [])
+
+        final_submit = request.form.get('final_submit', '')
+        date_str = request.form.get('date', '')
+        time_str = request.form.get('time', '')
+        phone = request.form.get('phone', '').strip()
+        city = request.form.get('city', '').strip()
+        notes = request.form.get('notes', '')
+
+        if final_submit == 'update_state':
+            return render_template('schedule.html',
+                                   application_id=application_id,
+                                   error=None,
+                                   success=None,
+                                   meeting=meeting,
+                                   state_cities=state_cities,
+                                   selected_state=selected_state,
+                                   city_list=city_list
+                                   )
+
+        malaysia_phone_regex = re.compile(r'^\+60[1-9][0-9]{7,10}$')
+
+        if not selected_state or not city:
+            error = "Please select both State and City."
+        elif not malaysia_phone_regex.match(phone):
+            error = "Invalid Malaysian phone number format. Format: +60XXXXXXXXX."
+        else:
+            try:
+                chosen_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+                today = datetime.today().date()
+                meeting_time = datetime.strptime(time_str, '%H:%M').time()
+
+                if chosen_date < today:
+                    error = "Cannot schedule a meeting for a past date."
+                elif not (datetime.strptime('08:00', '%H:%M').time() <= meeting_time <= datetime.strptime('22:00', '%H:%M').time()):
+                    error = "Meetings must be scheduled between 08:00 and 22:00."
+                else:
+                    database.schedule_meeting(user_id, application_id, date_str, time_str, notes)
+                    success = "Your meeting has been finalized!" if final_submit == 'finalize' else "Your meeting has been saved!"
+                    meeting = {
+                        'date': date_str,
+                        'time': time_str,
+                        'phone': phone,
+                        'state': selected_state,
+                        'city': city,
+                        'notes': notes
+                    }
+            except ValueError:
+                error = "Invalid date or time format."
+
+    return render_template('schedule.html',
+                           application_id=application_id,
+                           error=error,
+                           success=success,
+                           meeting=meeting,
+                           state_cities=state_cities,
+                           selected_state=selected_state,
+                           city_list=city_list
+                           )
+
+# finalize adoption route -> TEHA'S
+@app.route('/finalize', methods=['POST'])
+def finalize():
+    app_id = request.form.get('application_id')
+    if not app_id:
+        return "Application ID required.", 400
+
+    username = session.get('username')
+    if not username:
+        return redirect(url_for('login'))
+
+    user = database.get_user_by_username(username)
+    if not user:
+        return "User not found.", 404
+
+    user_id = user[0]
+    adoptions = database.get_adoption_status(user_id)
+    adoption = next((a for a in adoptions if str(a[0]) == app_id), None)
+
+    if not adoption:
+        return "Application not found or unauthorized access.", 403
+
+    if adoption[5] != "Approved":
+        return "Application not approved. Cannot finalize.", 403
+
+    if adoption[6] == 1:
+        return f"Adoption already finalized for pet ID {adoption[2]}."
+
+    conn = sqlite3.connect("adoptions.db")
+    c = conn.cursor()
+    c.execute("UPDATE adoptions SET finalized = 1 WHERE id = ?", (app_id,))
+    conn.commit()
+    conn.close()
+
+    session['application_id'] = app_id
+    return redirect(url_for('schedule', application_id=app_id))
+
+# account info route
+@app.route("/account", methods=['GET', 'POST'])
+def account():
+
+    username = session.get('username')
+    user = database.get_user_by_username(username) # fetch current user info
+    message = ""
+
+    if request.method == 'POST':
+        # extract submitted form data
+        email = request.form['email']
+        phone = request.form['phone']
+
+        if user:
+            # update user's email & phone in database
+            database.update_account_info(username, email, phone) 
+            message = "Changes saved!"
+
+            # reload with updated data
+            user = database.get_user_by_username(username)
+
+        else:
+            message = "User not found. Changes not saved."
+    return render_template('account.html', user=user, message=message)
+
+# personal info route
+@app.route("/personal", methods=["GET", "POST"])
+def personal():
+
+    username = session.get("username")
+    user = database.get_user_by_username(username) # fetch current user info
+    message = ""
+
+    if request.method == "POST":
+        # extract submitted form data
+        fullname = request.form["fullname"]
+        dob = request.form["dob"]
+        gender = request.form["gender"]
+        nationality = request.form["nationality"]
+        language = request.form["language"]
+        bio = request.form["bio"]
+
+        # update personal info in database
+        database.update_personal_info(username, fullname, dob, gender, nationality, language, bio)
+
+        # reload with updated data
+        user = database.get_user_by_username(username)
+        message = "Changes saved!"
+
+    return render_template("personal.html", user=user, message=message)
+
+# contact info route
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+
+    username = session.get('username')
+    message = ""
+
+    if request.method == 'POST':
+        # extract submitted form data
+        primary = request.form['primary-address']
+        shipping = request.form['shipping-address']
+
+        # update contact info in database
+        database.update_contact_info(username, primary, shipping)
+        message = "Changes saved!"
+
+        # reload with updated data
+        user = database.get_user_by_username(username)
+        return render_template("contact.html", user=user, message=message)
+
+    # show current contact info
+    user = database.get_user_by_username(username)
+    return render_template("contact.html", user=user)
+
+# privacy settings route
+@app.route("/privacy", methods=["GET", "POST"])
+def privacy():
+
+    username = session.get("username")
+    if not username:
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        if "delete" in request.form:
+            # account deletion
+            database.delete_account(username)
+            session.pop("username", None)
+            return redirect(url_for("login"))
+        
+        # update privacy settings
+        visibility = request.form.get("visibility")
+        activity_status = request.form.get("activity-status")
+
+        if visibility and activity_status:
+            database.update_privacy_settings(username, visibility, activity_status)
+            message = "Privacy settings updated!"
+            privacy_settings = database.get_privacy_settings(username)
+            return render_template("privacy.html", privacy=privacy_settings, message=message)
+
+    # show current privacy settings
+    privacy_settings = database.get_privacy_settings(username)
+    return render_template("privacy.html", privacy=privacy_settings)
+
+# delete account route
+@app.route("/delete_account", methods=["POST"])
+def delete_account():
+    username = session.get('username')
+
+    # delete account from database
+    database.delete_account(username)
+
+    # clear session data & notify user
+    session.pop('username', None)
+    flash("Your account has been deleted.")
+    return redirect(url_for('login'))
+
+if __name__ == "__main__":
+    database.init_info_db()
+    database.init_pets_db()
+    database.init_adoptions_db()
+    app.run(debug=True)
