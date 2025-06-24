@@ -746,8 +746,6 @@ def schedule(application_id):
                         'notes': notes
                     }
                     print("meetings_before", meetings)
-                    print("session_application_id", session["application_id"])
-                    meetings[session["application_id"]] = meeting
                     print("meetings_after", meetings)
             except ValueError:
                 error = "Invalid date or time format."
