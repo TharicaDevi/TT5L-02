@@ -9,6 +9,9 @@
 </head>
     <body>
         <div class="nav">
+            <div class="nav-left">
+                <span class="username">♔ {{ session.username }}</span>
+            </div>
             <ul class="nav-center">
                 <li><a href="{{ url_for('user_dashboard') }}">HOME</a></li>
                 <li><a href="{{ url_for('track_user') }}">STATUS</a></li>
@@ -24,14 +27,14 @@
         <div class="main-content">
             <h2>Welcome, {{ username }}</h2>
 
-            <div class="section">
+            <div>
                 <p><strong>Pet:</strong> {{ app.get('pet_name', '-') if app else '-' }}</p>
                 <p><strong>Status:</strong> {{ app.get('status', '-') if app else '-' }}</p>
                 <p><strong>Finalized:</strong> {{ 'Yes' if app and app.get('finalized') else 'No' }}</p>
             </div>
 
             {% if app and not app.get('finalized') and app.get('status') == 'Approved' %}
-                <div class="section">
+                <div class="btn-group">
                     <form method="POST" action="{{ url_for('finalized') }}">
                         <input type="hidden" name="application_id" value="{{ app_id }}">
                         <button type="submit" class="btn">Finalize Adoption</button>
@@ -40,7 +43,7 @@
             {% endif %}
 
             {% if app and not meetup and app.get('status') == 'Approved' %}
-                <div class="section">
+                <div class="btn-group">
                     <form method="POST" action="{{ url_for('schedule', application_id=app_id) }}">
                         <input type="hidden" name="application_id" value="{{ app_id }}">
                         <button type="submit" class="btn">Schedule Meetup</button>
@@ -49,7 +52,7 @@
             {% endif %}
 
             {% if meetup %}
-                <div class="section">
+                <div>
                     <h3>Meeting Details</h3>
                     <p><strong>Date:</strong> {{ meetup.get('date', '-') }}</p>
                     <p><strong>Time:</strong> {{ meetup.get('time', '-') }}</p>
@@ -62,7 +65,7 @@
             {% endif %}
 
             {% if app and app.get('review') %}
-                <div class="section">
+                <div>
                     <h3>Your Review</h3>
                     <p>
                         {% if app.get('review') is mapping and app.review.get('feedback') %}
