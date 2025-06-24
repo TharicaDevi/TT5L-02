@@ -5,7 +5,6 @@ from database import EMAIL_ADDRESS, EMAIL_PASSWORD
 from datetime import datetime
 import database, os, smtplib, random, re, sqlite3
 
-
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'  # needed for session (session = store information about the user across multiple pages)
 
@@ -329,6 +328,8 @@ def track_admin():
             continue
         if filter_state and filter_state != data.get('state', ''):
             continue
+        if not data.get('finalized'):
+            continue
         filtered_apps[app_id] = data
     print("filtered_apps", filtered_apps)
 
@@ -554,16 +555,23 @@ def submit_request():
         return redirect(url_for('req_form', pet_id=pet_id))
 
     # create application ID
-    app_id = f"APP{random.randint(1000, 9999)}"
-    while app_id in applications:
-        app_id = f"APP{random.randint(1000, 9999)}" # ensure unique ID
+    # app_id = f"APP{random.randint(1000, 9999)}"
+    # while app_id in applications:
+    #     app_id = f"APP{random.randint(1000, 9999)}" # ensure unique ID
+
+    # create summary message to store in database
+    message = f"Full Name: {fullname}\nEmail: {email}\nPhone: {phone}\nAddress: {address}\n" \
+              f"Reason: {reason}\nLiving Situation: {living}"
 
     status = "Approved"
+
+    # add adoption request into database
+    app_id = str(database.add_adoption_request(user_id=user_id, pet_id=pet_id, message=message, status=status))
 
     applications[app_id] = {
         'status': status,
         'pet': database.get_pet_by_id(pet_id)["name"],
-        'finalized': True,
+        'finalized': False,
         'review': None,
         'name': fullname,
         'email': email,
@@ -574,19 +582,11 @@ def submit_request():
         'user': username
     }
 
-    print("applications", len(applications))
-    print(applications)
-
     # save application ID in session
     session["application_id"] = app_id
     print("session_application_id", session["application_id"])
 
-    # create summary message to store in database
-    message = f"Full Name: {fullname}\nEmail: {email}\nPhone: {phone}\nAddress: {address}\n" \
-              f"Reason: {reason}\nLiving Situation: {living}"
-
-    # add adoption request into database
-    database.add_adoption_request(user_id=user_id, pet_id=pet_id, message=message, status=status)
+    print("applications[app_id]", app_id, applications[app_id])
 
     flash("Your adoption request has been submitted successfully!")
     return render_template('submitted.html', fullname=fullname, email=email, phone=phone, address=address, reason=reason, living=living, pet_id=pet_id)
@@ -611,6 +611,7 @@ def track_user():
     print("adoptions", adoptions)
     if adoptions:
         adoption = adoptions[-1]
+        print("adoption", adoption)
 
         app_id = adoption[0]
         pet_id = adoption[2]
@@ -788,9 +789,17 @@ def finalized():
 
     if adoption[5] != "Approved":
         return "Application not approved. Cannot finalize.", 403
-
+    
     if adoption[6] == 1:
         return f"Adoption already finalized for pet ID {adoption[2]}."
+
+    print("app_id here", app_id)
+    print("applications", applications)
+    if app_id in applications:
+        applications[app_id]['finalized'] = True
+
+        print("applications[app_id]", applications[app_id])
+        print("applications", len(applications), applications)
 
     conn = sqlite3.connect("adoptions.db")
     c = conn.cursor()

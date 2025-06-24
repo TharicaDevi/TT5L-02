@@ -380,8 +380,12 @@ def  add_adoption_request(user_id, pet_id, message="", status="Approved"):
         VALUES (?, ?, ?, ?, ?)
     ''', (user_id, pet_id, request_date, message, status))
     
+    app_id = c.lastrowid
+
     conn.commit()
     conn.close()
+
+    return app_id
 
 def add_adoption(user_id, pet_id, status="pending"):
     conn = sqlite3.connect("adoptions.db")
