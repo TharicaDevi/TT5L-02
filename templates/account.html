@@ -11,6 +11,23 @@
 
   <body>
     <div class="top-nav">
+      <div class="top-nav-left">
+        <span class="username">♔ {{ session['username'] }}</span>
+      </div>
+
+      <ul class="top-nav-center">
+        <li><a href="{{ url_for('user_dashboard') }}">HOME</a></li>
+        <li><a href="{{ url_for('track_user') }}">STATUS</a></li>
+        <li><a href="{{ url_for('account') }}">SETTINGS</a></li>
+      </ul>
+
+      <div class="top-nav-right">
+        <a href="{{ url_for('login') }}" class="logout-btn">LOGOUT</a>
+      </div>
+    </div>
+
+    <!-- SECONDARY nav bar below the top nav -->
+    <div class="nav">
       <ul>
         <li><a href="{{ url_for('account') }}">ACCOUNT</a></li>
         <li><a href="{{ url_for('personal') }}">PERSONAL</a></li>
