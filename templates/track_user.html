@@ -4,13 +4,25 @@
     <meta charset="UTF-8">
     <title>User Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='user.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+    <body>
+        <div class="nav">
+            <ul class="nav-center">
+                <li><a href="{{ url_for('user_dashboard') }}">HOME</a></li>
+                <li><a href="{{ url_for('track_user') }}">STATUS</a></li>
+                <li><a href="{{ url_for('account') }}">SETTINGS</a></li>
+            </ul>
+            <div class="nav-right">
+                <a href="{{ url_for('login') }}" class="logout-btn">LOGOUT</a>
+            </div>
+        </div>
+    </body>
 <body>
     <div class="admin-container">
         <div class="sidebar">
             <ul>
-                <li><a href="{{ url_for('user_dashboard') }}">Home</a></li>
                 {% if app and not meetup and app.get('status') == 'Approved' %}
                     <li><a href="{{ url_for('schedule', application_id=app_id) }}">Schedule Meetup</a></li>
                 {% endif %}
