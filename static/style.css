@@ -28,69 +28,6 @@ body {
   line-height: 1.5;
 }
 
-/* Top Navigation */
-.sidebar {
-  width: 100%;
-  background: var(--primary-mint); 
-  color: var(--text-dark);
-  padding: 1rem 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  position: sticky;
-  top: 0;
-  z-index: 999;
-  border-radius: 0 0 var(--border-radius) var(--border-radius);
-}
-
-/* Container to center content */
-.sidebar .nav-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 0 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-/* Brand/Title */
-.sidebar h2 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #ff6f91;
-}
-
-/* Nav links */
-.sidebar ul {
-  list-style: none;
-  display: flex;
-  gap: 1.5rem;
-  margin: 0;
-  padding: 0;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.sidebar ul li {
-  margin: 0;
-}
-
-.sidebar ul li a {
-  color: var(--text-dark);
-  font-weight: 600;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: var(--border-radius);
-  transition: background var(--transition-speed);
-  background: transparent;
-}
-
-.sidebar ul li a:hover,
-.sidebar ul li a:focus {
-  background: var(--primary-peach);
-  outline: none;
-}
-
 /* Optional logout or button style */
 .logout-btn {
     padding: 8px 16px;
@@ -122,13 +59,6 @@ body {
   padding: 2rem;
   border-radius: var(--border-radius);
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-/* Typography */
-h1, h2, h3 {
-  color: #4e4e4e;
-  margin-bottom: 1rem;
-  font-weight: 700;
 }
 
 /* Buttons */
@@ -166,124 +96,6 @@ h1, h2, h3 {
   outline: none;
 }
 
-/* Form styles */
-form {
-  max-width: 600px;
-}
-
-.form-group {
-  margin-bottom: 1.2rem;
-}
-
-label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 0.4rem;
-  color: #444;
-}
-
-input[type="text"],
-input[type="password"],
-input[type="date"],
-input[type="time"],
-input[type="tel"],
-select,
-textarea {
-  width: 100%;
-  padding: 0.5rem 0.7rem;
-  font-size: 1rem;
-  border: 2px solid #ddd;
-  border-radius: var(--border-radius);
-  transition: border-color var(--transition-speed);
-  font-family: var(--font-family);
-  resize: vertical;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: var(--primary-mint);
-  outline: none;
-}
-
-/* Table styles */
-.meetup-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-  font-size: 0.9rem;
-}
-
-.meetup-table th,
-.meetup-table td {
-  border: 1px solid #eee;
-  padding: 0.6rem 0.8rem;
-  text-align: left;
-  vertical-align: middle;
-}
-
-.meetup-table th {
-  background: var(--primary-mint);
-  color: var(--text-dark);
-  font-weight: 600;
-}
-
-.meetup-table tbody tr:nth-child(even) {
-  background: #fcfcfc;
-}
-
-.no-data {
-  text-align: center;
-  font-style: italic;
-  color: #999;
-}
-
-/* Messages */
-.error {
-  background: #f8d7da;
-  color: var(--error-color);
-  border: 1px solid #d32f2f;
-  padding: 0.7rem 1rem;
-  border-radius: var(--border-radius);
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-.success {
-  background: #d0f0d6;
-  color: var(--success-color);
-  border: 1px solid var(--success-color);
-  padding: 0.7rem 1rem;
-  border-radius: var(--border-radius);
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-/* Login styling */
-.login-wrapper {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: var(--primary-bg);
-  padding: 1rem;
-}
-
-.login-box {
-  background: var(--bg-white);
-  padding: 2rem 2.5rem;
-  border-radius: var(--border-radius);
-  width: 320px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
-
-.login-box h2 {
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  color: #4e4e4e;
-  text-align: center;
-}
-
 /* Button group */
 .btn-group {
   margin-top: 1rem;
@@ -292,26 +104,6 @@ textarea:focus {
   flex-wrap: wrap;
   justify-content: flex-start;
   flex-direction: row;
-}
-
-/* Responsive tweaks */
-@media (max-width: 768px) {
-  .sidebar .nav-container {
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .main-content {
-    padding: 1.5rem 1rem;
-    margin: 1rem;
-  }
-
-  .sidebar ul {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
 }
 
 /* Section */
