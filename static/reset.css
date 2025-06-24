@@ -103,6 +103,30 @@ body {
   box-shadow: none;
 }
 
+.login-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14.5px;
+    margin-top: 20px;
+}
+
+.left-text {
+    color:#fff;
+}
+
+.right-link {
+    color: #000000f1;
+    text-decoration: none;
+    font-weight: 800;
+}
+
+.right-link:hover {
+    color:rgba(0, 225, 255, 0.886);
+    text-decoration: underline;
+    transition: 0.3s;
+}
+
 .error-message {
     color: #ff4d4d;
     font-size: 16px;
