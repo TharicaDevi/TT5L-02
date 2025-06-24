@@ -21,14 +21,6 @@
     </body>
 <body>
     <div class="admin-container">
-        <div class="sidebar">
-            <ul>
-                {% if app and not meetup and app.get('status') == 'Approved' %}
-                    <li><a href="{{ url_for('schedule', application_id=app_id) }}">Schedule Meetup</a></li>
-                {% endif %}
-            </ul>
-        </div>
-
         <div class="main-content">
             <h2>Welcome, {{ username }}</h2>
 
@@ -43,6 +35,15 @@
                     <form method="POST" action="{{ url_for('finalized') }}">
                         <input type="hidden" name="application_id" value="{{ app_id }}">
                         <button type="submit" class="btn">Finalize Adoption</button>
+                    </form>
+                </div>
+            {% endif %}
+
+            {% if app and not meetup and app.get('status') == 'Approved' %}
+                <div class="section">
+                    <form method="POST" action="{{ url_for('schedule', application_id=app_id) }}">
+                        <input type="hidden" name="application_id" value="{{ app_id }}">
+                        <button type="submit" class="btn">Schedule Meetup</button>
                     </form>
                 </div>
             {% endif %}
