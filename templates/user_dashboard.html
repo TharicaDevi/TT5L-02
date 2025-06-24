@@ -8,11 +8,16 @@
     </head>
     <body>
         <div class="nav">
+            <div class="nav-left">
+                <span class="username">♔ {{ session.username }}</span>
+            </div>
+
             <ul class="nav-center">
                 <li><a href="{{ url_for('user_dashboard') }}">HOME</a></li>
                 <li><a href="{{ url_for('track_user') }}">STATUS</a></li>
                 <li><a href="{{ url_for('account') }}">SETTINGS</a></li>
             </ul>
+
             <div class="nav-right">
                 <a href="{{ url_for('login') }}" class="logout-btn">LOGOUT</a>
             </div>

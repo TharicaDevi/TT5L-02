@@ -70,6 +70,14 @@ body {
   right: 80px;
 }
 
+.nav-left {
+  position: absolute;
+  left: 30px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+}
+
 .logout-btn {
     padding: 8px 16px;
     border: none;
