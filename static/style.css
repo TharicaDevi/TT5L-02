@@ -92,23 +92,20 @@ body {
 }
 
 /* Optional logout or button style */
-.logout-btn,
-.reset-btn {
-  background: #ff6f91;
-  color: white;
-  padding: 0.4rem 1rem;
-  border-radius: var(--border-radius);
-  border: none;
-  cursor: pointer;
-  transition: background var(--transition-speed);
-  font-weight: 600;
+.logout-btn {
+    padding: 8px 16px;
+    border: none;
+    color: #fff;
+    border-radius: 7px;
+    letter-spacing: 2px;
+    text-decoration: none;
 }
 
-.logout-btn:hover,
-.reset-btn:hover {
-  background: #ffa8b7;
+.logout-btn:hover {
+    background-color: #fff;
+    color: #000;
+    transition: 0.5s;
 }
-
 
 /* Main layout */
 .admin-container {
@@ -144,9 +141,11 @@ h1, h2, h3 {
   border-radius: var(--border-radius);
   cursor: pointer;
   transition: background var(--transition-speed);
-  display: inline-block;
   text-align: center;
   user-select: none;
+  margin-left: 0;
+  margin-right: auto;
+  display: block;  
 }
 
 .btn:hover,
