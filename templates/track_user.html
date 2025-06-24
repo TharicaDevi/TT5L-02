@@ -25,9 +25,11 @@
 <body>
     <div class="admin-container">
         <div class="main-content">
-            <h2>Welcome, {{ username }}</h2>
+            <div class="section">
+                <h1>Welcome, {{ username }}</h1>
+            </div>
 
-            <div>
+            <div class="section">
                 <p><strong>Pet:</strong> {{ app.get('pet_name', '-') if app else '-' }}</p>
                 <p><strong>Status:</strong> {{ app.get('status', '-') if app else '-' }}</p>
                 <p><strong>Finalized:</strong> {{ 'Yes' if app and app.get('finalized') else 'No' }}</p>
@@ -52,8 +54,10 @@
             {% endif %}
 
             {% if meetup %}
-                <div>
-                    <h3>Meeting Details</h3>
+                <div class="section">
+                    <div class="section">
+                        <h2>Meeting Details</h2>
+                    </div>
                     <p><strong>Date:</strong> {{ meetup.get('date', '-') }}</p>
                     <p><strong>Time:</strong> {{ meetup.get('time', '-') }}</p>
                     <p><strong>Location:</strong> {{ meetup.get('city', '-') }}, {{ meetup.get('state', '-') }}</p>
@@ -65,8 +69,10 @@
             {% endif %}
 
             {% if app and app.get('review') %}
-                <div>
-                    <h3>Your Review</h3>
+                <div class="section">
+                    <div class="section">
+                        <h3>Your Review</h3>
+                    </div>
                     <p>
                         {% if app.get('review') is mapping and app.review.get('feedback') %}
                             {{ app.get('review').get('feedback') }}
