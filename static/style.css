@@ -144,8 +144,8 @@ h1, h2, h3 {
   text-align: center;
   user-select: none;
   margin-left: 0;
-  margin-right: auto;
-  display: block;  
+  margin-right: 0;
+  display: inline-block;
 }
 
 .btn:hover,
@@ -157,6 +157,8 @@ h1, h2, h3 {
 .btn-secondary {
   background: var(--primary-peach);
   color: var(--text-dark);
+  display: inline-block;
+  text-align: center;
 }
 
 .btn-secondary:hover,
@@ -289,6 +291,8 @@ textarea:focus {
   display: flex;
   gap: 0.8rem;
   flex-wrap: wrap;
+  justify-content: flex-start;
+  flex-direction: row;
 }
 
 /* Responsive tweaks */
@@ -302,10 +306,6 @@ textarea:focus {
   .main-content {
     padding: 1.5rem 1rem;
     margin: 1rem;
-  }
-
-  .btn-group {
-    flex-direction: column;
   }
 
   .sidebar ul {
