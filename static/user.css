@@ -158,3 +158,12 @@ button:hover {
     justify-content: center;
     gap: 20px;
 }
+
+.top-nav-left {
+  position: absolute;
+  left: 30px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 1;
+}
