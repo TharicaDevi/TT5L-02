@@ -382,8 +382,6 @@ def update_status(app_id):
 def edit_meeting(app_id):
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
-    
-    print("meetings", meetings)
 
     meeting = meetings.get(app_id)
     if not meeting:
@@ -930,4 +928,5 @@ if __name__ == "__main__":
     database.init_info_db()
     database.init_pets_db()
     database.init_adoptions_db()
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)
