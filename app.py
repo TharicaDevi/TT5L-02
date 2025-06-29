@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session, flash
 from werkzeug.utils import secure_filename
 from email.message import EmailMessage
-from database import EMAIL_ADDRESS, EMAIL_PASSWORD
+from database import EMAIL_ADDRESS, EMAIL_PASSWORD, seed_pets
 from datetime import datetime
 import database, os, smtplib, random, re, sqlite3
 
@@ -928,5 +928,6 @@ if __name__ == "__main__":
     database.init_info_db()
     database.init_pets_db()
     database.init_adoptions_db()
+    seed_pets()
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=True, host='0.0.0.0', port=port)

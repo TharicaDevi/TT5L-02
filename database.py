@@ -1,4 +1,4 @@
-import sqlite3, smtplib
+import sqlite3, smtplib, database
 from email.message import EmailMessage
 from datetime import datetime
 
@@ -10,6 +10,17 @@ with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
     smtp.starttls()
     smtp.ehlo()
     smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+
+#THAR's database petlist.py
+def seed_pets():
+    database.insert_pet("Milo", "dog1.jpeg", "Dog", "Golden", "Golden Retriever", 1, "available")
+    database.insert_pet("Snowy", "cat1.jpeg", "Cat", "White", "Persian", 2, "available")
+    database.insert_pet("Hammy", "hamster1.jpeg", "Hamster", "Brown", "Roborovski Dwarf", 2, "available")
+    database.insert_pet("Oyen", "cat2.jpeg", "Cat", "Orange", "Persian", 4, "available")
+    database.insert_pet("Xixi", "cat3.jpeg", "Cat", "Grey", "Persian", 1, "available")
+    database.insert_pet("Spike", "dog2.jpeg", "Dog", "Calico", "Chihuahua", 3, "available")
+    database.insert_pet("Tabby", "cat4.jpeg", "Cat", "Seal point", "Siamese", 1, "available")
+    database.insert_pet("Sam", "hamster2.jpeg", "Hamster", "Orange", "Syrian hamster", 1, "available")
     
 # Initialize the database and create tables if they don't exist
 def init_info_db():
