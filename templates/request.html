@@ -71,7 +71,13 @@
 
       <!-- Submit Button -->
       <div class="form-actions">
-        <button type="submit">Submit Request</button>
+        <a>
+        <a href="{{ url_for('submit_request')}}" >
+          <button type="submit">Submit Request</button>
+        </a><br></br>
+        <a href="{{ url_for('user_dashboard')}}" >
+          <button type="submit">Return to Home</button>
+        </a>
       </div>
     </form>
   </div>
