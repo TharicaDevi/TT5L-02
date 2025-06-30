@@ -36,7 +36,9 @@
         <p><strong>Breed:</strong> {{ pet['breed'] }}</p>
         <p><strong>Age:</strong> {{ pet['age'] }}</p>
         <br>
-        <a href="{{ url_for('user_dashboard') }}">← Back to Browse</a>
+        <a href="{{ url_for('admin_dashboard') if session.get('role') == 'admin' else url_for('user_dashboard') }}">
+            ← Back to {{ 'Dashboard' if session.get('role') == 'admin' else 'Browse' }}
+        </a>
         <br><br>
         <a href="{{ url_for('req_form', pet_id=pet['id']) }}">Adopt {{ pet['name'] }} →</a>
     </div>
